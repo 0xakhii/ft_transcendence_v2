@@ -36,23 +36,3 @@ function animate() {
 }
 
 animate();
-
-const socket = new WebSocket('ws://localhost:8000/ws/game/');
-
-socket.onopen = function(event) {
-    console.log('WebSocket connection established');
-    socket.send(JSON.stringify({ message: 'Hello Server!' }));
-};
-
-socket.onmessage = function(event) {
-    const data = JSON.parse(event.data);
-    console.log('Message from server:', data);
-};
-
-socket.onclose = function(event) {
-    console.log('WebSocket connection closed:', event);
-};
-
-socket.onerror = function(error) {
-    console.error('WebSocket error:', error);
-};

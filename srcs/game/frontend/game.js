@@ -303,7 +303,7 @@ let lastRequestTime = 0;
 let flag = 0
 function makeRequest() {
     const now = Date.now();
-    if (now - lastRequestTime > 1000) {  // One request per second
+    if (now - lastRequestTime > 10000) {
         if (flag === 0){
             flag = 1;
         }
@@ -319,12 +319,12 @@ function gameLoop(){
     ballTouchedWall = false;
     leftPaddle.ballTouchedPaddle = false;
     rightPaddle.ballTouchedPaddle = false;
-    // makeRequest();
+    makeRequest();
     ballWallCollision();
     ballPaddleCollision();
-    if (ball.dx === 0 && ball.dy === 0) {
-        ballMove();
-    }
+    // if (ball.dx === 0 && ball.dy === 0) {
+        // ballMove();
+    // }
     if (gameOver() === 1 && (score.left === 11 || score.right === 11)) {
         RestartButton();
         return 0;
@@ -477,3 +477,23 @@ function fetchGameState() {
         console.error('Error fetching game state:', error);
     }
 }
+
+const socket = new WebSocket('ws://localhost:8000/ws/test/');
+
+socket.onopen = function(event) {
+    console.log('WebSocket connection established');
+    socket.send(JSON.stringify({ message: 'Hello Server!' }));
+};
+
+socket.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+    console.log('Message from server:', data);
+};
+
+socket.onclose = function(event) {
+    console.log('WebSocket connection closed:', event);
+};
+
+socket.onerror = function(error) {
+    console.error('WebSocket error:', error);
+};

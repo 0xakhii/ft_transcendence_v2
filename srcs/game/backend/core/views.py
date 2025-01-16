@@ -10,6 +10,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 @csrf_exempt
+@api_view(['POST'])
 def game_state(request):
     if request.method == 'POST':
         data = json.loads(request.body)

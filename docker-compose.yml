@@ -4,7 +4,7 @@ services:
     ports:
       - "5173:5173"
     volumes:
-      - ./srcs/game/frontend:/ft_transcendence
+      - ./srcs/game/frontend:/ft_transcendence/
     restart: on-failure
     init: true
 
@@ -16,7 +16,7 @@ services:
     depends_on:
       - db
     volumes:
-      - ./srcs/game/backend:/ft_transcendence
+      - ./srcs/game/backend:/ft_transcendence/
     restart: on-failure
     env_file:
       - .env

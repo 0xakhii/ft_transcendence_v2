@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 	'rest_framework',
 	'django_filters',
 	'corsheaders',
+	'channels',
 ]
 
 MIDDLEWARE = [
@@ -62,6 +63,12 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:8000',
     'http://localhost:5173',
 ]
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer'
+    }
+}
 
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'rest_framework_json_api.exceptions.exception_handler',
@@ -107,7 +114,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-ASGI_APPLICATION = "myproject.asgi.application"
+ASGI_APPLICATION = "backend.routing.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 

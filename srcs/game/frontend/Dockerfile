@@ -4,12 +4,12 @@ RUN apk update && apk upgrade \
 	&& apk add curl\
 	&& apk add nodejs-current npm\
 	&& npm cache clean --force && rm -rf /usr/local/lib/node_modules/\
-	&& mkdir -p /ft_transcendence/srcs/
+	&& mkdir /ft_transcendence/
 
-COPY ./ /ft_transcendence/srcs/
-WORKDIR /ft_transcendence/srcs
+COPY ./ /ft_transcendence/
+WORKDIR /ft_transcendence/
 
-RUN chmod +x /ft_transcendence/srcs/conf.sh
+RUN chmod +x /ft_transcendence/conf.sh
 EXPOSE 5173
 
-ENTRYPOINT [ "/bin/sh", "/ft_transcendence/srcs/conf.sh" ]
+ENTRYPOINT [ "/bin/sh", "/ft_transcendence/conf.sh" ]
