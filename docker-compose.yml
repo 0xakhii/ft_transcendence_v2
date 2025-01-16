@@ -1,0 +1,30 @@
+services:
+  front:
+    build: ./srcs/game/frontend/
+    ports:
+      - "5173:5173"
+    restart: on-failure
+    init: true
+
+  back:
+    build: ./srcs/game/backend
+    ports:
+      - "8000:8000"
+      - "3000:3000"
+    depends_on:
+      - db
+    restart: on-failure
+    env_file:
+      - .env
+    init: true
+  
+  db:
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    restart: on-failure
+    depends_on:
+      - front
+    init: true
