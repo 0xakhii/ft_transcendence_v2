@@ -8,3 +8,4 @@ package.json
 pkg/
 my_env/
 .venv/
+__pycache__/
