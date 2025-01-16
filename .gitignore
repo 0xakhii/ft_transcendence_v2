@@ -4,7 +4,7 @@ srcs/.vite
 node_modules/
 package-lock.json
 package.json
-# .env
+.env
 pkg/
 my_env/
 .venv/
