@@ -19,5 +19,6 @@ def game_state(request):
         ball = data.get('ball')
         logger.debug('POST SUCCESS')
         init(left_paddle, right_paddle, ball)
-        return JsonResponse({'status': 'success'})
+        return JsonResponse(ball)
+        # return JsonResponse({'status': 'success'})
     return JsonResponse({'status': 'error'}, status=400)

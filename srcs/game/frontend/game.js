@@ -471,8 +471,19 @@ function fetchGameState() {
         body: JSON.stringify({ leftPaddle: leftPaddle, rightPaddle: rightPaddle, ball: ball})
     })
     .then(response => response.json()
-    .then(data => console.log(data)))    
-}
+    .then(data => {
+        console.log(data);
+        // if (data.status == 'success')
+        // {
+            ball = data;
+            console.log('Game state sent successfully');
+            
+        // }
+        // else
+        //     console.log('Game state not sent');
+    }
+    ));
+    }
     catch (error){
         console.error('Error fetching game state:', error);
     }
