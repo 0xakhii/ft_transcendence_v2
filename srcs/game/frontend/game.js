@@ -303,15 +303,18 @@ let lastRequestTime = 0;
 let flag = 0
 function makeRequest() {
     const now = Date.now();
-    if (now - lastRequestTime > 10000) {
+    if (now - lastRequestTime > 1000) {
         if (flag === 0){
             flag = 1;
         }
         fetchGameState();
+        WebSocket_fetch();
         lastRequestTime = now;
     }
 }
 function gameLoop(){
+    makeRequest();
+    // sleep(2);
     if (gamePaused)
         return;
     draw();
@@ -319,7 +322,6 @@ function gameLoop(){
     ballTouchedWall = false;
     leftPaddle.ballTouchedPaddle = false;
     rightPaddle.ballTouchedPaddle = false;
-    makeRequest();
     ballWallCollision();
     ballPaddleCollision();
     // if (ball.dx === 0 && ball.dy === 0) {
@@ -338,36 +340,46 @@ document.addEventListener('keyup', keyUpHandler);
 
 function keyDownHandler(event) {
     if (event.key === 'ArrowUp') {
-        // fetch('http://localhost:8000', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     },
-        //     body: JSON.stringify({ direction: 'up' })
-        // });
-        rightPaddle.dy = -5;
-        if (rightPaddle.y + rightPaddle.dy < 0) {
-            rightPaddle.y = 0;
-            rightPaddle.dy = 0;
-        }
+        fetch('http://localhost:8000/direction/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ direction: 'up', rightPaddle: rightPaddle, })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+            rightPaddle = data.rightPaddle
+        });
+        // rightPaddle.dy = -5;
+        // if (rightPaddle.y + rightPaddle.dy < 0) {
+        //     rightPaddle.y = 0;
+        //     rightPaddle.dy = 0;
+        // }
     } else if (event.key === 'ArrowDown') {
         // rightPaddle.dy = 5;
         // if (rightPaddle.y + rightPaddle.height + rightPaddle.dy > canvas.height) {
         //     rightPaddle.y = canvas.height - rightPaddle.height;
         //     rightPaddle.dy = 0;
         // }
-        // fetch('http://localhost:8000', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     },
-        //     body: JSON.stringify({ direction: 'down' })
-        // });
-        rightPaddle.dy = 5;
-        if (rightPaddle.y + rightPaddle.height + rightPaddle.dy > canvas.height) {
-            rightPaddle.y = canvas.height - rightPaddle.height;
-            rightPaddle.dy = 0;
-        }
+        fetch('http://localhost:8000/direction/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ direction: 'down', rightPaddle: rightPaddle})
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+            rightPaddle = data.rightPaddle
+        });
+        // rightPaddle.dy = 5;
+        // if (rightPaddle.y + rightPaddle.height + rightPaddle.dy > canvas.height) {
+        //     rightPaddle.y = canvas.height - rightPaddle.height;
+        //     rightPaddle.dy = 0;
+        // }
     }
     if (event.key === 'w') {
         leftPaddle.dy = -5;
@@ -387,14 +399,19 @@ function keyDownHandler(event) {
 
 function keyUpHandler(event) {
     if (event.key === 'ArrowUp' || event.key === 'ArrowDown'){
-        // fetch('http://localhost:8000/', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     },
-        //     body: JSON.stringify({ direction: 'stop' })
-        // });
-        rightPaddle.dy = 0;
+        fetch('http://localhost:8000/direction/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ direction: 'stop', rightPaddle: rightPaddle, })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+            rightPaddle = data.rightPaddle
+        });
+        // rightPaddle.dy = 0;
     }
     if (event.key === 'w' || event.key === 's')
         leftPaddle.dy = 0;
@@ -475,36 +492,41 @@ function fetchGameState() {
         console.log(data);
         // if (data.status == 'success')
         // {
-            ball = data;
+            // ball = data.ball;
+            // leftPaddle = data.left_paddle
+            rightPaddle = data.right_paddle
+            leftPaddle = data.left_paddle
+            ball = data.ball
             console.log('Game state sent successfully');
             
-        // }
-        // else
-        //     console.log('Game state not sent');
-    }
+            // }
+            // else
+            //     console.log('Game state not sent');
+        }
     ));
-    }
+}
     catch (error){
         console.error('Error fetching game state:', error);
     }
 }
-
-const socket = new WebSocket('ws://localhost:8000/ws/test/');
-
-socket.onopen = function(event) {
-    console.log('WebSocket connection established');
-    socket.send(JSON.stringify({ message: 'Hello Server!' }));
-};
-
-socket.onmessage = function(event) {
-    const data = JSON.parse(event.data);
-    console.log('Message from server:', data);
-};
-
-socket.onclose = function(event) {
-    console.log('WebSocket connection closed:', event);
-};
-
-socket.onerror = function(error) {
-    console.error('WebSocket error:', error);
-};
+function WebSocket_fetch(){
+    const socket = new WebSocket('ws://localhost:8000/ws/test/');
+    
+    socket.onopen = function(event) {
+        console.log('WebSocket connection established');
+        socket.send(JSON.stringify({ message: 'Hello Server!' }));
+    };
+    
+    socket.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        console.log('Message from server:', data);
+    };
+    
+    socket.onclose = function(event) {
+        console.log('WebSocket connection closed:', event);
+    };
+    
+    socket.onerror = function(error) {
+        console.error('WebSocket error:', error);
+    };
+}
