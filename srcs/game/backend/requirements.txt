@@ -15,3 +15,4 @@ sqlparse==0.4.3
 tzdata==2022.6
 django-cors-headers==4.4.0
 debugpy==1.5.1
+channels_redis==4.2.1

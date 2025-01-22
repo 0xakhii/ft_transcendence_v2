@@ -1,75 +1,45 @@
-import json
-from channels.generic.websocket import WebsocketConsumer
-import logging
-
-logger = logging.getLogger(__name__)
-
-class GameConsumer(WebsocketConsumer):
-    def connect(self):
-        logger.info("Connection attempt received")
-        try:
-            self.accept()
-            logger.info("Connection accepted")
-            self.send(text_data=json.dumps({
-                'message': 'WebSocket connection established'
-            }))
-        except Exception as e:
-            logger.error(f"Connection error: {str(e)}")
-            raise
-
-    def disconnect(self, close_code):
-        logger.info(f"Disconnected with code: {close_code}")
-
-    def receive(self, text_data):
-        logger.info(f"Received data: {text_data}")
-        try:
-            data = json.loads(text_data)
-            self.send(text_data=json.dumps({
-                'message': 'Data received',
-                'data': data
-            }))
-        except Exception as e:
-            logger.error(f"Error processing message: {str(e)}")
-
 # import json
-# from channels.generic.websocket import AsyncWebsocketConsumer
+# from channels.generic.websocket import WebsocketConsumer
+# import logging
 
-# class GameConsumer(AsyncWebsocketConsumer):
-#     async def connect(self):
-#         # Accept the WebSocket connection
-#         self.room_name = "test"
-#         self.room_group_name = f"ws_{self.room_name}"
+# logger = logging.getLogger(__name__)
 
-#         await self.channel_layer.group_add(
-#             self.room_group_name,
-#             self.channel_name
-#         )
+# class GameConsumer(WebsocketConsumer):
+#     def connect(self):
+#         logger.info("Connection attempt received")
+#         try:
+#             self.accept()
+#             logger.info("Connection accepted")
+#             self.send(text_data=json.dumps({
+#                 'message': 'WebSocket connection established'
+#             }))
+#         except Exception as e:
+#             logger.error(f"Connection error: {str(e)}")
+#             raise
 
-#         await self.accept()
+#     def disconnect(self, close_code):
+#         logger.info(f"Disconnected with code: {close_code}")
 
-#     async def disconnect(self, close_code):
-#         # Leave the group when the WebSocket closes
-#         await self.channel_layer.group_discard(
-#             self.room_group_name,
-#             self.channel_name
-#         )
+#     def receive(self, text_data):
+#         logger.info(f"Received data: {text_data}")
+#         try:
+#             data = json.loads(text_data)
+#             self.send(text_data=json.dumps({
+#                 'message': 'Data received',
+#                 'data': data
+#             }))
+#         except Exception as e:
+#             logger.error(f"Error processing message: {str(e)}")
+from channels.generic.websocket import AsyncWebsocketConsumer
+import json
 
-#     async def receive(self, text_data):
-#         # Handle the incoming WebSocket message
-#         text_data_json = json.loads(text_data)
-#         message = text_data_json['message']
+class GameConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        await self.accept()
 
-#         await self.channel_layer.group_send(
-#             self.room_group_name,
-#             {
-#                 'type': 'chat_message',
-#                 'message': message
-#             }
-#         )
+    async def disconnect(self, close_code):
+        pass
 
-#     async def send(self, event):
-#         # Send message to WebSocket
-#         message = event['message']
-#         await self.send(text_data=json.dumps({
-#             'message': message
-#         }))
+    async def receive(self, text_data=None, bytes_data=None):
+        message = json.loads(text_data)
+        await self.send(json.dumps({"response": "Message received!"}))

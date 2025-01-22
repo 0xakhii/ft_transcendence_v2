@@ -308,7 +308,6 @@ function makeRequest() {
             flag = 1;
         }
         fetchGameState();
-        WebSocket_fetch();
         lastRequestTime = now;
     }
 }
@@ -509,24 +508,7 @@ function fetchGameState() {
         console.error('Error fetching game state:', error);
     }
 }
-function WebSocket_fetch(){
-    const socket = new WebSocket('ws://localhost:8000/ws/test/');
-    
-    socket.onopen = function(event) {
-        console.log('WebSocket connection established');
-        socket.send(JSON.stringify({ message: 'Hello Server!' }));
-    };
-    
-    socket.onmessage = function(event) {
-        const data = JSON.parse(event.data);
-        console.log('Message from server:', data);
-    };
-    
-    socket.onclose = function(event) {
-        console.log('WebSocket connection closed:', event);
-    };
-    
-    socket.onerror = function(error) {
-        console.error('WebSocket error:', error);
-    };
-}
+const socket = new WebSocket("ws://localhost:8000/ws/test/");
+socket.onopen = () => console.log("WebSocket connected");
+socket.onerror = (error) => console.error("WebSocket error:", error);
+socket.onclose = (event) => console.log("WebSocket closed:", event);

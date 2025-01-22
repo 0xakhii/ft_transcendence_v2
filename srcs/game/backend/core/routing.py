@@ -1,7 +1,7 @@
-# from django.urls import re_path
+from django.urls import re_path
 from .consumer import GameConsumer
 
 websocket_urlpatterns = [
-    path('ws/test/', GameConsumer.as_asgi()),
+    re_path(r'ws/test/$', GameConsumer.as_asgi()),
 ]
 
