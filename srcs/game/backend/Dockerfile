@@ -10,4 +10,4 @@ RUN apt update && apt install -y \
 COPY ./ /ft_transcendence/
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
-CMD  ["/ft_transcendence/wait-for-it.sh", "db:5432", "--", "python", "/ft_transcendence/manage.py", "runserver", "0.0.0.0:8000"]
+CMD  ["/ft_transcendence/wait-for-it.sh", "db:5432", "--", "daphne", "-b", "0.0.0.0", "-p", "8000", "backend.asgi:application"]

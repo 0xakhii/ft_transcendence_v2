@@ -27,5 +27,5 @@ class GameConsumer(WebsocketConsumer):
             }))
         except Exception as e:
             print(f"Error processing message: {str(e)}")
-    def send(self , message):
-        self.send(text_data=json.dumps(message))
+    # def send(self , message):
+    #     self.send(text_data=json.dumps(message))
