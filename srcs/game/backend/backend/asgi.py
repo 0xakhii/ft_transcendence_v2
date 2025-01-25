@@ -1,13 +1,20 @@
+import os
+import django
+from channels.routing import get_default_application
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
+django.setup()
+application = get_default_application()
+
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
-from django.urls import path
-from core.consumer import GameConsumer
+from core.routing import websocket_urlpatterns
 
 application = ProtocolTypeRouter({
-    "http": get_asgi_application(),
+    "http": get_default_application(),
     "websocket": AuthMiddlewareStack(
-        URLRouter([
-            path("ws/test/", GameConsumer.as_asgi()),
-        ])
+        URLRouter(
+            websocket_urlpatterns
+        )
     ),
 })

@@ -308,6 +308,7 @@ function makeRequest() {
             flag = 1;
         }
         fetchGameState();
+        sendMessageToSocket("Hello, WebSocket!");
         lastRequestTime = now;
     }
 }
@@ -508,7 +509,16 @@ function fetchGameState() {
         console.error('Error fetching game state:', error);
     }
 }
-const socket = new WebSocket("ws://localhost:8000/ws/test/");
-socket.onopen = () => console.log("WebSocket connected");
-socket.onerror = (error) => console.error("WebSocket error:", error);
-socket.onclose = (event) => console.log("WebSocket closed:", event);
+
+function sendMessageToSocket(message) {
+    const socket = new WebSocket('ws://localhost:8000/ws/pong/');
+    console.log(socket)
+    socket.onopen = () => {
+        console.log("WebSocket connected");
+        socket.send(message);
+        console.log("Message sent to WebSocket:", message);
+    };
+    socket.onmessage = (event) => console.log("WebSocket message received:", event.data);
+    socket.onerror = (error) => console.error("WebSocket error:", error);
+    socket.onclose = (event) => console.log("WebSocket closed:", event);
+}

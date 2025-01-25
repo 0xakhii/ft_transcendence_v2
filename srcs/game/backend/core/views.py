@@ -22,6 +22,8 @@ def game_state(request):
         init(left_paddle, right_paddle, ball, direction)
         response = update(left_paddle, right_paddle, ball)
         return JsonResponse(response)
+    else:
+        return JsonResponse({'method: ' + request.method}, status=710)
     return JsonResponse({'status': 'error'}, status=400)
 
 

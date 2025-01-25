@@ -28,10 +28,9 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'http://localhost:8000',
-    'http://localhost:5173',
-    'ws://localhost:8000',
-    'localhost'
+    'localhost',
+	'127.0.0.1',
+	'*',
 ]
 
 
@@ -68,6 +67,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:8000',
     'http://localhost:5173',
     'ws://localhost:8000',
+	'ws://back:8000',
 ]
 
 CHANNEL_LAYERS = {
