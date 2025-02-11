@@ -1,0 +1,130 @@
+body 
+{
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+}
+.main
+{
+    height: 100vh;
+    background-color: #181e2a;
+    /* overflow: hidden; */
+    background-image: url(images/PO-BG.png);
+
+    background-color: #181e2a;
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: #bfb9ed;
+    /* display: flex 
+    flex-direction: column; */
+    /* justify-content: space-between;
+    align-items: center; */
+}
+.logo
+{
+    /* position: absolute; */
+    /* height: 15vh; */
+    /* top: 19vh; */
+    width: 11vw;
+    /* margin: -4vh 0 1vh 0; */
+    /* margin: 5vh 0 0 5vw; */
+    margin-left: 85px;
+    margin-top: 70px;
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px; /* Add some padding inside the header */
+    box-sizing: border-box; /* Ensure padding doesn't affect layout width */
+}
+
+.header a {
+    text-decoration: none;
+    color: #bfb9ed;
+    font-family: "Poppins", sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 10px 40px; /* Add padding for better spacing */
+    /* display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center; */
+    transition: border 0.3s ease, background-color 0.3s ease;
+}
+
+.test a:hover {
+    border: #bfb9ed solid 3px;
+    border-radius: 20px;
+    background-color: rgba(191, 185, 237, 0.2); 
+}
+
+.test a.active 
+{
+    border: #bfb9ed solid 3px; /* Same as hover style */
+    border-radius: 20px;
+    background-color: rgba(191, 185, 237, 0.2);
+    color: #fff; /* Optional: Ensure the text color remains visible */
+}
+.test {
+  /* display: flex;  */
+  /* gap: 20px; Space between links */
+  padding-right: 4.5vw;
+  margin-top: 10vh;
+}
+@media (max-width: 1400px)
+{
+    .header a
+    {
+        font-size: 15px;
+        font-weight: bold;
+        padding: 5px 20px;
+    }
+    .test
+    {
+        margin: 10vh 0 0 0;
+    }
+}
+
+@media (max-width: 1000px)
+{
+    .header a
+    {
+        font-size: 12px;
+        font-weight: bold;
+        padding: 5px 15px;
+    }
+    .test
+    {
+        margin: 7vh 0 0 0;
+    }
+
+}
+@media (max-width: 1700px)
+{
+    .header a
+    {
+        font-size: 20px;
+        font-weight: bold;
+        padding: 5px 20px;
+    }
+    .test
+    {
+        margin: 8vh 0 0 0;
+    }
+
+}
+
+@media (max-width: 980px)
+{
+    .header a
+    {
+        font-size: 10px;
+        font-weight: bold;
+        padding: 2px 15px;
+    }
+    .test
+    {
+        margin: 8vh 0 0 0;
+    }
+}

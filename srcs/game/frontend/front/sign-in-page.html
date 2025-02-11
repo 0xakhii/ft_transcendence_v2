@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz@0,14..32;1,14..32&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style2.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="main">
+        <div class="border-up">
+            <img class="logo" src="images/Pongify_logo.png" >
+            <h2>WELCOME</h2>
+            <p>Login with your 42 Network account or use your own email and password</p>
+        </div>
+        <div class="border-bottom">
+            <form>
+                <input type="text" class="brd" placeholder="Username"><br>
+                <input type="password" class="brd" placeholder="Password">
+                <!-- <button class="btn" type="submit">Login</button> -->
+                <p class="error-msg" style="color: red;"></p>
+                <button class="btn" type="submit" >Login</button>
+            </form>
+            <button  class="btn2" type="submit"><img src="images/42.png">Network</button>
+            <a href="sign-up-page.html">Create Account</a>
+        </div>
+    </div>
+    <script>
+        // document.querySelector('.btn').addEventListener('click', async (e) => {
+        //     e.preventDefault();
+        //     const username = document.querySelector('input[placeholder="Username"]').value;
+        //     const password = document.querySelector('input[placeholder="Password"]').value;
+    
+        //     try {
+        //         const response = await fetch('http://127.0.0.1:8000/login/', {
+        //             method: 'POST',
+        //             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        //             body: JSON.stringify({ username, password }),
+        //         });
+                
+        //         console.log(response);
+        //         if (response.ok) 
+        //         {
+        //             const data = await response.json();
+        //             // alert('Login successful');
+        //             window.location.href = 'dashboard.html'; // Redirect to dashboard
+        //         } else {
+        //             alert('Login failed');
+        //         }
+        //     } catch (error) {
+        //         console.error('Error logging in:', error);
+        //     }
+        // });
+        /////////
+
+
+
+//     document.querySelector('.btn').addEventListener('click', async (e) => {
+//     e.preventDefault();
+
+//     const username = document.querySelector('input[placeholder="Username"]').value.trim();
+//     const password = document.querySelector('input[placeholder="Password"]').value.trim();
+
+//     // if (!username || !password) {
+//     //     alert('Username and password are required!');
+//     //     return;
+//     // }
+
+//     try {
+//         const response = await fetch('http://127.0.0.1:8000/login/', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//             },
+//             body: JSON.stringify({ username, password }),
+//         });
+//             /////////this part is working good
+//         if (response.ok) {
+//             const data = await response.json();
+//             // alert('Login successful!');
+//             window.location.href = 'dashboard.html';
+//         } else {
+//             const errorData = await response.json();
+//             // alert(errorData.error || 'Invalid username or password');
+//         }
+//     } catch (error) {
+//         console.error('Error during login:', error);
+//         alert('Something went wrong. Please try again later.');
+//     }
+// });
+// document.querySelector('.btn').addEventListener('click', async (e) => {
+//     e.preventDefault();
+
+//     const username = document.querySelector('input[placeholder="Username"]').value.trim();
+//     const password = document.querySelector('input[placeholder="Password"]').value.trim();
+//     const errorMsg = document.querySelector('.error-msg');
+
+//     // Clear any previous error message
+//     errorMsg.style.display = 'none';
+//     errorMsg.textContent = '';
+
+//     if (!username || !password) {
+//         errorMsg.style.display = 'block';
+//         errorMsg.textContent = 'Username and password are required!';
+//         return;
+//     }
+
+//     try {
+//         const response = await fetch('http://127.0.0.1:8000/login/', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//             },
+//             body: JSON.stringify({ username, password }),
+//         });
+
+//         if (response.ok) {
+//             const data = await response.json();
+//             window.location.href = 'dashboard.html'; // Redirect to dashboard
+//         } else {
+//             const errorData = await response.json();
+//             errorMsg.style.display = 'block';
+//             errorMsg.textContent = errorData.error || 'Invalid username or password';
+//         }
+//     } catch (error) {
+//         console.error('Error during login:', error);
+//         errorMsg.style.display = 'block';
+//         errorMsg.textContent = 'Something went wrong. Please try again later.';
+//     }
+// });
+        // Handle regular login
+// document.querySelector('.btn').addEventListener('click', async (e) => {
+//     e.preventDefault();
+
+//     const username = document.querySelector('input[placeholder="Username"]').value.trim();
+//     const password = document.querySelector('input[placeholder="Password"]').value.trim();
+//     const errorMsg = document.querySelector('.error-msg');
+//     // Clear any previous error message
+//     errorMsg.style.display = 'none';
+//     errorMsg.textContent = '';
+
+//     if (!username || !password) {
+//         errorMsg.style.display = 'block';
+//         errorMsg.textContent = 'Username and password are required!';
+//         return;
+//     }
+
+//     try {
+//         const response = await fetch('http://127.0.0.1:8000/login/', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//             },
+//             body: JSON.stringify({ username, password }),
+//         });
+
+//         if (response.ok) {
+//             const data = await response.json();
+//             localStorage.setItem('authToken', data.access); // Store the token
+//             // window.location.href = 'dashboard.html'; // Redirect to dashboard
+//         }
+//         else 
+//         {
+//             const errorData = await response.json();
+//             errorMsg.style.display = 'block';
+//             errorMsg.textContent = errorData.error || 'Invalid username or password';
+//         }
+//     } catch (error) {
+//         console.error('Error during login:', error);
+//         errorMsg.style.display = 'block';
+//         errorMsg.textContent = 'Something went wrong. Please try again later.';
+//     }
+// });
+
+// // Handle 42 Network login
+// document.querySelector('.btn2').addEventListener('click', () => {
+//     // Redirect to 42 Network login endpoint
+//     // window.location.href = 'http://127.0.0.1:5173/dashboard.html';
+// });
+        // On page load, check if an access_token is provided in the URL (from a 42 Network redirect)
+document.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('access_token');
+    if (token) {
+        console.log('Access token received:', token);
+        localStorage.setItem('authToken', token);
+        // Optionally, remove the query parameters from the URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+        // window.location.href = 'dashboard.html';
+    }
+});
+
+// Handle regular login
+    document.querySelector('.btn').addEventListener('click', async (e) => {
+        e.preventDefault();
+
+        const username = document.querySelector('input[placeholder="Username"]').value.trim();
+        const password = document.querySelector('input[placeholder="Password"]').value.trim();
+        const errorMsg = document.querySelector('.error-msg');
+
+        // Clear any previous error message
+        errorMsg.style.display = 'none';
+        errorMsg.textContent = '';
+
+        if (!username || !password) {
+            errorMsg.style.display = 'block';
+            errorMsg.textContent = 'Username and password are required!';
+            return;
+        }
+
+        try {
+            const response = await fetch('http://127.0.0.1:8000/login/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                localStorage.setItem('authToken', data.access); // Store the token
+                window.location.href = 'dashboard.html'; // Redirect to dashboard
+            } else {
+                const errorData = await response.json();
+                errorMsg.style.display = 'block';
+                errorMsg.textContent = errorData.error || 'Invalid username or password';
+            }
+        } catch (error) {
+            console.error('Error during login:', error);
+            errorMsg.style.display = 'block';
+            errorMsg.textContent = 'Something went wrong. Please try again later.';
+        }
+    });
+
+    // Handle 42 Network login/sign-up
+    document.querySelector('.btn2').addEventListener('click', () => {
+        // If a token already exists, go directly to the dashboard.
+        if (localStorage.getItem('authToken')) {
+            window.location.href = 'dashboard.html';
+        } else {
+            // Otherwise, redirect to the 42 login endpoint to start the OAuth flow.
+            window.location.href = 'http://127.0.0.1:8000/42_login/';
+        }
+    });
+
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz@0,14..32;1,14..32&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="sign-up-page.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="main">
+        <div class="border-up">
+            <img class="logo" src="images/Pongify_logo.png" >
+            <h2>WELCOME</h2>
+            <p>Login with your 42 Network account or use your own email and password</p>
+        </div>
+        <div class="border-bottom">
+            <form id="signup-form">
+                <input id="username" type="text" class="brd" placeholder="Username">
+                <input id="email" type="email" class="brd" placeholder=" mail">
+                <input id="password" type="password" class="brd" placeholder="Password">
+                <!-- <input id="confirm-password" type="password" class="brd" placeholder="Confirm Password"> -->
+                <input id="first_name" type="text" class="brd" placeholder="First name">
+                <input id="last_name" type="text" class="brd" placeholder="last name">
+                <button class="btn" type="submit">Sign Up</button>
+            </form>
+            <button class="btn2"><img src="images/42.png">Network</button>
+        </div>
+    </div>
+    <script>
+//         document.getElementById('signup-form').addEventListener('submit', async (event) => {
+//     event.preventDefault(); // Prevent the form from reloading the page
+
+//     const username = document.getElementById('username').value;
+//     const email = document.getElementById('email').value;
+//     const password = document.getElementById('password').value;
+//     const confirmPassword = document.getElementById('confirm-password').value;
+
+//     if (password !== confirmPassword) {
+//         alert('Passwords do not match');
+//         return;
+//     }
+
+//     try {
+//         const response = await fetch('/register/', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//             },
+//             body: JSON.stringify({
+//                 username,
+//                 email,
+//                 password,
+//             }),
+//         });
+
+//         if (response.ok) {
+//             const data = await response.json();
+//             alert(data.message); // Show the success message from the backend
+//             window.location.href = 'sign-in-page.html'; // Redirect to the sign-in page
+//         } else if (response.status === 400) {
+//             const errorData = await response.json();
+//             alert(errorData.error || 'Sign-up failed due to invalid data');
+//         } else {
+//             alert('An unexpected error occurred');
+//         }
+//     } catch (error) {
+//         console.error('Error during sign-up:', error);
+//         alert('An error occurred. Please try again.');
+//     }
+// });
+// document.getElementById('signup-form').addEventListener('submit', async (event) => {
+//     event.preventDefault();
+
+//     const username = document.getElementById('username').value;
+//     const email = document.getElementById('email').value;
+//     const password = document.getElementById('password').value;
+//     const confirmPassword = document.getElementById('confirm-password').value;
+
+//     if (password !== confirmPassword) {
+//         alert('Passwords do not match');
+//         return;
+//     }
+
+//     // Construct form-encoded data
+//     const formData = new URLSearchParams();
+//     formData.append('username', username);
+//     formData.append('email', email);
+//     formData.append('password', password);
+
+//     try {
+//         const response = await fetch('/register/', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/x-www-form-urlencoded',
+//             },
+//             body: formData.toString(),
+//         });
+
+//         console.log('Sending data to backend:', { username, email, password });
+
+//         if (response.ok) {
+//             const data = await response.json();
+//             alert(data.message);
+//             window.location.href = 'sign-in-page.html'; // Redirect to sign-in page
+//         } else {
+//             const errorData = await response.json();
+//             alert(errorData.error || 'Sign-up failed');
+//         }
+//     } catch (error) {
+//         console.error('Error during sign-up:', error);
+//         alert('An error occurred. Please try again.');
+//     }
+// });
+// document.getElementById('signup-form').addEventListener('submit', async (event) => {
+//     event.preventDefault();
+
+//     const username = document.getElementById('username').value;
+//     const email = document.getElementById('email').value;
+//     const password = document.getElementById('password').value;
+//     const confirmPassword = document.getElementById('confirm-password').value;
+
+//     if (password !== confirmPassword) {
+//         alert('Passwords do not match');
+//         return;
+//     }
+
+//     // If you want to send JSON instead of form-encoded:
+//     const requestBody = JSON.stringify({
+//         username,
+//         email,
+//         password
+//     });
+
+//     try {
+//         const response = await fetch('/register/', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',  // Use JSON content type
+//             },
+//             body: requestBody,  // Send JSON body
+//         });
+
+//         console.log('Response:', response);
+//         console.log('Sending data to backend:', { username, email, password });
+
+//         if (response.ok) {
+//             const data = await response.json();
+//             alert(data.message);  // Show success message from backend
+//             window.location.href = 'sign-in-page.html';  // Redirect
+//         } else {
+//             const errorData = await response.json();
+//             alert(errorData.error || 'Sign-up failed');  // Show error message from backend
+//         }
+//     } catch (error) {
+//         console.error('Error during sign-up:', error);
+//         alert('An error occurred. Please try again.');  // General error message
+//     }
+// });
+
+// document.getElementById('signup-form').addEventListener('submit', async (event) => {
+//     event.preventDefault();
+
+//     const username = document.getElementById('username').value;
+//     const first_name = document.getElementById('first_name').value;
+//     const last_name = document.getElementById('last_name').value;
+//     const email = document.getElementById('email').value;
+//     const password = document.getElementById('password').value;
+//     // const confirmPassword = document.getElementById('confirm-password').value;
+
+//     // if (password !== confirmPassword) {
+//     //     alert('Passwords do not match');
+//     //     return;
+//     // }
+
+//     // If you want to send JSON instead of form-encoded:
+//     const requestBody = JSON.stringify({
+//         username,
+//         email,
+//         password
+//     });
+
+//     try {
+//         const response = await fetch('http://127.0.0.1:8000/register/', {  // Updated URL to backend
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',  // Use JSON content type
+//             },
+//             body: requestBody,  // Send JSON body
+//         });
+
+//         console.log('Response:', response);
+//         console.log('Sending data to backend:', { username, email, password ,first_name,last_name});
+
+//         if (response.ok) {
+//             const data = await response.json();
+//             alert(data.message);  // Show success message from backend
+//             window.location.href = 'sign-in-page.html';  // Redirect
+//         } else {
+//             const errorData = await response.json();
+//             alert(errorData.error || 'Sign-up failed');  // Show error message from backend
+//         }
+//     } catch (error) {
+//         console.error('Error during sign-up:', error);
+//         alert('An error occurred. Please try again.');  // General error message
+//     }
+// });
+// document.getElementById('signup-form').addEventListener('submit', async (event) => {
+//     event.preventDefault(); // Prevent the form from reloading the page
+
+//     const username = document.getElementById('username').value;
+//     const first_name = document.getElementById('first_name').value;
+//     const last_name = document.getElementById('last_name').value;
+//     const email = document.getElementById('email').value;
+//     const password = document.getElementById('password').value;
+
+//     // Prepare data as form-encoded
+//     const formData = new URLSearchParams();
+//     formData.append('username', username);
+//     formData.append('first_name', first_name);
+//     formData.append('last_name', last_name);
+//     formData.append('email', email);
+//     formData.append('password', password);
+
+//     try {
+//         const response = await fetch('http://127.0.0.1:8000/register/', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/x-www-form-urlencoded',  // Use form URL encoded
+//             },
+//             body: formData.toString(),  // Send form-encoded data
+//         });
+
+//         // console.log('Sending data to backend:', { username, first_name, last_name, email, password });
+
+//         if (response.ok) {
+//             const data = await response.json();
+//             alert(data.message);  // Show success message from backend
+//             window.location.href = 'sign-in-page.html';  // Redirect
+//         }
+//         else 
+//         {
+//             const errorData = await response.json();
+//             alert(errorData.error || 'Sign-up failed');  // Show error message from backend
+//         }
+//     } catch (error) {
+//         console.error('Error during sign-up:', error);
+//         alert('An error occurred. Please try again.');  // General error message
+//     }
+// });
+        document.getElementById('signup-form').addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent the form from reloading the page
+        
+            const username = document.getElementById('username').value;
+            const first_name = document.getElementById('first_name').value;
+            const last_name = document.getElementById('last_name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+        
+            // Prepare data as form-encoded
+            const formData = new URLSearchParams();
+            formData.append('username', username);
+            formData.append('first_name', first_name);
+            formData.append('last_name', last_name);
+            formData.append('email', email);
+            formData.append('password', password);
+        
+            try {
+                const response = await fetch('http://127.0.0.1:8000/register/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',  // Use form URL encoded
+                    },
+                    body: formData.toString(),  // Send form-encoded data
+                });
+            
+                if (response.ok)
+                {
+                    const data = await response.json();
+                    // alert(data.message);  // Show success message from backend
+                    window.location.href = '/sign-in-page.html';  // Redirect
+                } else {
+                    const errorData = await response.json();
+                    alert(errorData.error || 'Sign-up failed');  // Show error message from backend
+                }
+            } catch (error) {
+                console.error('Error during sign-up:', error);
+                alert('An error occurred. Please try again.');  // General error message
+            }
+        });
+
+        // Pre-fill the form with data from the backend (if provided) and log it
+        // document.addEventListener('DOMContentLoaded', () => {
+        //     const params = new URLSearchParams(window.location.search);
+        
+        //     const username = params.get('username');
+        //     const firstName = params.get('first_name');
+        //     const lastName = params.get('last_name');
+        //     const email = params.get('email');
+        
+            // Only log data and pre-fill the form if query parameters exist
+            // if (username || firstName || lastName || email) {
+            //     console.log('Received data from backend:');
+            //     console.log('Username:', username || 'Not provided');
+            //     console.log('First Name:', firstName || 'Not provided');
+            //     console.log('Last Name:', lastName || 'Not provided');
+            //     console.log('Email:', email || 'Not provided');
+            
+            //     if (username) document.getElementById('username').value = username;
+            //     if (firstName) document.getElementById('first_name').value = firstName;
+            //     if (lastName) document.getElementById('last_name').value = lastName;
+            //     if (email) document.getElementById('email').value = email;
+            // } else {
+            //     console.log('No query parameters detected. Awaiting 42 Network login.');
+            // }
+        // });
+
+        // Handle 42 Network sign-up
+        document.querySelector('.btn2').addEventListener('click', async () => {
+            try 
+            {
+                // Redirect the user to the 42 login endpoint
+                window.location.href = 'http://127.0.0.1:8000/42_login/';
+                const params = new URLSearchParams(window.location.search);
+                const token = urlParams.get('access_token');
+    
+                if (token) 
+                {
+                    localStorage.setItem('authToken', token);
+                    console.log("Access token stored in localStorage:", token);
+                
+                // Optionally, you can remove the query parameters from the URL so they don't remain visible:
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                } 
+                else 
+                {
+                    console.log("No access token found in URL.");
+                }
+            } 
+            catch (error)
+            {
+                console.error('Error during 42 Network login:', error);
+                alert('An error occurred. Please try again.');
+            }
+        });
+
+// Handle 42 Network sign-up
+
+// Add functionality for the 42 Network button
+// document.querySelector('.btn2').addEventListener('click', async () => {
+//     try {
+//         // Redirect the user to the 42 login endpoint
+//         window.location.href = 'http://127.0.0.1:5173/sign-in-page.html';
+//     } catch (error) {
+//         console.error('Error during 42 Network login:', error);
+//         alert('An error occurred. Please try again.');
+//     }
+// });
+
+
+// // Pre-fill the form with data from the backend (if provided) and log it
+// document.addEventListener('DOMContentLoaded', () => {
+//     const params = new URLSearchParams(window.location.search);
+
+//     const username = params.get('username');
+//     const firstName = params.get('first_name');
+//     const lastName = params.get('last_name');
+//     const email = params.get('email');
+
+//     if (username) document.getElementById('username').value = username;
+//     if (firstName) document.getElementById('first_name').value = firstName;
+//     if (lastName) document.getElementById('last_name').value = lastName;
+//     if (email) document.getElementById('email').value = email;
+
+//     console.log('Received data from backend:');
+//     console.log('Username:', username || 'Not provided');
+//     console.log('First Name:', firstName || 'Not provided');
+//     console.log('Last Name:', lastName || 'Not provided');
+//     console.log('Email:', email || 'Not provided');
+
+// });
+
+
+</script>
+    
+</body>
+</html>

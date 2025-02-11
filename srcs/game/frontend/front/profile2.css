@@ -1,0 +1,46 @@
+
+  /* Profile Container */
+  .profile-container {
+    /* position: relative; */
+  }
+  
+
+  .profile-info
+  {
+    /* position: absolute; */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* margin-top: 20px; Space above info */
+    gap: 20px; /* Space between items */
+  }
+  .profile-stats 
+  {
+    /* position: absolute; */
+    /* display: flex;
+    justify-content: space-between;
+    align-items: flex-end; */
+    /* margin-top: 20px; Space above stats */
+    gap: 20px; /* Space between items */
+  }
+  
+  /* Match History Section */
+  .match-history {
+    /* position: relative; */
+    /* padding: 20px; Internal spacing */
+    /* margin-top: 20px; Space above match history */
+    /* border-radius: 20px; Rounded corners */
+    /* background: rgba(255, 255, 255, 0.1); Optional semi-transparent background */
+    /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); Optional shadow */
+  }
+.profile-border
+{
+    height: 400px;
+    width: 250x;
+}
+.stats-border
+{
+    height: 200px;
+    width: 250x;
+}
+  
