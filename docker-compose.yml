@@ -1,22 +1,22 @@
 services:
   front:
-    build: ./srcs/game/frontend/
+    build: ./srcs/frontend/
     ports:
       - "5173:5173"
     volumes:
-      - ./srcs/game/frontend:/ft_transcendence/
+      - ./srcs/frontend:/ft_transcendence/
     restart: on-failure
     init: true
 
   back:
-    build: ./srcs/game/backend
+    build: ./srcs/backend
     ports:
       - "8000:8000"
       - "3000:3000"
     depends_on:
       - db
     volumes:
-      - ./srcs/game/backend:/ft_transcendence/
+      - ./srcs/backend:/ft_transcendence/
     restart: on-failure
     env_file:
       - .env
