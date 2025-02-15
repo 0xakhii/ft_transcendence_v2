@@ -878,8 +878,8 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="profile-container">
                 <div class="profile-info">
                     <img class="profile-border" src="profile imgs/main_profile_window.png">
-                    <img id="profile-img" class="profile-img" src="profile images/placeholder.png">
-                    <h2 id="profile-username" class="profile-username">Username</h2>
+                    <img class="p_img" id="profile-img" class="profile-img" src="profile images/luffy_snipper.jpg">
+                    <h2 class="p_username" id="profile-username" class="profile-username">Username</h2>
                 </div>
                 <div class="profile-stats">
                     <img class="stats-border wins" src="profile imgs/level_and_wins_window.png" alt="Wins">
@@ -903,20 +903,45 @@ document.addEventListener("DOMContentLoaded", () => {
                         <a href="" data-page="settings">SETTINGS</a>
                     </div>
                 </div>
+                <div class="middle">
+                    <div class="play_local">
+                        <div class="btn">
+                            <button type="button" onclick="location.href='game.html';">Play Local Game</button>
+                        </div>
+                        <img class="f_img" src="dashboard img/full_button.png">
+                    </div>
+                    <div class="btn2">
+                        <button type="button" onclick="location.href='game.html';">Play Online Game</button>
+                    </div>
+                        <img class="f_img" src="dashboard img/full_buton_2.png">
+                </div>
             </div>
         `,
     };
     
+    // const urlParams = new URLSearchParams(window.location.hash.split('?')[1]);
+    // const token = urlParams.get('access_token');
+    // localStorage.setItem("authToken", token);
+
     const urlParams = new URLSearchParams(window.location.hash.split('?')[1]);
     const token = urlParams.get('access_token');
-    localStorage.setItem("authToken", token);
-    if (token){
+    const user_id = urlParams.get('user_id');
 
+    if (token) {
+        localStorage.setItem("authToken", token);
+    }
+    if (user_id) {
+        localStorage.setItem("user_id", user_id);
+    }
+
+    console.log("Access token from 42 Network:", token);
+    console.log("User ID from 42 Network:", user_id);
+
+    if (token){
         navigateTo('#/dashboard');
     }
-    
-                    // console.log(urlParams)
-                    console.log("Access token from 42 Network:", token);
+    // console.log(urlParams)
+    console.log("Access token from 42 Network:", token);
     function preloadStylesheet(url) {
         const link = document.createElement('link');
         link.rel = 'stylesheet';
@@ -958,6 +983,7 @@ document.addEventListener("DOMContentLoaded", () => {
             case '#/dashboard':
                 app.innerHTML = pages.dashboard;
                 loadCSS('dashboard.css');
+                // loadProfileInfo();
                 break;
             case '#/home':
                 app.innerHTML = pages.home;
@@ -1059,8 +1085,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-
-
     function setupSignUp() 
     {
         const signupForm = document.getElementById('signup-form');
@@ -1100,20 +1124,30 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
         }
+        
         signupForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const username = document.getElementById('username').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value.trim();
-            const firstName = document.getElementById('first_name').value.trim();
-            const lastName = document.getElementById('last_name').value.trim();
+            // const username = document.getElementById('username').value.trim();
+            // const email = document.getElementById('email').value.trim();
+            // const password = document.getElementById('password').value.trim();
+            // const first_name = document.getElementById('first_name').value.trim();
+            // const last_name = document.getElementById('last_name').value.trim();
+            const formData = {
+                username: document.getElementById('username').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                first_name: document.getElementById('first_name').value,
+                last_name: document.getElementById('last_name').value
+            };
+            // console.log(formData);
 
+            // console.log('Sending payload:', { username, email, password, first_name, last_name });
             try {
                 const response = await fetch('http://127.0.0.1:8000/register/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, email, password, first_name: firstName, last_name: lastName }),
+                    body: JSON.stringify(formData)
                 });
 
                 if (response.ok) {
@@ -1129,31 +1163,75 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         
     }
+    localStorage.setItem("authToken", token);
+    console.log("Token set in localStorage:", localStorage.getItem("authToken"));
 
     async function loadProfileInfo() {
         try {
-            // const token = localStorage.getItem('authToken');
-            if (!token) return;
 
+            const access_token = localStorage.getItem('authToken');
+            // if (!token) return;
+            if (!access_token) 
+            {
+                console.log("No access token found in localStorage." , {access_token});
+                return;
+            }
             const response = await fetch('http://127.0.0.1:8000/profile/', {
                 method: 'GET',
                 headers: {
+                    "Authorization": `Bearer ${access_token}`,
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    // 'Accept': 'application/vnd.api+json',
                 },
             });
+            console.log('Response Headers:', response.headers);
             
             if (response.ok)
             {
-                console.log(token);
-                const data = await response.json();
-                document.getElementById('profile-img').src = data.image?.link || 'default-avatar.png';
-                document.getElementById('profile-username').innerText = data.login || 'Unknown User';
+                // const data = await response.json();
+                const result = await response.json();
+                const profileData = result.data.attributes;
+                // document.getElementById('profile-img').src = data.image?.link || 'default-avatar.png';
+                // document.getElementById('profile-username').innerText = data.login || 'Unknown User';
+                document.getElementById('profile-img').src = profileData.avatar || 'default-avatar.png';
+                document.getElementById('profile-username').innerText = profileData.username || 'Unknown User';
             }
         } catch (error) {
             console.error('Error loading profile info:', error);
         }
     }
+
+    // async function loadProfileInfo() {
+    //     try {
+    //         const user_id = localStorage.getItem('user_id');
+    //         if (!user_id) {
+    //             console.log("No user id found in localStorage.", { user_id });
+    //             return;
+    //         }
+    //         const response = await fetch(`http://127.0.0.1:8000/profile/?user_id=${user_id}`, {
+    //             method: 'GET',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //                 // No Authorization header needed
+    //             },
+    //         });
+    //         console.log('Response Headers:', response.headers);
+            
+    //         if (response.ok) {
+    //             const result = await response.json();
+    //             // Assuming JSON:API structure:
+    //             const profileData = result.data.attributes;
+    //             document.getElementById('profile-img').src = profileData.avatar || 'default-avatar.png';
+    //             document.getElementById('profile-username').innerText = profileData.username || 'Unknown User';
+    //         }            
+    //         else {
+    //             console.error("Failed to load profile info. Status:", response.status);
+    //         }
+    //     } catch (error) {
+    //         console.error('Error loading profile info:', error);
+    //     }
+    // }
+    
 
     // Load the initial page
     preloadStylesheet('dashboard.css'); // Dashboard CSS

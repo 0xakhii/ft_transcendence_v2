@@ -219,12 +219,24 @@ body
     top: 550px;
   }
 
-  .profile-username
+  .profile-info h2
   {
     /* margin: 0; */
     position: absolute;
-    top: 700px;
-    left: 20.5%;
+    top: 600px;
+    /* left: 18%; */
+    font-family: 'Poppins';
+    font-size: 30px;
+    color: white;
+  }
+  .p_img
+  {
+    position: absolute;
+    top: 400px;
+    left: 17%;
+    width: 180px;
+    height: 180px;
+    border-radius: 80px;
   }
   /* @media (min-width: 2000px) {
     .profile-container {
