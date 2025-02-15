@@ -1,7 +1,6 @@
 from django.urls import path
 from .views import login_42, callback_42,RegistrationView, LoginView, ProfileUpdateView, SendFriendRequestView, AcceptFriendRequestView, RejectFriendRequestView, PendingFriendRequestsView,FriendListView,UserListView,ProfileDetailView
 from . import views
-
 urlpatterns = [
     path('42_login/', login_42.as_view(), name='login_42'),
     path('oauth/callback/', callback_42.as_view(), name='callback_42'),
@@ -15,5 +14,5 @@ urlpatterns = [
     path("friends/list/", FriendListView.as_view(), name="friends-list"),
     # path('users/', views.user_list, name='user_list'),
     path("profile/", ProfileDetailView.as_view(), name="profile-detail"),
-    path('users/', UserListView.as_view(),name='userlistview')
+    path('users/', UserListView.as_view(),name='userlistview'),
 ]

@@ -903,17 +903,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         <a href="" data-page="settings">SETTINGS</a>
                     </div>
                 </div>
-                <div class="middle">
-                    <div class="play_local">
-                        <div class="btn">
-                            <button type="button" onclick="location.href='game.html';">Play Local Game</button>
-                        </div>
-                        <img class="f_img" src="dashboard img/full_button.png">
-                    </div>
-                    <div class="btn2">
-                        <button type="button" onclick="location.href='game.html';">Play Online Game</button>
-                    </div>
-                        <img class="f_img" src="dashboard img/full_buton_2.png">
+                <div class="game-container">
+                    <canvas id="gamecanvas"></canvas>
                 </div>
             </div>
         `,
@@ -975,38 +966,49 @@ document.addEventListener("DOMContentLoaded", () => {
                 loadCSS('style2.css');
                 setupSignIn();
                 break;
-            case '#/sign-up':
-                app.innerHTML = pages.signUp;
-                loadCSS('sign-up-page.css');
-                setupSignUp();
-                break;
-            case '#/dashboard':
-                app.innerHTML = pages.dashboard;
-                loadCSS('dashboard.css');
-                // loadProfileInfo();
-                break;
-            case '#/home':
+                case '#/sign-up':
+                    app.innerHTML = pages.signUp;
+                    loadCSS('sign-up-page.css');
+                    setupSignUp();
+                    break;
+                    case '#/dashboard':
+                        app.innerHTML = pages.dashboard;
+                        loadCSS('dashboard.css');
+                        // loadProfileInfo();
+                        break;
+                        case '#/home':
                 app.innerHTML = pages.home;
                 break;
-            case '#/profile':
-                app.innerHTML = pages.profile;
-                loadCSS('profile.css');
-                loadProfileInfo();
-                break;
-            case '#/game':
-                app.innerHTML = pages.game;
-                loadCSS('game.css');
-                break;
-            default:
+                case '#/profile':
+                    app.innerHTML = pages.profile;
+                    loadCSS('profile.css');
+                    loadProfileInfo();
+                    break;
+                    case '#/game':
+                        app.innerHTML = pages.game;
+                        loadCSS('styleGame.css');
+                        // const gamecanvas = document.createElement('canvas');
+                        // gamecanvas.id = 'gamecanvas';
+                        // document.body.appendChild(gamecanvas);
+                        const gameScript = document.createElement('script');
+                        gameScript.src = './game.js';
+                        document.body.appendChild(gameScript);
+
+                        
+                        const backgroundAnimationScript = document.createElement('script');
+                        backgroundAnimationScript.src = './backgroundAnimation.js';
+                        document.body.appendChild(backgroundAnimationScript);
+                        break;
+                        default:
                 app.innerHTML = pages.signIn;
                 loadCSS('style2.css');
                 setupSignIn();
                 break;
+            }
         }
-    }
-
-    function setupSignIn() 
-    {
+        
+        function setupSignIn() 
+        {
         const loginForm = document.getElementById('login-form');
         const goToSignUp = document.getElementById('go-to-sign-up');
         const errorMsg = document.querySelector('.error-msg');
@@ -1236,7 +1238,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Load the initial page
     preloadStylesheet('dashboard.css'); // Dashboard CSS
     preloadStylesheet('profile.css'); // Profile page CSS
-    preloadStylesheet('game.css'); // Game page CSS (if applicable)
+    preloadStylesheet('styleGame.css'); // Game page CSS (if applicable)
 
     window.addEventListener('popstate', () => {
         renderPage(window.location.hash);

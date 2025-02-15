@@ -7,17 +7,20 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseNotAllowed
 import json
 import logging
+from rest_framework.permissions import AllowAny
+from rest_framework.decorators import permission_classes
 
 logger = logging.getLogger(__name__)
 @csrf_exempt
 @api_view(['POST'])
+
+@permission_classes([AllowAny])
 def game_state(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         left_paddle = data.get('leftPaddle')
         right_paddle = data.get('rightPaddle')
         ball = data.get('ball')
-        print(right_paddle, '  --------')
         direction = data.get('direction')
         init(left_paddle, right_paddle, ball, direction)
         response = update(left_paddle, right_paddle, ball)
@@ -26,8 +29,8 @@ def game_state(request):
         return JsonResponse({'method: ' + request.method}, status=710)
     return JsonResponse({'status': 'error'}, status=400)
 
-
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def PaddleMove(request):
     if request.method == 'POST':
         data = json.loads(request.body)

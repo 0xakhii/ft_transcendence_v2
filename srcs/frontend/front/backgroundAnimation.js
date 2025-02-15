@@ -8,7 +8,7 @@ bgCanvas.style.top = '0';
 bgCanvas.style.left = '0';
 bgCanvas.style.width = '100%';
 bgCanvas.style.height = '100%';
-bgCanvas.style.zIndex = '-1';
+bgCanvas.style.zIndex = '2';
 document.body.insertBefore(bgCanvas, document.body.firstChild);
 
 class Star {
@@ -20,7 +20,6 @@ class Star {
         this.speedY = Math.random() * 0.2 ? Math.random() * 0.2 : 0.2;
         this.speed = 5;
     }
-
     update(ballX, ballY) {
         this.x += this.speedX;
         this.y += this.speedY;
