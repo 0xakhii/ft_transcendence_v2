@@ -927,8 +927,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     console.log("Access token from 42 Network:", token);
     console.log("User ID from 42 Network:", user_id);
+    // const token = localStorage.getItem("authToken");
+    
+    // console.log("Access token before:", token);
 
-    if (token){
+    
+    if (token)
+    {
         navigateTo('#/dashboard');
     }
     // console.log(urlParams)
@@ -966,40 +971,38 @@ document.addEventListener("DOMContentLoaded", () => {
                 loadCSS('style2.css');
                 setupSignIn();
                 break;
-                case '#/sign-up':
-                    app.innerHTML = pages.signUp;
-                    loadCSS('sign-up-page.css');
-                    setupSignUp();
-                    break;
-                    case '#/dashboard':
-                        app.innerHTML = pages.dashboard;
-                        loadCSS('dashboard.css');
-                        // loadProfileInfo();
-                        break;
-                        case '#/home':
+            case '#/sign-up':
+                app.innerHTML = pages.signUp;
+                loadCSS('sign-up-page.css');
+                setupSignUp();
+                break;
+            case '#/dashboard':
+                app.innerHTML = pages.dashboard;
+                loadCSS('dashboard.css');
+                // loadProfileInfo();
+                break;
+            case '#/home':
                 app.innerHTML = pages.home;
                 break;
-                case '#/profile':
-                    app.innerHTML = pages.profile;
-                    loadCSS('profile.css');
-                    loadProfileInfo();
-                    break;
-                    case '#/game':
-                        app.innerHTML = pages.game;
-                        loadCSS('styleGame.css');
-                        // const gamecanvas = document.createElement('canvas');
-                        // gamecanvas.id = 'gamecanvas';
-                        // document.body.appendChild(gamecanvas);
-                        const gameScript = document.createElement('script');
-                        gameScript.src = './game.js';
-                        document.body.appendChild(gameScript);
-
-                        
-                        const backgroundAnimationScript = document.createElement('script');
-                        backgroundAnimationScript.src = './backgroundAnimation.js';
-                        document.body.appendChild(backgroundAnimationScript);
-                        break;
-                        default:
+            case '#/profile':
+                app.innerHTML = pages.profile;
+                loadCSS('profile.css');
+                loadProfileInfo();
+                break;
+            case '#/game':
+                app.innerHTML = pages.game;
+                loadCSS('styleGame.css');
+                // const gamecanvas = document.createElement('canvas');
+                // gamecanvas.id = 'gamecanvas';
+                // document.body.appendChild(gamecanvas);
+                const gameScript = document.createElement('script');
+                gameScript.src = './game.js';
+                document.body.appendChild(gameScript);
+                const backgroundAnimationScript = document.createElement('script');
+                backgroundAnimationScript.src = './backgroundAnimation.js';
+                document.body.appendChild(backgroundAnimationScript);
+                break;
+            default:
                 app.innerHTML = pages.signIn;
                 loadCSS('style2.css');
                 setupSignIn();
@@ -1070,18 +1073,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (response.ok) 
                 {
-                    const data = await response.json();
-                    localStorage.setItem('authToken', data.access);
+                    const result = await response.json();
+                    localStorage.setItem('authToken', result.data.access);
                     navigateTo('#/dashboard');
-                    // renderPage('#/dashboard');
                 }
                 else 
                 {
                     const errorData = await response.json();
+                    errorMsg.style.display = 'block';
                     errorMsg.textContent = errorData.error || 'Invalid username or password';
                 }
             } catch (error) {
                 console.error('Error during login:', error);
+                errorMsg.style.display = 'block';
                 errorMsg.textContent = 'Something went wrong. Please try again later.';
             }
         });
@@ -1238,7 +1242,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Load the initial page
     preloadStylesheet('dashboard.css'); // Dashboard CSS
     preloadStylesheet('profile.css'); // Profile page CSS
-    preloadStylesheet('styleGame.css'); // Game page CSS (if applicable)
+    // preloadStylesheet('styleGame.css'); // Game page CSS (if applicable)
 
     window.addEventListener('popstate', () => {
         renderPage(window.location.hash);
