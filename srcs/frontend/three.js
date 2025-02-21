@@ -61,33 +61,58 @@ export class PongGame {
     }
 
     initObjects() {
+        this.fetchGameInitData({'state' : 'init'});
         const light = new THREE.PointLight(0xffffff, 1, 100);
         light.position.set(10, 10, 10);
         this.scene.add(light);
-
-        const paddleGeometry = new THREE.BoxGeometry(1, 3, 0.5);
+        
+        const paddleGeometry = new THREE.CylinderGeometry(1, 1, 0.5);
         const paddleMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
         this.paddle1 = new THREE.Mesh(paddleGeometry, paddleMaterial);
-        this.paddle1.position.x = -4;
         this.scene.add(this.paddle1);
-
+        
         this.paddle2 = new THREE.Mesh(paddleGeometry, paddleMaterial);
-        this.paddle2.position.x = 4;
         this.scene.add(this.paddle2);
-
+        
         const ballGeometry = new THREE.SphereGeometry(0.5, 32, 32);
         const ballMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
         this.ball = new THREE.Mesh(ballGeometry, ballMaterial);
         this.scene.add(this.ball);
     }
-
+    
+    fetchGameInitData(state){
+        fetch('http://localhost:8000/game/', {
+            method : 'POST',
+            headers: {'Content-type': 'application/json'},
+            body: JSON.stringify(state)
+        })
+        .then(response => response.json())
+        .then(data => {
+            this.paddle1.position.x = data['LeftPaddle']['x'];
+            this.paddle1.position.y = data['LeftPaddle']['y'];
+            this.paddle1.position.z = data['LeftPaddle']['z'];
+            
+            this.paddle2.position.x = data['RightPaddle']['x'];
+            this.paddle2.position.y = data['RightPaddle']['y'];
+            this.paddle2.position.z = data['RightPaddle']['z'];
+            
+            this.ball.position.x = data['ball']['x'];
+            this.ball.position.y = data['ball']['y'];
+            this.ball.position.z = data['ball']['z'];
+        })
+        .catch(error => console.log('Error fetching game inital data'));
+    }
+    
     fetchUserData() {
-        fetch('http://localhost:8000/user-data/')
+        fetch('http://localhost:8000/users/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            // body: JSON.stringify()
+        })
             .then(response => response.json())
             .then(data => {
-                // { user1: { name: '1234', ... }, user2: { name: '4321', ... } }
-                this.user1 = data.user1;
-                this.user2 = data.user2;
+                // this.user1 = data.user1;
+                // this.user2 = data.user2;
             })
             .catch(error => console.error('Error fetching user data:', error));
     }

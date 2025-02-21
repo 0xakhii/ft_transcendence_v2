@@ -1,5 +1,5 @@
 let allUsers = [];
-import { PongGame, setCurrentGame } from "./three";
+import { PongGame, setCurrentGame } from "./three"
 // document.addEventListener("DOMContentLoaded", () => {
 //     const pages = {
 //         signIn: `
