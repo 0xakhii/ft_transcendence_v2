@@ -1,0 +1,97 @@
+body 
+{
+    margin: 0;
+	background: radial-gradient(circle, #3b0764, #090c31);
+}
+.main
+{
+    height: 100vh;
+    background-color: #181e2a;
+    background-image: url(images/PO-BG.png);
+
+
+    background-color: #181e2a;
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: #bfb9ed;
+}
+
+.logo
+{
+    width: 11vw;
+    margin-left: 85px;
+    margin-top: 70px;
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    box-sizing: border-box;
+}
+
+.header a {
+    text-decoration: none;
+    color: #bfb9ed;
+    font-family: "Poppins", sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 10px 40px;
+    transition: border 0.3s ease, background-color 0.3s ease;
+}
+
+.test a:hover {
+    border: #bfb9ed solid 3px;
+    border-radius: 20px;
+    background-color: rgba(191, 185, 237, 0.2); 
+}
+
+.test {
+    padding-right: 4.5vw;
+    margin-top: 10vh;
+}
+
+.f_img
+{
+    height: 40vh;
+    width: 20vw;
+    margin-right: 5vw;
+}
+
+.btn button
+{
+    position: absolute;
+    transform: translate(-50%, -50%) scaleY(1.7);
+    background: transparent;
+    color: #fff;
+    font-family: "Poppins", sans-serif;
+    border: #fff solid 2px;
+    border-radius: 20px;
+    font-size: 2.5vh;
+    font-weight: bold;
+    letter-spacing: 4px;
+    padding: 0 1vw;
+    margin: 4.5vh 0 0 10vw;
+}
+
+.btn2 button
+{
+    position: absolute;
+    transform: translate(-50%, -50%) scaleY(1.7);
+    background: transparent;
+    color: #fff;
+    font-family: "Poppins", sans-serif;
+    border: #fff solid 2px;
+    border-radius: 25px;
+    font-size: 2.5vh;
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin: -15.5vh 0 0 10vw;
+    padding: 0 1vw;
+}
+
+.three-canvas {
+	margin: 0 auto;
+	background: transparent;
+}
+

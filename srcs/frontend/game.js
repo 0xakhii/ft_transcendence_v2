@@ -2,7 +2,6 @@ let canvas = document.getElementById('gamecanvas');
 let game = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-
 const ballRad = 15;
 const paddleHeight = 150;
 const paddleWidth = 25;
@@ -518,7 +517,10 @@ function sendMessageToSocket(message) {
         socket.send(message);
         console.log("Message sent to WebSocket:", message);
     };
-    socket.onmessage = (event) => console.log("WebSocket message received:", event.data);
+    socket.onmessage = (event) =>{
+        console.log("WebSocket message received:", event.data);
+        
+    } 
     socket.onerror = (error) => console.error("WebSocket error:", error);
     socket.onclose = (event) => console.log("WebSocket closed:", event);
 }

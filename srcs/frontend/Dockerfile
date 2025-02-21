@@ -7,7 +7,7 @@ RUN apk update && apk upgrade \
 	&& mkdir /ft_transcendence/
 
 COPY ./ /ft_transcendence/
-WORKDIR /ft_transcendence/front/
+WORKDIR /ft_transcendence/
 
 RUN chmod +x /ft_transcendence/conf.sh
 EXPOSE 5173
