@@ -17,8 +17,8 @@ def game_state_init(request):
 				'y': '0',
 				'z': '-10',
 				'keys': {
-					'left': ['A', 'a'],
-					'right': ['D', 'd']
+					'up': ['W', 'w'],
+					'down': ['S', 's']
 				}
 			},
 			'RightPaddle': {
@@ -27,14 +27,14 @@ def game_state_init(request):
 				'y': '0',
 				'z': '5',
 				'keys': {
-					'left': ['ArrowLeft'],
-					'right': ['ArrowRight']
+					'up': ['ArrowUp'],
+					'down': ['ArrowDown']
 				}
 			},
 			'ball': {
 				'x': '0',
 				'y': '0',
-				'z': '0',
+				'z': '10',
 				'speed': '5'
 			}
 		}

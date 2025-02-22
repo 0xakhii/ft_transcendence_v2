@@ -7,7 +7,7 @@ class PongGameConsumer(AsyncWebsocketConsumer):
     players = {}
 
     async def connect(self):
-        self.user = self.scope["user"]
+        self.user = User.scope["user"]
         if self.user.is_authenticated:
             print(f" User {self.user.username} connected.")
             await self.accept()

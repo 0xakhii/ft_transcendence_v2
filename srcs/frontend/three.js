@@ -8,10 +8,10 @@ export class PongGame {
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 1000);
         this.camera.lookAt(0, 0, 0);
-        this.camera.position.set(0, 5, 7);
+        this.camera.position.set(0, 7, 10);
         document.addEventListener('keydown', (event) => {
             if (event.key === '0') {
-            this.camera.position.set(0, 5, 7);
+            this.camera.position.set(0, 7, 10);
             this.camera.lookAt(0, 0, 0);
             }
         });
@@ -31,7 +31,11 @@ export class PongGame {
         const headerDiv = document.querySelector('.header');
         const mainDivHeight = mainDiv && headerDiv ? mainDiv.offsetHeight - headerDiv.offsetHeight : window.innerHeight;
         this.renderer.setSize(window.innerWidth, mainDivHeight);
-
+        
+        this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+        this.controls.enableDamping = true;
+        this.controls.dampingFactor = 0.25;
+        this.controls.enableZoom = true;
         window.addEventListener('resize', () => {
             const mainDivHeight = mainDiv && headerDiv ? mainDiv.offsetHeight - headerDiv.offsetHeight : window.innerHeight;
             this.renderer.setSize(window.innerWidth, mainDivHeight);
@@ -62,21 +66,25 @@ export class PongGame {
 
     initObjects() {
         this.fetchGameInitData({'state' : 'init'});
-        const light = new THREE.PointLight(0xffffff, 1, 100);
-        light.position.set(10, 10, 10);
-        this.scene.add(light);
-        
-        const paddleGeometry = new THREE.CylinderGeometry(1, 1, 0.5);
-        const paddleMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-        this.paddle1 = new THREE.Mesh(paddleGeometry, paddleMaterial);
+        this.paddle1 = new THREE.Mesh(
+            new THREE.CapsuleGeometry(0.2, 3, 8, 16),
+            new THREE.MeshBasicMaterial({ color: 'blue' })
+        );
+        this.paddle1.rotation.x = Math.PI/2;
+        this.paddle1.rotation.z = Math.PI/2;
         this.scene.add(this.paddle1);
         
-        this.paddle2 = new THREE.Mesh(paddleGeometry, paddleMaterial);
+        this.paddle2 = new THREE.Mesh(
+            new THREE.CapsuleGeometry(0.2, 3, 8, 16),
+            new THREE.MeshBasicMaterial({ color: 'red' })
+        );
+        this.paddle2.rotation.x = Math.PI/2;
+        this.paddle2.rotation.z = Math.PI/2;
+
+        
         this.scene.add(this.paddle2);
         
-        const ballGeometry = new THREE.SphereGeometry(0.5, 32, 32);
-        const ballMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-        this.ball = new THREE.Mesh(ballGeometry, ballMaterial);
+        this.ball = new THREE.Mesh(new THREE.SphereGeometry(0.2), new THREE.MeshBasicMaterial({color: 'orange'}));
         this.scene.add(this.ball);
     }
     
@@ -129,7 +137,7 @@ export class PongGame {
     }
 
     setupWebSocket() {
-        this.socket = new WebSocket('ws://localhost:8000/ws/game/');
+        this.socket = new WebSocket('ws://localhost:8000/ws/pong/');
 
         this.socket.onopen = () => {
             console.log('Connected to WebSocket');
