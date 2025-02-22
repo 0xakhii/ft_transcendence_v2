@@ -113,14 +113,20 @@ export class PongGame {
     
     fetchUserData() {
         fetch('http://localhost:8000/users/', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            // body: JSON.stringify()
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json',
+                "Authorization": `Bearer ${localStorage.getItem("authToken")}`
+             },
         })
             .then(response => response.json())
             .then(data => {
-                // this.user1 = data.user1;
-                // this.user2 = data.user2;
+                this.userList = [];
+                if (data.data && Array.isArray(data.data)) {
+                    userList = data.data.map(item => Object.assign({}, item.attributes, { id: item.id }));
+                } else {
+                    console.error("Unexpected response format:", data);
+                    return;
+                }
             })
             .catch(error => console.error('Error fetching user data:', error));
     }
