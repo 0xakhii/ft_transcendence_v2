@@ -7,13 +7,13 @@ class PongGameConsumer(AsyncWebsocketConsumer):
     players = {}
 
     async def connect(self):
-        self.user = User.scope["user"]
-        if self.user.is_authenticated:
-            print(f" User {self.user.username} connected.")
-            await self.accept()
-        else:
-            print(" Unauthorized user tried to connect.")
-            await self.close()
+        self.user = self.scope["user"]
+        # if self.user.is_authenticated:
+        #     print(f" User {self.user.username} connected.")
+        await self.accept()
+        # else:
+        #     print(" Unauthorized user tried to connect.")
+        #     await self.close()
 
         self.players[self.channel_name] = {"x": 0, "y": 0, "z": -10}
         await self.send_state()

@@ -6,12 +6,13 @@ export class PongGame {
     constructor(mode) {
         this.mode = mode;
         this.scene = new THREE.Scene();
+        this.padd_x = 0;
         this.camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 1000);
         this.camera.lookAt(0, 0, 0);
-        this.camera.position.set(0, 7, 10);
+        this.camera.position.set(0, 18, 20);
         document.addEventListener('keydown', (event) => {
             if (event.key === '0') {
-            this.camera.position.set(0, 7, 10);
+            this.camera.position.set(0, 18, 20);
             this.camera.lookAt(0, 0, 0);
             }
         });
@@ -59,6 +60,8 @@ export class PongGame {
         } else if (this.mode === 'local') {
             this._handleLocalInput = this.handleLocalInput.bind(this);
             document.addEventListener('keydown', this._handleLocalInput);
+            document.addEventListener('keyup', this._handleLocalInput);
+
         }
 
         this.animate();
@@ -84,8 +87,22 @@ export class PongGame {
         
         this.scene.add(this.paddle2);
         
-        this.ball = new THREE.Mesh(new THREE.SphereGeometry(0.2), new THREE.MeshBasicMaterial({color: 'orange'}));
+        this.ball = new THREE.Mesh(new THREE.SphereGeometry(0.5), new THREE.MeshBasicMaterial({color: 'orange'}));
+        this.ball.velocity = new THREE.Vector3(0.1, 0, 0); 
         this.scene.add(this.ball);
+
+        this.wall = new THREE.Mesh(
+            new THREE.BoxGeometry(0.5, 0.5, 30),
+            new THREE.MeshBasicMaterial({ color: 'white' })
+        );
+        this.wall.position.set(-10, 0, 0);
+        this.scene.add(this.wall)
+        this.wall2 = new THREE.Mesh(
+            new THREE.BoxGeometry(0.5, 0.5, 30),
+            new THREE.MeshBasicMaterial({ color: 'white' })
+        );
+        this.wall2.position.set(10, 0, 0);
+        this.scene.add(this.wall2)
     }
     
     fetchGameInitData(state){
@@ -104,9 +121,9 @@ export class PongGame {
             this.paddle2.position.y = data['RightPaddle']['y'];
             this.paddle2.position.z = data['RightPaddle']['z'];
             
-            this.ball.position.x = data['ball']['x'];
-            this.ball.position.y = data['ball']['y'];
-            this.ball.position.z = data['ball']['z'];
+            // this.ball.position.x = data['ball']['x'];
+            // this.ball.position.y = data['ball']['y'];
+            // this.ball.position.z = data['ball']['z'];
         })
         .catch(error => console.log('Error fetching game inital data'));
     }
@@ -122,11 +139,12 @@ export class PongGame {
             .then(data => {
                 this.userList = [];
                 if (data.data && Array.isArray(data.data)) {
-                    userList = data.data.map(item => Object.assign({}, item.attributes, { id: item.id }));
+                    this.userList = data.data.map(item => Object.assign({}, item.attributes, { id: item.id }));
                 } else {
                     console.error("Unexpected response format:", data);
                     return;
                 }
+                console.log(this.userList);
             })
             .catch(error => console.error('Error fetching user data:', error));
     }
@@ -169,12 +187,36 @@ export class PongGame {
     }
 
     handleLocalInput(event) {
-        if (event.key === 'w') this.paddle1.position.y += 0.5;
-        if (event.key === 's') this.paddle1.position.y -= 0.5;
-        if (event.key === 'ArrowUp') this.paddle2.position.y += 0.5;
-        if (event.key === 'ArrowDown') this.paddle2.position.y -= 0.5;
+        console.log(this.paddle2.position.x)
+        
+        if (event.key === 'd') this.paddle1.position.x += 0.5;
+        if (event.key === 'a') this.paddle1.position.x -= 0.5;
+        if (event.key === 'ArrowRight') this.padd_x += 0.5
+        // if (event.key === 'ArrowLeft') this.paddle2.position.x -= 0.5;
+        this.paddle2.position.x = this.padd_x
     }
+    handleLocalBall(){
+        this.ball.position.x += this.ball.velocity.x;
+        this.ball.position.y += this.ball.velocity.y;
 
+        if (this.ball.position.x <= -10 || this.ball.position.x >= 10) {
+            this.ball.velocity.x = -this.ball.velocity.x;
+            this.ball.velocity.y = -this.ball.velocity.y;
+        }
+
+        // if (this.ball.position.distanceTo(this.paddle1.position) < 1 || this.ball.position.distanceTo(this.paddle2.position) < 1) {
+        //     this.ball.velocity.y = -this.ball.velocity.y;
+        // }
+
+        // if (this.mode === 'multiplayer' && this.socket && this.socket.readyState === WebSocket.OPEN) {
+        //     const ballUpdateEvent = {
+        //     action: 'update_ball',
+        //     ball_x: this.ball.position.x,
+        //     ball_y: this.ball.position.y
+        //     };
+        //     this.socket.send(JSON.stringify(ballUpdateEvent));
+        // }
+    }
     updateGameState(data) {
         this.paddle1.position.y = data.paddle1_y;
         this.paddle2.position.y = data.paddle2_y;
@@ -201,6 +243,7 @@ export class PongGame {
 
     animate() {
         requestAnimationFrame(() => this.animate());
+        this.handleLocalBall();
         this.renderer.render(this.scene, this.camera);
     }
 

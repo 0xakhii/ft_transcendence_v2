@@ -15,7 +15,7 @@ def game_state_init(request):
 				'name': 'player1',
 				'x': '0',
 				'y': '0',
-				'z': '-10',
+				'z': '-15',
 				'keys': {
 					'up': ['W', 'w'],
 					'down': ['S', 's']
@@ -25,7 +25,7 @@ def game_state_init(request):
 				'name': 'player2',
 				'x': '0',
 				'y': '0',
-				'z': '5',
+				'z': '15',
 				'keys': {
 					'up': ['ArrowUp'],
 					'down': ['ArrowDown']
@@ -34,7 +34,7 @@ def game_state_init(request):
 			'ball': {
 				'x': '0',
 				'y': '0',
-				'z': '10',
+				'z': '0',
 				'speed': '5'
 			}
 		}
