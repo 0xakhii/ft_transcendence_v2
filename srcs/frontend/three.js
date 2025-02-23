@@ -4,9 +4,9 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 export class PongGame {
     constructor(mode) {
+        this.fetchUserData();
         this.mode = mode;
         this.scene = new THREE.Scene();
-        this.padd_x = 0;
         this.camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 1000);
         this.camera.lookAt(0, 0, 0);
         this.camera.position.set(0, 18, 20);
@@ -16,16 +16,16 @@ export class PongGame {
             this.camera.lookAt(0, 0, 0);
             }
         });
-        this.scoreDisplay = document.createElement('div');
-        Object.assign(this.scoreDisplay.style, {
-            position: 'absolute',
-            top: '20px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            fontSize: '24px',
-            color: 'white'
-        });
-        document.body.appendChild(this.scoreDisplay);
+        // this.scoreDisplay = document.createElement('div');
+        // Object.assign(this.scoreDisplay.style, {
+        //     position: 'absolute',
+        //     top: '20px',
+        //     left: '50%',
+        //     transform: 'translateX(-50%)',
+        //     fontSize: '24px',
+        //     color: 'white'
+        // });
+        // document.body.appendChild(this.scoreDisplay);
         this.initObjects();
         this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         const mainDiv = document.querySelector('.main');
@@ -55,7 +55,6 @@ export class PongGame {
         window.addEventListener('resize', this._onResize);
 
         if (this.mode === 'multiplayer') {
-            this.fetchUserData();
             this.setupWebSocket();
         } else if (this.mode === 'local') {
             this._handleLocalInput = this.handleLocalInput.bind(this);
@@ -129,24 +128,19 @@ export class PongGame {
     }
     
     fetchUserData() {
-        fetch('http://localhost:8000/users/', {
+        fetch('http://localhost:8000/profile/', {
             method: 'GET',
-            headers: { 'Content-Type': 'application/json',
+            headers: { 
+                'Content-Type': 'application/json',
                 "Authorization": `Bearer ${localStorage.getItem("authToken")}`
-             },
+            },
         })
-            .then(response => response.json())
-            .then(data => {
-                this.userList = [];
-                if (data.data && Array.isArray(data.data)) {
-                    this.userList = data.data.map(item => Object.assign({}, item.attributes, { id: item.id }));
-                } else {
-                    console.error("Unexpected response format:", data);
-                    return;
-                }
-                console.log(this.userList);
-            })
-            .catch(error => console.error('Error fetching user data:', error));
+        .then(response => response.json())
+        .then(data => {
+            if (data)
+                this.user = data;
+        })
+        .catch(error => console.error('Error fetching user data:', error));
     }
 
     storeMatchHistory(matchData) {
@@ -187,13 +181,10 @@ export class PongGame {
     }
 
     handleLocalInput(event) {
-        console.log(this.paddle2.position.x)
-        
         if (event.key === 'd') this.paddle1.position.x += 0.5;
         if (event.key === 'a') this.paddle1.position.x -= 0.5;
-        if (event.key === 'ArrowRight') this.padd_x += 0.5
-        // if (event.key === 'ArrowLeft') this.paddle2.position.x -= 0.5;
-        this.paddle2.position.x = this.padd_x
+        if (event.key === 'ArrowRight') this.paddle2.position.x;
+        if (event.key === 'ArrowLeft') this.paddle2.position.x -= 0.5;
     }
     handleLocalBall(){
         this.ball.position.x += this.ball.velocity.x;
@@ -223,13 +214,13 @@ export class PongGame {
         this.ball.position.x = data.ball_x;
         this.ball.position.y = data.ball_y;
 
-        if (this.mode === 'multiplayer') {
-            const name1 = this.user1?.name || 'Player 1';
-            const name2 = this.user2?.name || 'Player 2';
-            this.scoreDisplay.textContent = `${name1}: ${data.score1} - ${name2}: ${data.score2}`;
-        } else {
-            this.scoreDisplay.textContent = `Player 1: ${data.score1} - Player 2: ${data.score2}`;
-        }
+        // if (this.mode === 'multiplayer') {
+        //     const name1 = this.user['data']['attributes']['username'];
+        //     const name2 = this.user2?.name || 'Player 2';
+        //     this.scoreDisplay.textContent = `${name1}: 0- ${name2}: 0`;
+        // } else {
+        //     this.scoreDisplay.textContent = `Player 1: 0- Player 2: 0`;
+        // }
     }
 
     onWindowResize() {
