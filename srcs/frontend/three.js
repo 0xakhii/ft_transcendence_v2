@@ -10,6 +10,10 @@ export class PongGame {
         this.camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 1000);
         this.camera.lookAt(0, 0, 0);
         this.camera.position.set(0, 18, 20);
+        this.paddle1SpeedX = 0;
+        this.paddle1SpeedY = 0;
+        this.paddle2SpeedX = 0;
+        this.paddle2SpeedY = 0;
         document.addEventListener('keydown', (event) => {
             if (event.key === '0') {
             this.camera.position.set(0, 18, 20);
@@ -181,18 +185,28 @@ export class PongGame {
     }
 
     handleLocalInput(event) {
-        if (event.key === 'd') this.paddle1.position.x += 0.5;
-        if (event.key === 'a') this.paddle1.position.x -= 0.5;
-        if (event.key === 'ArrowRight') this.paddle2.position.x;
-        if (event.key === 'ArrowLeft') this.paddle2.position.x -= 0.5;
+        if (event.key === 'd') this.paddle1SpeedX += 0.5;
+        if (event.key === 'a') this.paddle1SpeedY -= 0.5;
+        
+        if (event.key === 'ArrowRight') this.paddle2SpeedX += 0.5;
+        if (event.key === 'ArrowLeft') this.paddle2SpeedY -= 0.5;
+
+        this.paddle1.position.y += this.paddle1SpeedY;
+        this.paddle1.position.x += this.paddle1SpeedX;
+        
+        this.paddle2.position.y += this.paddle2SpeedY;
+        this.paddle2.position.x += this.paddle2SpeedX;
+        // if (this.paddle1.position.y < -10) this.paddle1.position.y = -10;
+        // if (this.paddle1.position.y > 10) this.paddle1.position.y = 10;
+        // if (this.paddle2.position.y < -10) this.paddle2.position.y = -10;
+        // if (this.paddle2.position.y > 10) this.paddle2.position.y = 10;
     }
     handleLocalBall(){
         this.ball.position.x += this.ball.velocity.x;
         this.ball.position.y += this.ball.velocity.y;
-
         if (this.ball.position.x <= -10 || this.ball.position.x >= 10) {
-            this.ball.velocity.x = -this.ball.velocity.x;
-            this.ball.velocity.y = -this.ball.velocity.y;
+            this.ball.velocity.x = this.ball.velocity.z = -this.ball.velocity.x;
+            this.ball.velocity.y = this.ball.velocity.z;
         }
 
         // if (this.ball.position.distanceTo(this.paddle1.position) < 1 || this.ball.position.distanceTo(this.paddle2.position) < 1) {
