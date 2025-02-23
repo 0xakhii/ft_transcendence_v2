@@ -1,43 +1,137 @@
-/* * {
+body 
+{
     margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+    height: 100vh;
+    overflow: hidden;
+}
+.main
+{
+    height: 100vh;
+    background-color: #181e2a;
+    /* overflow: hidden; */
+    /* background-image: url(images/PO-BG.png);
+ */
+
+    background-color: #181e2a;
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: #bfb9ed;
+    /* display: flex 
+    flex-direction: column; */
+    /* justify-content: space-between;
+    align-items: center; */
+}
+.logo
+{
+    /* position: absolute; */
+    /* height: 15vh; */
+    /* top: 19vh; */
+    width: 11vw;
+    /* margin: -4vh 0 1vh 0; */
+    /* margin: 5vh 0 0 5vw; */
+    margin-left: 85px;
+    margin-top: 70px;
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px; /* Add some padding inside the header */
+    box-sizing: border-box; /* Ensure padding doesn't affect layout width */
 }
 
-body {
-    font-family: Arial, sans-serif;
-    background: url("PO-BG.webp");
-    background-size: cover;
-    display: flex;
+.header a {
+    text-decoration: none;
+    color: #bfb9ed;
+    font-family: "Poppins", sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 10px 40px; /* Add padding for better spacing */
+    /* display: inline-flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    color: #333;
-} */
+    text-align: center; */
+    transition: border 0.3s ease, background-color 0.3s ease;
+}
 
-.app-container 
+.test a:hover {
+    border: #bfb9ed solid 3px;
+    border-radius: 20px;
+    background-color: rgba(191, 185, 237, 0.2); 
+}
+
+.test a.active 
 {
-    margin-top: 10vh;
+    border: #bfb9ed solid 3px; /* Same as hover style */
+    border-radius: 20px;
+    background-color: rgba(191, 185, 237, 0.2);
+    color: #fff; /* Optional: Ensure the text color remains visible */
+}
+
+.test {
+  /* display: flex;  */
+  /* gap: 20px; Space between links */
+  padding-right: 4.5vw;
+  margin-top: 10vh;
+}
+
+.middle
+{
+    /* position: relative; */
     display: flex;
-    width: 35vw;
-    height: 40vh;
-    /* background: #fff; */
+    align-items: center;
+    justify-content: center;
+    height: 65vh;
+    margin-top: 5vh;
+}
+
+.signout
+{
+  position: absolute;
+  color: #fff;
+  top: 820px;
+  font-family: "Poppins", sans-serif;
+  font-size: 2vh;
+  /* margin: 2vh 0 0 12vw; */
+  /* border: none; */
+  border: #fff solid 2px;
+  border-radius: 20px;
+  background: transparent;
+  padding: 0.5vh 1vw;
+  font-weight: bold;
+}
+
+.app-container {
+    display: flex;
+    max-width: 800px;
+    height: 600px;
     border-radius: 15px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .border {
+    position: absolute;
+    top: 300px;
+    left: 700px;
     border: #F78689 solid 5px;
+    /* border-width: 5px; */
+    /* border-style: solid; */
     border-radius: 3%;
-    margin-top: 10vh; /* Adjusted to move the header down */
+    /* margin-top: 100px; */
+    /* margin-left: 350px; */
+    /* display: flex
+; */
+
 }
 
 .user-list {
     width: 30%;
-    background: #f0f0f0;
+    background: transparent;
     overflow-y: auto;
-    border-radius: 15px 0 0 15px;
+    border-radius: 15px 0;
     padding: 10px;
+    /* margin: 0 0px 0 0; */
+    border: grey 1px solid;
 }
 
 .user-icon {
@@ -52,11 +146,11 @@ body {
     cursor: pointer;
     align-items: center;
     margin-bottom: 5px;
-    background: #ddd;
+    background: transparent;
     border-radius: 5px;
     text-align: center;
     display: flex;
-    /* justify-content: space-between; */
+    /* justify-content: space-between;*/
 }
 
 .icon {
@@ -79,12 +173,13 @@ body {
 }
 
 .chat-header {
-    background: #6a0dad; /* Purple */
+    background: #6a0dad;
     padding: 15px;
     color: white;
     text-align: center;
-    border-radius: 0 15px 0 0;
+    border-radius: 0 15px 15px 0;
     font-size: 1.5rem;
+    /* border: gr solid 3px; */
 }
 
 .message-time {
@@ -100,8 +195,8 @@ body {
 }
 
 /* test */
-.header {
-    background-color: rgba(106, 13, 173, 0); /* Fully transparent background */
+ /* .header {
+    background-color: rgba(106, 13, 173, 0); 
     color: white;
     padding: 100px 100px;
     width: 100%;
@@ -109,23 +204,34 @@ body {
     top: 0;
     left: 0;
     z-index: 1000;
-}
+    justify-content: space-between;
+
+} 
+
 
 .header-content {
+    width: 100%;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-}
+    
+} */
 
 .logo {
-    margin-left: 90px;
+    align-self: flex-start;
+}
 
+.logo-img {
+    width: 250px;
 }
 
 .nav {
-    gap: 60px;
-    margin-right: 90px;
-    
+    display: flex;
+    /* align-items: flex-end; */
+    flex-wrap: nowrap; 
+    align-items: center;
+    /* justify-items: end; */
+    width: 100%;
+
 }
 
 .nav a {
@@ -136,11 +242,39 @@ body {
     border-width: 2px;
     border-radius: 15px;
     border-color: transparent;
+} 
+
+/* Media query for small screens */
+@media (max-width: 1530px) {
+    .nav {
+        gap: 10px; 
+        margin-right: 10px; 
+    }
+
+    .nav a {
+        font: 1.1vw;
+        padding: 5px 20px; 
+    }
     
 }
 
+@media (max-width: 1080px) {
+    .logo-img {
+        width: 200px;
+    }
+}
+
+@media (max-width: 1042px) {
+    .logo-img {
+        width: 150px;
+    }
+    .app-container {
+        max-width: 600px;
+    }
+} 
+
 .nav a:hover {
-    background-color: rgba(255, 255, 255, 0.2); /* Light background on hover */
+    background-color: rgba(255, 255, 255, 0.2);
     border-style: solid;
     border-width: 2px;
     border-radius: 15px;
@@ -150,7 +284,7 @@ body {
 
 
 .send-btn {
-    background: #6a0dad; /* Purple */
+    background: #6a0dad; 
     color: white;
     border: none;
     padding: 10px 20px;
@@ -160,7 +294,7 @@ body {
 }
 
 .send-btn:hover {
-    background-color: #5a0c9d; /* Darker purple on hover */
+    background-color: #5a0c9d; 
 }
 
 .emoji-toggle-btn {
@@ -174,6 +308,9 @@ body {
 .btn-container {
     width: 40px;
     height: 40px;
+}
+.emoji {
+    width:30px;
 }
 
 /* Ensure timestamps appear on the left for bot messages */
@@ -214,7 +351,7 @@ body {
     border-radius: 15px;
     display: inline-block;
     max-width: 60%;
-    margin-left: 0; /* Align to the left */
+    margin-left: 0; 
 }
 
 /* Messages received from the bot (aligned right) */
@@ -252,17 +389,18 @@ body {
 .emoji-picker {
     display: none;
     position: absolute;
+    top: 605px;
     z-index: 1000;
-    background: white;
+    background: transparent;
     padding: 10px;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     max-height: 200px;
     overflow-y: auto;
     transform: translateX(-50%);
-    bottom: 60px;
+    /* bottom: 0px; */
     left: 50%;
-    width: 300px;
+    width: 720px;
 }
 
 .emoji-picker .emoji {
@@ -284,4 +422,144 @@ body {
 .btn-container {
     width: 40px;
     height: 40px;
+}
+
+.menu {
+    display: flex;
+    gap: 20px;
+  }
+  
+   .hamburger {
+    display: none; 
+    font-size: 30px;
+    cursor: pointer;
+    color: white;
+  }
+  
+  /* Responsive design for smaller screens */
+ @media (max-width: 768px) {
+    .menu {
+      display: none; 
+      flex-direction: column; 
+      width: 100%;
+      background-color: #333;
+      position: absolute;
+      top: 60px;
+      left: 0;
+      padding: 20px;
+      gap: 15px;
+    }
+    .app-container {
+        width: 500px;
+    }
+    .hamburger {
+      display: block; 
+    }
+    
+    .menu.active {
+      display: flex; 
+    }
+}  
+
+@media (max-width: 426px) {
+
+    .border {
+        border-radius: 5%;
+    }
+    .app-container {
+        width: 300px;
+    }
+    .chat-header {
+        font-size: small;
+    }
+    .user-list {
+        margin: 0;
+        padding: 0;
+    }
+    .user {
+        font-size: small;
+        width: fit-content;
+        margin-bottom: 0px;
+    }
+    .icon {
+        width: 15px;
+        height: 15px;
+    }
+
+    .chat-input::placeholder {
+        font-size: 10px;
+    }
+    .chat-input {
+        width: 80px;
+        padding: 5px;
+    }
+    .btn-container {
+        width: 30px;
+        height: 30px;
+    }
+    .emoji-toggle-btn {
+        width: 25px;
+        height: 25px;
+    }
+    .emoji {
+        width: 15px;
+    }
+    .send-btn {
+        font-size: 8px;
+    }
+}  
+
+@media (max-width: 1400px)
+{
+    .header a
+    {
+        font-size: 15px;
+        font-weight: bold;
+        padding: 5px 20px;
+    }
+    .test
+    {
+        margin: 10vh 0 0 0;
+    }
+}
+
+@media (max-width: 1000px)
+{
+    .header a
+    {
+        font-size: 12px;
+        font-weight: bold;
+        padding: 5px 15px;
+    }
+    .test
+    {
+        margin: 7vh 0 0 0;
+    }
+}
+@media (max-width: 1700px)
+{
+    .header a
+    {
+        font-size: 20px;
+        font-weight: bold;
+        padding: 5px 20px;
+    }
+    .test
+    {
+        margin: 8vh 0 0 0;
+    }
+}
+
+@media (max-width: 980px)
+{
+    .header a
+    {
+        font-size: 12px;
+        font-weight: bold;
+        padding: 3px 15px;
+    }
+    .test
+    {
+        margin: 8vh 0 0 0;
+    }
 }
