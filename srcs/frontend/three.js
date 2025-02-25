@@ -186,20 +186,14 @@ export class PongGame {
 
     handleLocalInput(event) {
         if (event.key === 'd') this.paddle1SpeedX += 0.5;
-        if (event.key === 'a') this.paddle1SpeedY -= 0.5;
+        if (event.key === 'a') this.paddle1SpeedX-= 0.5;
         
         if (event.key === 'ArrowRight') this.paddle2SpeedX += 0.5;
-        if (event.key === 'ArrowLeft') this.paddle2SpeedY -= 0.5;
+        if (event.key === 'ArrowLeft') this.paddle2SpeedX-= 0.5;
 
-        this.paddle1.position.y += this.paddle1SpeedY;
-        this.paddle1.position.x += this.paddle1SpeedX;
+        this.paddle1.position.x = this.paddle1SpeedX
         
-        this.paddle2.position.y += this.paddle2SpeedY;
-        this.paddle2.position.x += this.paddle2SpeedX;
-        // if (this.paddle1.position.y < -10) this.paddle1.position.y = -10;
-        // if (this.paddle1.position.y > 10) this.paddle1.position.y = 10;
-        // if (this.paddle2.position.y < -10) this.paddle2.position.y = -10;
-        // if (this.paddle2.position.y > 10) this.paddle2.position.y = 10;
+        this.paddle2.position.x = this.paddle2SpeedX;
     }
     handleLocalBall(){
         this.ball.position.x += this.ball.velocity.x;
@@ -208,19 +202,6 @@ export class PongGame {
             this.ball.velocity.x = this.ball.velocity.z = -this.ball.velocity.x;
             this.ball.velocity.y = this.ball.velocity.z;
         }
-
-        // if (this.ball.position.distanceTo(this.paddle1.position) < 1 || this.ball.position.distanceTo(this.paddle2.position) < 1) {
-        //     this.ball.velocity.y = -this.ball.velocity.y;
-        // }
-
-        // if (this.mode === 'multiplayer' && this.socket && this.socket.readyState === WebSocket.OPEN) {
-        //     const ballUpdateEvent = {
-        //     action: 'update_ball',
-        //     ball_x: this.ball.position.x,
-        //     ball_y: this.ball.position.y
-        //     };
-        //     this.socket.send(JSON.stringify(ballUpdateEvent));
-        // }
     }
     updateGameState(data) {
         this.paddle1.position.y = data.paddle1_y;
