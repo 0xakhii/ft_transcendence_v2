@@ -1,5 +1,6 @@
 let allUsers = [];
-import {PongGame, setCurrentGame} from './three.js'
+let lastRequestTime = 0;
+let flag = 0
 // document.addEventListener("DOMContentLoaded", () => {
 //     const pages = {
 //         signIn: `
@@ -810,7 +811,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <a href="#/profile" data-page="profile">PROFILE</a>
                         <a href="#/game" data-page="game">GAME</a>
                         <a href="" data-page="tournament">TOURNAMENT</a>
-                        <a href="#/chat" data-page="chat">CHAT</a>
+                        <a id="chat" href="#/chat" data-page="chat">CHAT</a>
                         <button id="signout-btn" type="button">Sign Out</button>
                     </div>
                 </div>
@@ -876,8 +877,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         <a href="#/profile" data-page="profile" class="active">PROFILE</a>
                         <a href="#/game" data-page="game">GAME</a>
                         <a href="" data-page="tournament">TOURNAMENT</a>
-                        <a href="#/chat" data-page="chat">CHAT</a>
-                        <button class="signout" id="signout-btn" type="button">Sign Out</button>
+                        <a id="chat" href="#/chat" data-page="chat">CHAT</a>
+                        <button id="signout-btn" type="button">Sign Out</button>
                     </div>
                 </div>
             <div class="profile-container">
@@ -936,71 +937,62 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
         `,
         chat: `
-            <div class="main">
-                <div class="header">
-                    <img class="logo" src="images/Pongify_logo.png">
-                    <div class="test">
-                        <a href="#/dashboard" data-page="home">HOME</a>
-                        <a href="#/profile" data-page="profile">PROFILE</a>
-                        <a href="#/game" data-page="game">GAME</a>
-                        <a href="" data-page="tournament">TOURNAMENT</a>
-                        <a href="#/chat" data-page="chat" class="active">CHAT</a>
-                    </div>
+    <div class="main">
+        <div class="header">
+            <img class="logo" src="images/Pongify_logo.png">
+            <div class="test">
+                <a href="#/dashboard" data-page="home">HOME</a>
+                <a href="#/profile" data-page="profile">PROFILE</a>
+                <a href="#/game" data-page="game">GAME</a>
+                <a href="" data-page="tournament">TOURNAMENT</a>
+                <a id="chat" href="#/chat" data-page="chat" class="active">CHAT</a>
+                <button id="signout-btn" type="button">Sign Out</button>
+            </div>
+            <div id="current-user" data-username="{{ request.user.username }}" data-user-id="{{ request.user.id }}"></div>
+        </div>
+        <div class="border">
+            <div class="app-container">
+                <div class="user-list" id="chat-friend-list">
+                    <!-- Friend list will be dynamically populated here -->
                 </div>
-                <div class="border">
-                <div class="app-container">
-                    <div class="user-list">
-                        <div class="user" onclick="switchConversation('user1')">
-                            <div class="icon">
-                                <img src="https://via.placeholder.com/40" alt="">
-                            </div>
-                            <div>User 1</div>
-                        </div>
-                        <div class="user" onclick="switchConversation('user2')">
-                            <div class="icon">
-                                <img src="https://via.placeholder.com/40" alt="">
-                            </div>
-                            <div>User 2</div>
-                        </div>
+                <div class="chat-panel">
+                    <div class="chat-header" id="chat-header">
+                        Select a friend to start chatting
                     </div>
-                    <div class="chat-panel">
-                        <div class="chat-header" id="chat-header">
-                            Chat with User 1
+                    <div class="chat-messages" id="chat-messages">
+                        <!-- Messages will be displayed here -->
+                    </div>
+                    <div class="chat-input-container">
+                        <input type="text" class="chat-input" id="chat-input" placeholder="Type a message...">
+                        <div class="btn-container">
+                            <button id="emoji-toggle-btn" class="emoji-toggle-btn">
+                                <img class="emoji" src="https://icons.iconarchive.com/icons/designbolts/emoji/512/Emoji-Blank-icon.png" alt="">
+                            </button>
+                        </div>                    
+                        <div id="emojiPicker" class="emoji-picker">
+                            <span onclick="addEmoji('😀')" class="emoji">😀</span>
+                            <span onclick="addEmoji('😂')" class="emoji">😂</span>
+                            <span onclick="addEmoji('❤️')" class="emoji">❤️</span>
+                            <span onclick="addEmoji('🎉')" class="emoji">🎉</span>
+                            <span onclick="addEmoji('😎')" class="emoji">😎</span>
+                            <span onclick="addEmoji('😅')" class="emoji">😅</span>
+                            <span onclick="addEmoji('😍')" class="emoji">😍</span>
+                            <span onclick="addEmoji('🔥')" class="emoji">🔥</span>
+                            <span onclick="addEmoji('🤔')" class="emoji">🤔</span>
+                            <span onclick="addEmoji('🙌')" class="emoji">🙌</span>
+                            <span onclick="addEmoji('🌟')" class="emoji">🌟</span>
+                            <span onclick="addEmoji('🥳')" class="emoji">🥳</span>
+                            <span onclick="addEmoji('🍆')" class="emoji">🍆</span>
+                            <span onclick="addEmoji('🔥')" class="emoji">🔥</span>
+                            <span onclick="addEmoji('💩')" class="emoji">💩</span>
                         </div>
-                        <div class="chat-messages" id="chat-messages">
-                            <!-- Messages will be displayed here -->
-                        </div>
-                        <div class="chat-input-container">
-                            <input type="text" class="chat-input" id="chat-input" placeholder="Type a message...">
-                            <div class="btn-container">
-                                <button id="emoji-toggle-btn" class="emoji-toggle-btn">
-                                    <img class="emoji" src="https://icons.iconarchive.com/icons/designbolts/emoji/512/Emoji-Blank-icon.png" alt="">
-                                </button>
-                            </div>                    
-                            <div id="emojiPicker" class="emoji-picker">
-                                <span onclick="addEmoji('😀')" class="emoji">😀</span>
-                                <span onclick="addEmoji('😂')" class="emoji">😂</span>
-                                <span onclick="addEmoji('❤️')" class="emoji">❤️</span>
-                                <span onclick="addEmoji('🎉')" class="emoji">🎉</span>
-                                <span onclick="addEmoji('😎')" class="emoji">😎</span>
-                                <span onclick="addEmoji('😅')" class="emoji">😅</span>
-                                <span onclick="addEmoji('😍')" class="emoji">😍</span>
-                                <span onclick="addEmoji('🔥')" class="emoji">🔥</span>
-                                <span onclick="addEmoji('🤔')" class="emoji">🤔</span>
-                                <span onclick="addEmoji('🙌')" class="emoji">🙌</span>
-                                <span onclick="addEmoji('🌟')" class="emoji">🌟</span>
-                                <span onclick="addEmoji('🥳')" class="emoji">🥳</span>
-                                <span onclick="addEmoji('🍆')" class="emoji">🍆</span>
-                                <span onclick="addEmoji('🔥')" class="emoji">🔥</span>
-                                <span onclick="addEmoji('💩')" class="emoji">💩</span>
-                            </div>
-                            <button id="send-btn" class="send-btn">Send</button>
-                        </div>
+                        <button id="send-btn" class="send-btn">Send</button>
                     </div>
                 </div>
             </div>
-        </div>    
-        `,
+        </div>
+    </div>
+    `,
     };
     
     // const urlParams = new URLSearchParams(window.location.hash.split('?')[1]);
@@ -1129,6 +1121,19 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Startplay button not found after rendering dashboard!");
         }
     }
+
+    function setupchat() {
+        const startplaybutton = document.getElementById("chat");
+        if (startplaybutton) {
+            startplaybutton.addEventListener('click', () => {
+                console.log("Start Playing button clicked!");
+                navigateTo('#/chat');
+                fetchAndDisplayFriends();
+            });
+        } else {
+            console.error("Startplay button not found after rendering dashboard!");
+        }
+    }
     function renderPage(route) {
         const app = document.getElementById('app');
         // const contentArea = document.getElementById('content-area');
@@ -1168,21 +1173,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 setupSignOut();
                 break;
             case '#/game':
-                case '#/game':
-                    window.location.hash = '#/game';
-                    app.innerHTML = pages.game;
-                    loadCSS('styleGame.css');
-    
-                    document.querySelector('.multiplayer-mode-btn').addEventListener('click', () => {
-                        app.innerHTML = pages.game_v2;
-                        setCurrentGame(new PongGame('multiplayer'));
-                    });
-                    
-                    document.querySelector('.local-mode-btn').addEventListener('click', () => {
-                        app.innerHTML = pages.game_v2;
-                        setCurrentGame(new PongGame('local'));
-                    });
-                    break;
+                window.location.hash = '#/game';
+                app.innerHTML = pages.game;
+                loadCSS('styleGame.css');
+
+                document.querySelector('.multiplayer-mode-btn').addEventListener('click', () => {
+                    app.innerHTML = pages.game_v2;
+                    setCurrentGame(new PongGame('multiplayer'));
+                });
+                
+                document.querySelector('.local-mode-btn').addEventListener('click', () => {
+                    app.innerHTML = pages.game_v2;
+                    setCurrentGame(new PongGame('local'));
+                });
+                break;
             case '#/chat':
                 window.location.hash = '#/chat';
                 app.innerHTML = pages.chat;
@@ -2200,15 +2204,15 @@ async function acceptFriendRequest(requestId) {
             "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
           },
         });
-    
+      
         if (!response.ok) {
           console.error("Failed to fetch pending friend requests. Status:", response.status);
           return;
         }
-    
+      
         const data = await response.json();
         console.log("Pending friend requests API response:", data);
-    
+      
         let pendingList = [];
         if (data.data && Array.isArray(data.data)) {
           pendingList = data.data.map(item => Object.assign({}, item.attributes, { id: item.id }));
@@ -2216,11 +2220,11 @@ async function acceptFriendRequest(requestId) {
           console.error("Unexpected response format for pending friend requests:", data);
           return;
         }
-    
+      
         const noFriendElem = document.getElementById("no-friend");
         const friendRequestsList = document.getElementById("friend-requests-list");
         friendRequestsList.innerHTML = "";
-    
+      
         if (pendingList.length === 0) {
             noFriendElem.style.display = "block"; // Show "No friend requests found"
             friendRequestsList.style.display = "none"; // Hide list container
@@ -2251,25 +2255,25 @@ async function acceptFriendRequest(requestId) {
             const usernameSpan = document.createElement("span");
             usernameSpan.classList.add("username");
             usernameSpan.textContent = request.sender_username || "Unknown";
-
+            
             // Accept button
             const acceptButton = document.createElement("button");
             acceptButton.textContent = "Accept";
             acceptButton.classList.add("accept-button");
             acceptButton.addEventListener("click", () => acceptFriendRequest(request.id));
-
+            
             // Reject button
             const rejectButton = document.createElement("button");
             rejectButton.textContent = "Reject";
             rejectButton.classList.add("reject-button");
             rejectButton.addEventListener("click", () => rejectFriendRequest(request.id));
-
+            
             // Append elements to the request div
             requestDiv.appendChild(avatarImg);
             requestDiv.appendChild(usernameSpan);
             requestDiv.appendChild(acceptButton);
             requestDiv.appendChild(rejectButton);
-
+            
             // Append the request div to the list container
             friendRequestsList.appendChild(requestDiv);
           });
@@ -2361,6 +2365,77 @@ async function acceptFriendRequest(requestId) {
           console.error("Error fetching friend list:", error);
         }
       }
+
+      async function  fetchAndDisplayFriendschat() {
+        try {
+            const response = await fetch("http://127.0.0.1:8000/friends/list/", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
+                },
+            });
+    
+            if (!response.ok) {
+                console.error("Failed to fetch friend list. Status:", response.status);
+                return;
+            }
+    
+            const data = await response.json();
+            console.log("Friend list API response:", data);
+    
+            let friendList = [];
+            if (data.data && Array.isArray(data.data)) {
+                friendList = data.data.map(item => Object.assign({}, item.attributes, { id: item.id }));
+            } else {
+                console.error("Unexpected response format for friend list:", data);
+                return;
+            }
+    
+            const friendListContainer = document.getElementById("chat-friend-list");
+            if (!friendListContainer) {
+                console.error("Chat friend list container not found.");
+                return;
+            }
+    
+            friendListContainer.innerHTML = ""; // Clear previous content
+    
+            if (friendList.length === 0) {
+                const noFriendsMessage = document.createElement("div");
+                noFriendsMessage.classList.add("no-friends");
+                noFriendsMessage.textContent = "No friends found.";
+                friendListContainer.appendChild(noFriendsMessage);
+            } else {
+                friendList.forEach(friend => {
+                    const friendDiv = document.createElement("div");
+                    friendDiv.classList.add("user");
+                    friendDiv.setAttribute("data-friend-id", friend.id);
+                    friendDiv.setAttribute("data-friend-name", friend.username);
+                    friendDiv.addEventListener("click", () => switchConversation(friend.username));
+    
+                    const iconDiv = document.createElement("div");
+                    iconDiv.classList.add("icon");
+                    const avatarImg = document.createElement("img");
+                    if (friend.avatar.startsWith("https://")) {
+                        avatarImg.src = friend.avatar || "images/default-avatar.png";
+                    } else {
+                        avatarImg.src = `http://127.0.0.1:8000${friend.avatar}` || "images/default-avatar.png";
+                    }
+                    avatarImg.alt = friend.username || "Friend Avatar";
+                    iconDiv.appendChild(avatarImg);
+    
+                    const nameDiv = document.createElement("div");
+                    nameDiv.textContent = friend.username || "Unknown";
+    
+                    friendDiv.appendChild(iconDiv);
+                    friendDiv.appendChild(nameDiv);
+                    friendListContainer.appendChild(friendDiv);
+                });
+            }
+        } catch (error) {
+            console.error("Error fetching friend list:", error);
+        }
+    }
     // async function loadPendingFriendRequests() {
     //     try {
     //       const response = await fetch("http://127.0.0.1:8000/friends/pending/", {
@@ -2528,7 +2603,7 @@ async function acceptFriendRequest(requestId) {
         });
       }
 
-      async function fetchAndDisplayUsers() {
+    async function fetchAndDisplayUsers() {
         try {
             const response = await fetch("http://127.0.0.1:8000/users/", {
             method: "GET",
@@ -3369,91 +3444,259 @@ async function acceptFriendRequest(requestId) {
       });
       
       async function initializechatFunctionality() {
-          const sendButton = document.getElementById('send-btn');
-          const chatInput = document.getElementById('chat-input');
-          const chatMessages = document.getElementById('chat-messages');
-          const emojiPicker = document.getElementById('emojiPicker');
-          const emojiToggleButton = document.getElementById('emoji-toggle-btn');
-          const chatHeader = document.getElementById('chat-header');
-      
-          const conversations = {
-              user1: [],
-              user2: [],
-              user3: []
-          };
-      
-          let currentUser = 'user1'; // Default user
-      
-          emojiToggleButton.addEventListener('click', () => {
-              const isPickerVisible = emojiPicker.style.display === 'block';
-              emojiPicker.style.display = isPickerVisible ? 'none' : 'block';
-          });
-      
-          function addEmoji(emoji) {
-              chatInput.value += emoji;
-              chatInput.focus();
-              emojiPicker.style.display = 'none';
-          }
-      
-          function sendMessage() {
-              const userMessage = chatInput.value.trim();
-              if (!userMessage) return;
-          
-              const timestamp = new Date().toLocaleTimeString();
-              conversations[currentUser].push({ text: userMessage, type: 'user', time: timestamp });
-              displayMessage(userMessage, 'user', timestamp);
-              chatInput.value = '';
-              chatMessages.scrollTop = chatMessages.scrollHeight;
-          
-              setTimeout(() => {
-                  const botMessage = `You said: ${userMessage}`;
-                  const botTimestamp = new Date().toLocaleTimeString();
-                  conversations[currentUser].push({ text: botMessage, type: 'bot', time: botTimestamp });
-                  displayMessage(botMessage, 'bot', botTimestamp);
-                  chatMessages.scrollTop = chatMessages.scrollHeight;
-              }, 500);
-          }
-      
-          function displayMessage(message, sender, timestamp) {
-              const messageDiv = document.createElement('div');
-              messageDiv.classList.add('message', `${sender}-message`);
-          
-              const messageText = document.createElement('span');
-              messageText.classList.add('message-text');
-              messageText.textContent = message;
-          
-              const timeSpan = document.createElement('span');
-              timeSpan.classList.add('message-time');
-              timeSpan.textContent = timestamp;
-          
-              messageDiv.appendChild(messageText);
-              messageDiv.appendChild(timeSpan);
-              chatMessages.appendChild(messageDiv);
-          }
-      
-          sendButton.addEventListener('click', sendMessage);
-          chatInput.addEventListener('keydown', (event) => {
-              if (event.key === 'Enter') {
-                  sendMessage();
-                  event.preventDefault();
-              }
-          });
-      
-          // Define switchConversation
-          async function switchConversation(user) {
-              if (currentUser === user) return;
-              currentUser = user;
-              chatHeader.textContent = `Chat with ${user.charAt(0).toUpperCase() + user.slice(1)}`;
-              chatMessages.innerHTML = '';
-              conversations[user].forEach((message) => {
-                  displayMessage(message.text, message.type, message.time);
-              });
-          }
-      
-          // Expose the function globally so inline onclick can find it:
-          window.switchConversation = switchConversation;
-      }
-      
+        const sendButton = document.getElementById('send-btn');
+        const chatInput = document.getElementById('chat-input');
+        const chatMessages = document.getElementById('chat-messages');
+        const emojiPicker = document.getElementById('emojiPicker');
+        const emojiToggleButton = document.getElementById('emoji-toggle-btn');
+        const chatHeader = document.getElementById('chat-header');
+    
+        // Fetch current user from profile endpoint
+        let sender;
+        try {
+            const token = localStorage.getItem('authToken');
+            if (!token) throw new Error("No auth token found");
+            
+            const response = await fetch('http://127.0.0.1:8000/profile/', {
+                method: 'GET',
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            });
+    
+            if (!response.ok) throw new Error(`Profile fetch failed: ${response.status}`);
+            
+            const data = await response.json();
+            sender = data.data?.attributes?.username || 'guest'; // Adjust based on your API response structure
+            console.log("Current user fetched:", sender);
+        } catch (error) {
+            console.error("Error fetching current user:", error);
+            sender = 'guest'; // Fallback if fetch fails
+        }
+    
+        let receiver = null; // Will be set after fetching friends
+        let chatSocket = null;
+        let messageQueue = [];
+        const conversations = JSON.parse(localStorage.getItem('conversations')) || {};
+    
+        // Fetch friends and set the first one as the default receiver
+        async function fetchAndDisplayFriendschat() {
+            return fetch("http://127.0.0.1:8000/friends/list/", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
+                },
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to fetch friend list. Status: " + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Friend list API response:", data);
+                let friendList = [];
+                if (data.data && Array.isArray(data.data)) {
+                    friendList = data.data.map(item => Object.assign({}, item.attributes, { id: item.id }));
+                } else {
+                    console.error("Unexpected response format for friend list:", data);
+                    return;
+                }
+    
+                const friendListContainer = document.getElementById("chat-friend-list");
+                if (!friendListContainer) {
+                    console.error("Chat friend list container not found.");
+                    return;
+                }
+    
+                friendListContainer.innerHTML = ""; // Clear previous content
+    
+                if (friendList.length === 0) {
+                    const noFriendsMessage = document.createElement("div");
+                    noFriendsMessage.classList.add("no-friends");
+                    noFriendsMessage.textContent = "No friends found.";
+                    friendListContainer.appendChild(noFriendsMessage);
+                } else {
+                    friendList.forEach(friend => {
+                        const friendDiv = document.createElement("div");
+                        friendDiv.classList.add("user");
+                        friendDiv.setAttribute("data-friend-id", friend.id);
+                        friendDiv.setAttribute("data-friend-name", friend.username);
+                        friendDiv.addEventListener("click", () => switchConversation(friend.username));
+    
+                        const iconDiv = document.createElement("div");
+                        iconDiv.classList.add("icon");
+                        const avatarImg = document.createElement("img");
+                        avatarImg.src = friend.avatar.startsWith("https://") 
+                            ? friend.avatar 
+                            : `http://127.0.0.1:8000${friend.avatar}` || "images/default-avatar.png";
+                        avatarImg.alt = friend.username || "Friend Avatar";
+                        iconDiv.appendChild(avatarImg);
+    
+                        const nameDiv = document.createElement("div");
+                        nameDiv.textContent = friend.username || "Unknown";
+    
+                        friendDiv.appendChild(iconDiv);
+                        friendDiv.appendChild(nameDiv);
+                        friendListContainer.appendChild(friendDiv);
+                    });
+    
+                    // Set the first friend as the default receiver
+                    if (!receiver && friendList.length > 0) {
+                        receiver = friendList[0].username;
+                        chatHeader.textContent = `Chat with ${receiver}`;
+                        makeRequest(); // Connect immediately with the default receiver
+                    }
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching friend list:", error);
+            });
+        }
+        await fetchAndDisplayFriendschat();
+    
+    
+        function connectWebSocket() {
+            if (!receiver || !sender) {
+                console.error("Receiver or sender not set. Cannot connect WebSocket.");
+                return;
+            }
+            const url = `ws://127.0.0.1:8000/ws/chat/${sender}/${receiver}/`;
+            console.log("Connecting to WebSocket:", url, "Sender:", sender, "Receiver:", receiver);
+        
+            // Explicitly close any existing WebSocket
+            if (chatSocket && chatSocket.readyState !== WebSocket.CLOSED) {
+                chatSocket.close(1000, "Switching receiver"); // Normal closure
+                console.log("Closed previous WebSocket connection.");
+            }
+        
+            chatSocket = new WebSocket(url);
+        
+            chatSocket.onopen = function ()     {
+                console.log("WebSocket connected.");
+                while (messageQueue.length > 0) {
+                    const message = messageQueue.shift();
+                    chatSocket.send(JSON.stringify({ "message": message }));
+                }
+            };
+        
+            chatSocket.onmessage = function (e) {
+                const data = JSON.parse(e.data);
+                console.log("Data received:", data);
+                if (data.message) {
+                    const timestamp = new Date().toLocaleTimeString();
+                    const messageSender = data.sender === sender ? 'sender' : 'receiver';
+                    if (!conversations[receiver]) conversations[receiver] = [];
+                    conversations[receiver].push({ text: data.message, type: messageSender, time: timestamp });
+                    localStorage.setItem('conversations', JSON.stringify(conversations));
+                    displayMessage(data.message, messageSender, timestamp, data.sender);
+                }
+            };
+        
+            chatSocket.onerror = function (error) {
+                console.error("WebSocket error:", error);
+                setTimeout(connectWebSocket, 1000);
+            };
+        
+            chatSocket.onclose = function (event) {
+                console.log("WebSocket closed. Code:", event.code, "Reason:", event.reason);
+                setTimeout(connectWebSocket, 1000);
+            };
+        }
+    
+        function sendMessage() {
+            const userMessage = chatInput.value.trim();
+            if (!userMessage || !receiver || !chatSocket) {
+                console.warn("Cannot send message. Missing:", { userMessage, receiver, chatSocket });
+                return;
+            }
+    
+            const timestamp = new Date().toLocaleTimeString();
+            if (!conversations[receiver]) conversations[receiver] = [];
+            conversations[receiver].push({ text: userMessage, type: 'sender', time: timestamp });
+            localStorage.setItem('conversations', JSON.stringify(conversations));
+            displayMessage(userMessage, 'sender', timestamp, receiver);
+            chatInput.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+    
+            if (chatSocket.readyState === WebSocket.OPEN) {
+                chatSocket.send(JSON.stringify({ "message": userMessage }));
+            } else {
+                messageQueue.push(userMessage);
+                console.log("WebSocket not open. Message queued:", userMessage);
+            }
+        }
+    
+        function displayMessage(message, senderType, timestamp, receiver) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', `${senderType}-message`);
+    
+            const senderSpan = document.createElement('span');
+            senderSpan.classList.add('message-sender');
+            senderSpan.textContent = senderType === 'sender' ? 'You' : receiver;
+    
+            const messageText = document.createElement('span');
+            messageText.classList.add('message-text');
+            messageText.textContent = message;
+    
+            const timeSpan = document.createElement('span');
+            timeSpan.classList.add('message-time');
+            timeSpan.textContent = timestamp;
+    
+            messageDiv.appendChild(senderSpan);
+            messageDiv.appendChild(messageText);
+            messageDiv.appendChild(timeSpan);
+            chatMessages.appendChild(messageDiv);
+        }
+    
+        function loadChatHistory() {
+            chatMessages.innerHTML = '';
+            if (conversations[receiver]) {
+                conversations[receiver].forEach(({ text, type, time }) => {
+                    displayMessage(text, type, time, receiver);
+                });
+            }
+        }
+    
+        function switchConversation(newReceiver) {
+            if (receiver === newReceiver) return;
+            receiver = newReceiver;
+            chatHeader.textContent = `Chat with ${receiver}`;
+            connectWebSocket();
+            loadChatHistory();
+        }
+    
+    
+        emojiToggleButton.addEventListener('click', () => {
+            emojiPicker.style.display = emojiPicker.style.display === 'block' ? 'none' : 'block';
+        });
+    
+        sendButton.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                sendMessage();
+                event.preventDefault();
+            }
+        });
+    
+        window.switchConversation = switchConversation;
+        function makeRequest() {
+            const now = Date.now();
+            if (now - lastRequestTime > 10000) {
+                if (flag === 0){
+                    flag = 1;
+                }
+                connectWebSocket();
+                lastRequestTime = now;
+            }
+        }
+    }
+    
+    
+    
+    
       ///////////////////////////////////////////chat////////////////////////////////////
 
     // function openEditProfileModal() {
