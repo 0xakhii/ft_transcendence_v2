@@ -1,6 +1,7 @@
 let allUsers = [];
 let lastRequestTime = 0;
 let flag = 0
+import { PongGame, setCurrentGame } from "./three";
 // document.addEventListener("DOMContentLoaded", () => {
 //     const pages = {
 //         signIn: `
