@@ -270,12 +270,14 @@ from rest_framework.permissions import IsAuthenticated,AllowAny
 from .models import Profile,FriendRequest
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import RegistrationSerializer, LoginSerializer, ProfileSerializer, UserSerializer, RegistrationSerializer_42, FriendRequestSerializer, ProfileDetailSerializer
+from rest_framework.parsers import MultiPartParser, FormParser
 import requests
 import json
+
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
-DEFAULT_AVATAR_URL = "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+DEFAULT_AVATAR_URL = "/media/avatars/Profile_avatar_placeholder_large.png"
 
 class login_42(APIView):
     permission_classes = [AllowAny]
@@ -298,7 +300,7 @@ class callback_42(APIView):
         data = {
             'grant_type': 'authorization_code',
             'client_id': "u-s4t2ud-b292b631faa175f40c72f3c46c0648df398518e1cd514dc73a6a8014d4600584",
-            'client_secret': "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",
+            'client_secret': "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",
             'code': code,
             'redirect_uri': "http://localhost:8000/oauth/callback/",
         }
@@ -340,7 +342,7 @@ class callback_42(APIView):
                 print("userid", user_id)
             save_to_json(user_data)
             print("this is the token", access_token)
-            redirect_url = redirect_url = f"http://127.0.0.1:5173/#dashboard?success&access_token={access_token}&user_id={user_id}"
+            redirect_url = redirect_url = f"http://127.0.0.1:5173/#/dashboard?success&access_token={access_token}&user_id={user_id}"
             return redirect(redirect_url)
         else:
             return redirect("http://127.0.0.1:8000/?error")
@@ -377,6 +379,21 @@ class RegistrationView(APIView):
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+# class LoginView(APIView):
+#     permission_classes = [AllowAny]
+
+#     def post(self, request):
+#         serializer = LoginSerializer(data=request.data)
+#         if serializer.is_valid():
+#             user = serializer.validated_data['user']
+#             refresh = RefreshToken.for_user(user)
+#             return Response({
+#                 "message": "Login successful",
+#                 'refresh': str(refresh),
+#                 'access': str(refresh.access_token),
+#             }, status=status.HTTP_200_OK)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 class LoginView(APIView):
     permission_classes = [AllowAny]
 
@@ -389,11 +406,13 @@ class LoginView(APIView):
                 "message": "Login successful",
                 'refresh': str(refresh),
                 'access': str(refresh.access_token),
+                'user_id': user.id,  # Add the user's ID to the response
             }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+        
 class ProfileUpdateView(APIView):
     permission_classes = [IsAuthenticated]
+    parser_classes = (MultiPartParser, FormParser,)
 
     def put(self, request):
         profile = request.user.profile
@@ -469,12 +488,12 @@ class PendingFriendRequestsView(generics.ListAPIView):
 #         return Response(serializer.data, status=status.HTTP_200_OK)
     
 class FriendListView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        user_id = request.query_params.get('user_id')
-        user = User.objects.get(id=user_id)
-        # user = request.user
+        # user_id = request.query_params.get('user_id')
+        # user = User.objects.get(id=.user_id)
+        user = request.user
 
         sent_requests = FriendRequest.objects.filter(sender=user, status="accepted")
         received_requests = FriendRequest.objects.filter(receiver=user, status="accepted")

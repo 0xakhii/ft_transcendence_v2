@@ -1262,7 +1262,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (response.ok) 
                 {
                     const result = await response.json();
+                    console.log("result : ", result);
                     localStorage.setItem('authToken', result.data.access);
+                    localStorage.setItem('user_id', result.data.user_id);
                     navigateTo('#/dashboard');
                 }
                 else 
@@ -1387,10 +1389,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.log("Username:", username);
     
                 const profileImg = document.getElementById('profile-img');
-                profileImg.src = `http://127.0.0.1:8000${avatarUrl}?t=${new Date().getTime()}`; // Use absolute URL
-                profileImg.onload = () => console.log("Image loaded successfully");
-                profileImg.onerror = () => console.error("Image failed to load:", avatarUrl);
-                document.getElementById('profile-username').innerText = username;
+                if (avatarUrl.startsWith("https://"))
+                {
+                    profileImg.src = avatarUrl;
+                    document.getElementById('profile-username').innerText = username;
+                    profileImg.onload = () => console.log("Image loaded successfully");
+                    profileImg.onerror = () => console.error("Image failed to load:", avatarUrl);
+                }
+                else
+                {
+                    profileImg.src = `http://127.0.0.1:8000${avatarUrl}?t=${new Date().getTime()}`; // Use absolute URL
+                    profileImg.onload = () => console.log("Image loaded successfully");
+                    profileImg.onerror = () => console.error("Image failed to load:", avatarUrl);
+                    document.getElementById('profile-username').innerText = username;
+                }
             } else {
                 console.error("GET Error:", await response.json());
                 document.getElementById('profile-img').src = 'images/default-avatar.png';
@@ -2188,15 +2200,15 @@ async function acceptFriendRequest(requestId) {
             "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
           },
         });
-      
+    
         if (!response.ok) {
           console.error("Failed to fetch pending friend requests. Status:", response.status);
           return;
         }
-      
+    
         const data = await response.json();
         console.log("Pending friend requests API response:", data);
-      
+    
         let pendingList = [];
         if (data.data && Array.isArray(data.data)) {
           pendingList = data.data.map(item => Object.assign({}, item.attributes, { id: item.id }));
@@ -2204,11 +2216,11 @@ async function acceptFriendRequest(requestId) {
           console.error("Unexpected response format for pending friend requests:", data);
           return;
         }
-      
+    
         const noFriendElem = document.getElementById("no-friend");
         const friendRequestsList = document.getElementById("friend-requests-list");
         friendRequestsList.innerHTML = "";
-      
+    
         if (pendingList.length === 0) {
             noFriendElem.style.display = "block"; // Show "No friend requests found"
             friendRequestsList.style.display = "none"; // Hide list container
@@ -2221,33 +2233,43 @@ async function acceptFriendRequest(requestId) {
             
             // Avatar image
             const avatarImg = document.createElement("img");
-            avatarImg.src = request.sender_avatar || "images/default-avatar.png";
-            avatarImg.alt = request.sender_username || "User Avatar";
-            avatarImg.classList.add("user-avatar");
-            
+            //check for img intra url
+            if(request.sender_avatar.startsWith("https://"))
+            {
+                avatarImg.src = request.sender_avatar || "images/default-avatar.png";
+                avatarImg.alt = request.sender_username || "User Avatar";
+                avatarImg.classList.add("user-avatar");
+            }
+            else
+            {
+                avatarImg.src = `http://127.0.0.1:8000${request.sender_avatar}` || "images/default-avatar.png";
+                console.log("avatar 1: " ,avatarImg.src);
+                avatarImg.alt = request.sender_username || "User Avatar";
+                avatarImg.classList.add("user-avatar");
+            }
             // Username
             const usernameSpan = document.createElement("span");
             usernameSpan.classList.add("username");
             usernameSpan.textContent = request.sender_username || "Unknown";
-            
+
             // Accept button
             const acceptButton = document.createElement("button");
             acceptButton.textContent = "Accept";
             acceptButton.classList.add("accept-button");
             acceptButton.addEventListener("click", () => acceptFriendRequest(request.id));
-            
+
             // Reject button
             const rejectButton = document.createElement("button");
             rejectButton.textContent = "Reject";
             rejectButton.classList.add("reject-button");
             rejectButton.addEventListener("click", () => rejectFriendRequest(request.id));
-            
+
             // Append elements to the request div
             requestDiv.appendChild(avatarImg);
             requestDiv.appendChild(usernameSpan);
             requestDiv.appendChild(acceptButton);
             requestDiv.appendChild(rejectButton);
-            
+
             // Append the request div to the list container
             friendRequestsList.appendChild(requestDiv);
           });
@@ -2299,9 +2321,10 @@ async function acceptFriendRequest(requestId) {
       
           if (friendList.length === 0)
           {
-            friendListContainer.innerHTML = "<p>No friends found.</p>";
+            let noFriendsMessage = document.createElement("h2"); // Create a new paragraph element
             noFriendsMessage.textContent = "No friends found.";
-            noFriendsMessage.classList.add("no-friends-message"); // Styled message
+            noFriendsMessage.classList.add("no-friends-message"); // Add styling class
+            friendListContainer.appendChild(noFriendsMessage);
           } else {
             friendList.forEach(friend => {
               const friendDiv = document.createElement("div");
@@ -2309,10 +2332,18 @@ async function acceptFriendRequest(requestId) {
       
               // Avatar image
               const avatarImg = document.createElement("img");
-              avatarImg.src = friend.avatar || "images/default-avatar.png";
+            if (friend.avatar.startsWith("https://"))
+            {
+                avatarImg.src = friend.avatar || "images/default-avatar.png";
+                avatarImg.alt = friend.username || "Friend Avatar";
+                avatarImg.classList.add("friend-avatar");
+            }
+            else
+            {
+              avatarImg.src = `http://127.0.0.1:8000${friend.avatar}` || "images/default-avatar.png";
               avatarImg.alt = friend.username || "Friend Avatar";
               avatarImg.classList.add("friend-avatar");
-      
+            }
               // Username
               const usernameSpan = document.createElement("span");
               usernameSpan.classList.add("friend-username");
@@ -2461,9 +2492,20 @@ async function acceptFriendRequest(requestId) {
       
           // Create avatar image element
           const avatarImg = document.createElement("img");
-          avatarImg.src = user.avatar || "images/default-avatar.png";
-          avatarImg.alt = user.username || "User Avatar";
+        //   avatarImg.src = user.avatar || "images/default-avatar.png";
+        if (user.avatar.startsWith("https://"))
+        {
+            avatarImg.src = user.avatar || "images/default-avatar.png";
+            avatarImg.alt = user.username || "User Avatar";
+            avatarImg.classList.add("user-avatar");
+        }
+        else
+        {
+            avatarImg.src = `http://127.0.0.1:8000${user.avatar}` || "images/default-avatar.png";
+            console.log("avatar 1: " ,avatarImg.src);
+            avatarImg.alt = user.username || "User Avatar";
         //   avatarImg.classList.add("user-avatar");
+        }
         
           // Create username element
           const usernameSpan = document.createElement("span");
@@ -2486,7 +2528,7 @@ async function acceptFriendRequest(requestId) {
         });
       }
 
-    async function fetchAndDisplayUsers() {
+      async function fetchAndDisplayUsers() {
         try {
             const response = await fetch("http://127.0.0.1:8000/users/", {
             method: "GET",
@@ -2513,6 +2555,7 @@ async function acceptFriendRequest(requestId) {
       
           // Exclude the current user (if user_id is stored)
           const currentUserId = localStorage.getItem("user_id");
+          console.log("Current User ID:", currentUserId);
           if (currentUserId) {
             userList = userList.filter(user => parseInt(user.id) !== parseInt(currentUserId));
           }
@@ -2858,18 +2901,20 @@ async function acceptFriendRequest(requestId) {
                     document.getElementById('profile-username').innerText = newUsername;
         
                     // Update avatar if uploaded, using backend URL, not avatarPreview.src
-                    if (file) {
-                        const newAvatarUrl = result.profile?.avatar || 'images/default-avatar.png';
-                        console.log("New avatar URL from backend:", newAvatarUrl);
-                        const profileImg = document.getElementById('profile-img');
-                        profileImg.src = `http://127.0.0.1:8000${newAvatarUrl}?t=${new Date().getTime()}`; // Force reload with base URL
-                        profileImg.onload = () => console.log("Image loaded successfully");
-                        profileImg.onerror = () => console.error("Image failed to load:", newAvatarUrl);
-                    }
+                    // if (file) {
+                    //     const newAvatarUrl = result.profile?.avatar || 'images/default-avatar.png';
+                    //     console.log("New avatar URL from backend:", newAvatarUrl);
+                    //     const profileImg = document.getElementById('profile-img');
+                    //     profileImg.src = `http://127.0.0.1:8000${newAvatarUrl}?t=${new Date().getTime()}`; // Force reload with base URL
+                    //     profileImg.onload = () => console.log("Image loaded successfully");
+                    //     profileImg.onerror = () => console.error("Image failed to load:", newAvatarUrl);
+                    // }
+                    loadProfileInfo();
                     alert("Profile updated successfully!");
                     // Sync with backend
-                    await loadProfileInfo();
-                } else {
+                }
+                else
+                {
                     console.error("Server error:", result);
                     alert("Failed to update profile: " + JSON.stringify(result));
                 }

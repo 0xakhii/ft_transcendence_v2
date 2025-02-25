@@ -317,6 +317,7 @@ body
   
   /* The "No friend requests found" message */
   #no-friend {
+    font-family: 'Poppins', sans-serif;
     text-align: center;
     font-size: 18px;
     color: #666;
@@ -448,6 +449,13 @@ body
     margin-bottom: 10px;
   }
 
+  .no-friends-message {
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+    font-size: 18px;
+    color: #666;
+    margin-bottom: 10px;
+  }
 /************************startplay btn********************************/
 
 .start-playing-btn
