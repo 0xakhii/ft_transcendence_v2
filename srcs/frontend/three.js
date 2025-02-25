@@ -194,13 +194,26 @@ export class PongGame {
         this.paddle1.position.x = this.paddle1SpeedX
         
         this.paddle2.position.x = this.paddle2SpeedX;
+        if (this.paddle1.position.x <= -10) this.paddle1.position.x = -10;
+        if (this.paddle1.position.x >= 10) this.paddle1.position.x = 10;
+
+        if (this.paddle2.position.x <= -10) this.paddle2.position.x = -10;
+        if (this.paddle2.position.x >= 10) this.paddle2.position.x = 10;
     }
     handleLocalBall(){
-        this.ball.position.x += this.ball.velocity.x;
-        this.ball.position.y += this.ball.velocity.y;
+        this.ball.position.add(this.ball.velocity);
+
+        if (this.ball.position.distanceTo(this.paddle1.position) < 1) {
+            this.ball.velocity.x = -this.ball.velocity.x;
+        }
+        if (this.ball.position.distanceTo(this.paddle2.position) < 1) {
+            this.ball.velocity.x = -this.ball.velocity.x;
+        }
         if (this.ball.position.x <= -10 || this.ball.position.x >= 10) {
-            this.ball.velocity.x = this.ball.velocity.z = -this.ball.velocity.x;
-            this.ball.velocity.y = this.ball.velocity.z;
+            this.ball.velocity.x = -this.ball.velocity.x;
+        }
+        if (this.ball.position.y <= -10 || this.ball.position.y >= 10) {
+            this.ball.velocity.y = -this.ball.velocity.y;
         }
     }
     updateGameState(data) {
