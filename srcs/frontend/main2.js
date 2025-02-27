@@ -3488,19 +3488,19 @@ async function acceptFriendRequest(requestId) {
             const users = [sender, receiver].sort();
             const url = `ws://127.0.0.1:8000/ws/chat/${users[0]}/${users[1]}/`;
             console.log("Attempting to connect to WebSocket:", url);
-        
+    
             if (chatSocket && chatSocket.url === url && chatSocket.readyState === WebSocket.OPEN) {
                 console.log("WebSocket already connected to this URL.");
                 return;
             }
-        
+    
             if (chatSocket) {
                 chatSocket.close(1000, "New connection starting");
                 console.log("Closed previous WebSocket.");
             }
-        
+    
             chatSocket = new WebSocket(url);
-        
+    
             chatSocket.onopen = function() {
                 console.log("WebSocket connected successfully.");
                 while (messageQueue.length > 0) {
@@ -3508,7 +3508,7 @@ async function acceptFriendRequest(requestId) {
                     chatSocket.send(JSON.stringify({ "message": message }));
                 }
             };
-        
+    
             chatSocket.onmessage = function(e) {
                 const data = JSON.parse(e.data);
                 console.log("Received data:", data);
@@ -3523,17 +3523,15 @@ async function acceptFriendRequest(requestId) {
                     if (!exists) {
                         conversations[receiver].push({ text: data.message, type: messageSender, time: timestamp });
                         localStorage.setItem('conversations', JSON.stringify(conversations));
-                        if (data.sender !== sender) {
-                            displayMessage(data.message, messageSender, timestamp, data.sender);
-                        }
+                        displayMessage(data.message, messageSender, timestamp, data.sender);
                     }
                 }
             };
-        
+    
             chatSocket.onerror = function(error) {
                 console.error("WebSocket connection failed:", error);
             };
-        
+    
             chatSocket.onclose = function(event) {
                 console.log("WebSocket closed. Code:", event.code, "Reason:", event.reason);
                 if (event.code !== 1000) {
@@ -3569,20 +3567,19 @@ async function acceptFriendRequest(requestId) {
         function displayMessage(message, senderType, timestamp, senderName) {
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message', `${senderType}-message`);
-        
+    
             const senderSpan = document.createElement('span');
             senderSpan.classList.add('message-sender');
-            // Use 'You' for the current user, otherwise use the actual sender's name
             senderSpan.textContent = senderType === 'sender' ? 'You' : senderName;
-        
+    
             const messageText = document.createElement('span');
             messageText.classList.add('message-text');
             messageText.textContent = message;
-        
+    
             const timeSpan = document.createElement('span');
             timeSpan.classList.add('message-time');
             timeSpan.textContent = timestamp;
-        
+    
             messageDiv.appendChild(senderSpan);
             messageDiv.appendChild(messageText);
             messageDiv.appendChild(timeSpan);
@@ -3594,7 +3591,8 @@ async function acceptFriendRequest(requestId) {
             chatMessages.innerHTML = '';
             if (conversations[receiver]) {
                 conversations[receiver].forEach(({ text, type, time }) => {
-                    displayMessage(text, type, time, receiver);
+                    const senderName = type === 'sender' ? sender : receiver;
+                    displayMessage(text, type, time, senderName);
                 });
             }
         }
@@ -3626,6 +3624,7 @@ async function acceptFriendRequest(requestId) {
         });
     
         window.switchConversation = switchConversation;
+    
         function makeRequest() {
             const now = Date.now();
             if (now - lastRequestTime > 10000) {
