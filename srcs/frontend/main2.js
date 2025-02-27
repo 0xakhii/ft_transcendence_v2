@@ -2174,7 +2174,7 @@ async function acceptFriendRequest(requestId) {
     try {
       const token = localStorage.getItem("authToken");
       const response = await fetch(`http://127.0.0.1:8000/friends/reject/${requestId}/`, {
-        method: "POST",
+        method: "DELETE",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
@@ -3452,12 +3452,10 @@ async function acceptFriendRequest(requestId) {
         const emojiToggleButton = document.getElementById('emoji-toggle-btn');
         const chatHeader = document.getElementById('chat-header');
     
-        // Fetch current user from profile endpoint
         let sender;
         try {
             const token = localStorage.getItem('authToken');
             if (!token) throw new Error("No auth token found");
-            
             const response = await fetch('http://127.0.0.1:8000/profile/', {
                 method: 'GET',
                 headers: {
@@ -3465,145 +3463,82 @@ async function acceptFriendRequest(requestId) {
                     "Content-Type": "application/json",
                 },
             });
-    
             if (!response.ok) throw new Error(`Profile fetch failed: ${response.status}`);
-            
             const data = await response.json();
-            sender = data.data?.attributes?.username || 'guest'; // Adjust based on your API response structure
+            sender = data.data?.attributes?.username || 'guest';
             console.log("Current user fetched:", sender);
         } catch (error) {
             console.error("Error fetching current user:", error);
-            sender = 'guest'; // Fallback if fetch fails
+            sender = 'guest';
         }
     
-        let receiver = null; // Will be set after fetching friends
+        let receiver = null;
         let chatSocket = null;
         let messageQueue = [];
         const conversations = JSON.parse(localStorage.getItem('conversations')) || {};
     
-        // Fetch friends and set the first one as the default receiver
-        async function fetchAndDisplayFriendschat() {
-            return fetch("http://127.0.0.1:8000/friends/list/", {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
-                },
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Failed to fetch friend list. Status: " + response.status);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log("Friend list API response:", data);
-                let friendList = [];
-                if (data.data && Array.isArray(data.data)) {
-                    friendList = data.data.map(item => Object.assign({}, item.attributes, { id: item.id }));
-                } else {
-                    console.error("Unexpected response format for friend list:", data);
-                    return;
-                }
-    
-                const friendListContainer = document.getElementById("chat-friend-list");
-                if (!friendListContainer) {
-                    console.error("Chat friend list container not found.");
-                    return;
-                }
-    
-                friendListContainer.innerHTML = ""; // Clear previous content
-    
-                if (friendList.length === 0) {
-                    const noFriendsMessage = document.createElement("div");
-                    noFriendsMessage.classList.add("no-friends");
-                    noFriendsMessage.textContent = "No friends found.";
-                    friendListContainer.appendChild(noFriendsMessage);
-                } else {
-                    friendList.forEach(friend => {
-                        const friendDiv = document.createElement("div");
-                        friendDiv.classList.add("user");
-                        friendDiv.setAttribute("data-friend-id", friend.id);
-                        friendDiv.setAttribute("data-friend-name", friend.username);
-                        friendDiv.addEventListener("click", () => switchConversation(friend.username));
-    
-                        const iconDiv = document.createElement("div");
-                        iconDiv.classList.add("icon");
-                        const avatarImg = document.createElement("img");
-                        avatarImg.src = friend.avatar.startsWith("https://") 
-                            ? friend.avatar 
-                            : `http://127.0.0.1:8000${friend.avatar}` || "images/default-avatar.png";
-                        avatarImg.alt = friend.username || "Friend Avatar";
-                        iconDiv.appendChild(avatarImg);
-    
-                        const nameDiv = document.createElement("div");
-                        nameDiv.textContent = friend.username || "Unknown";
-    
-                        friendDiv.appendChild(iconDiv);
-                        friendDiv.appendChild(nameDiv);
-                        friendListContainer.appendChild(friendDiv);
-                    });
-    
-                    // Set the first friend as the default receiver
-                    if (!receiver && friendList.length > 0) {
-                        receiver = friendList[0].username;
-                        chatHeader.textContent = `Chat with ${receiver}`;
-                        makeRequest(); // Connect immediately with the default receiver
-                    }
-                }
-            })
-            .catch(error => {
-                console.error("Error fetching friend list:", error);
-            });
-        }
         await fetchAndDisplayFriendschat();
-    
+        loadChatHistory();
     
         function connectWebSocket() {
             if (!receiver || !sender) {
                 console.error("Receiver or sender not set. Cannot connect WebSocket.");
                 return;
             }
-            const url = `ws://127.0.0.1:8000/ws/chat/${sender}/${receiver}/`;
-            console.log("Connecting to WebSocket:", url, "Sender:", sender, "Receiver:", receiver);
+            const users = [sender, receiver].sort();
+            const url = `ws://127.0.0.1:8000/ws/chat/${users[0]}/${users[1]}/`;
+            console.log("Attempting to connect to WebSocket:", url);
         
-            // Explicitly close any existing WebSocket
-            if (chatSocket && chatSocket.readyState !== WebSocket.CLOSED) {
-                chatSocket.close(1000, "Switching receiver"); // Normal closure
-                console.log("Closed previous WebSocket connection.");
+            if (chatSocket && chatSocket.url === url && chatSocket.readyState === WebSocket.OPEN) {
+                console.log("WebSocket already connected to this URL.");
+                return;
+            }
+        
+            if (chatSocket) {
+                chatSocket.close(1000, "New connection starting");
+                console.log("Closed previous WebSocket.");
             }
         
             chatSocket = new WebSocket(url);
         
-            chatSocket.onopen = function ()     {
-                console.log("WebSocket connected.");
+            chatSocket.onopen = function() {
+                console.log("WebSocket connected successfully.");
                 while (messageQueue.length > 0) {
                     const message = messageQueue.shift();
                     chatSocket.send(JSON.stringify({ "message": message }));
                 }
             };
         
-            chatSocket.onmessage = function (e) {
+            chatSocket.onmessage = function(e) {
                 const data = JSON.parse(e.data);
-                console.log("Data received:", data);
+                console.log("Received data:", data);
                 if (data.message) {
                     const timestamp = new Date().toLocaleTimeString();
                     const messageSender = data.sender === sender ? 'sender' : 'receiver';
+                    console.log(`Message from ${data.sender} to ${receiver}, displayed as ${messageSender}`);
                     if (!conversations[receiver]) conversations[receiver] = [];
-                    conversations[receiver].push({ text: data.message, type: messageSender, time: timestamp });
-                    localStorage.setItem('conversations', JSON.stringify(conversations));
-                    displayMessage(data.message, messageSender, timestamp, data.sender);
+                    const exists = conversations[receiver].some(msg => 
+                        msg.text === data.message && msg.time === timestamp && msg.type === messageSender
+                    );
+                    if (!exists) {
+                        conversations[receiver].push({ text: data.message, type: messageSender, time: timestamp });
+                        localStorage.setItem('conversations', JSON.stringify(conversations));
+                        if (data.sender !== sender) {
+                            displayMessage(data.message, messageSender, timestamp, data.sender);
+                        }
+                    }
                 }
             };
         
-            chatSocket.onerror = function (error) {
-                console.error("WebSocket error:", error);
-                setTimeout(connectWebSocket, 1000);
+            chatSocket.onerror = function(error) {
+                console.error("WebSocket connection failed:", error);
             };
         
-            chatSocket.onclose = function (event) {
+            chatSocket.onclose = function(event) {
                 console.log("WebSocket closed. Code:", event.code, "Reason:", event.reason);
-                setTimeout(connectWebSocket, 1000);
+                if (event.code !== 1000) {
+                    setTimeout(connectWebSocket, 2000);
+                }
             };
         }
     
@@ -3618,7 +3553,8 @@ async function acceptFriendRequest(requestId) {
             if (!conversations[receiver]) conversations[receiver] = [];
             conversations[receiver].push({ text: userMessage, type: 'sender', time: timestamp });
             localStorage.setItem('conversations', JSON.stringify(conversations));
-            displayMessage(userMessage, 'sender', timestamp, receiver);
+            console.log(`Sending message from ${sender} to ${receiver}: ${userMessage}`);
+            displayMessage(userMessage, 'sender', timestamp, sender);
             chatInput.value = '';
             chatMessages.scrollTop = chatMessages.scrollHeight;
     
@@ -3630,26 +3566,28 @@ async function acceptFriendRequest(requestId) {
             }
         }
     
-        function displayMessage(message, senderType, timestamp, receiver) {
+        function displayMessage(message, senderType, timestamp, senderName) {
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message', `${senderType}-message`);
-    
+        
             const senderSpan = document.createElement('span');
             senderSpan.classList.add('message-sender');
-            senderSpan.textContent = senderType === 'sender' ? 'You' : receiver;
-    
+            // Use 'You' for the current user, otherwise use the actual sender's name
+            senderSpan.textContent = senderType === 'sender' ? 'You' : senderName;
+        
             const messageText = document.createElement('span');
             messageText.classList.add('message-text');
             messageText.textContent = message;
-    
+        
             const timeSpan = document.createElement('span');
             timeSpan.classList.add('message-time');
             timeSpan.textContent = timestamp;
-    
+        
             messageDiv.appendChild(senderSpan);
             messageDiv.appendChild(messageText);
             messageDiv.appendChild(timeSpan);
             chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
         }
     
         function loadChatHistory() {
@@ -3663,12 +3601,17 @@ async function acceptFriendRequest(requestId) {
     
         function switchConversation(newReceiver) {
             if (receiver === newReceiver) return;
+            const friendList = Array.from(document.querySelectorAll("#chat-friend-list .user"))
+                .map(div => div.getAttribute("data-friend-name"));
+            if (!friendList.includes(newReceiver)) {
+                console.warn(`${newReceiver} is not a friend. Cannot start chat.`);
+                return;
+            }
             receiver = newReceiver;
             chatHeader.textContent = `Chat with ${receiver}`;
             connectWebSocket();
             loadChatHistory();
         }
-    
     
         emojiToggleButton.addEventListener('click', () => {
             emojiPicker.style.display = emojiPicker.style.display === 'block' ? 'none' : 'block';
@@ -3686,7 +3629,7 @@ async function acceptFriendRequest(requestId) {
         function makeRequest() {
             const now = Date.now();
             if (now - lastRequestTime > 10000) {
-                if (flag === 0){
+                if (flag === 0) {
                     flag = 1;
                 }
                 connectWebSocket();
@@ -3694,7 +3637,6 @@ async function acceptFriendRequest(requestId) {
             }
         }
     }
-    
     
     
     

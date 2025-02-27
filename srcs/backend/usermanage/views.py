@@ -454,10 +454,11 @@ class AcceptFriendRequestView(APIView):
 class RejectFriendRequestView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, request_id):
+    def delete(self, request, request_id):
         friend_request = get_object_or_404(FriendRequest, id=request_id, receiver=request.user, status="pending")
-        friend_request.status = "rejected"
-        friend_request.save()
+        # friend_request.status = "rejected"
+        # friend_request.save()
+        friend_request.delete()
         return Response({"message": "Friend request rejected."}, status=status.HTTP_200_OK)
 
 class PendingFriendRequestsView(generics.ListAPIView):

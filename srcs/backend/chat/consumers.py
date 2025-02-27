@@ -1,3 +1,4 @@
+# chat/consumers.py
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 
@@ -5,7 +6,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.sender = self.scope['url_route']['kwargs']['sender']
         self.receiver = self.scope['url_route']['kwargs']['receiver']
-        self.room_group_name = f'chat_{self.sender}_{self.receiver}'
+        # Sort sender and receiver alphabetically to ensure consistent room name
+        users = sorted([self.sender, self.receiver])
+        self.room_group_name = f'chat_{users[0]}_{users[1]}'
+
+        print(f"Connecting WebSocket: sender={self.sender}, receiver={self.receiver}, room={self.room_group_name}")
 
         await self.channel_layer.group_add(
             self.room_group_name,
