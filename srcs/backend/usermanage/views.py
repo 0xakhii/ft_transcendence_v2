@@ -492,8 +492,6 @@ class FriendListView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        # user_id = request.query_params.get('user_id')
-        # user = User.objects.get(id=.user_id)
         user = request.user
 
         sent_requests = FriendRequest.objects.filter(sender=user, status="accepted")
@@ -505,6 +503,27 @@ class FriendListView(APIView):
         
         serializer = UserSerializer(friends, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    def delete(self, request, username=None):
+        user = request.user
+        friend = User.objects.filter(username=username).first()
+        friend_request = FriendRequest.objects.filter(
+            status="accepted",
+            sender=user,
+            receiver=friend
+        ).first()
+        
+        if not friend_request:
+            friend_request = FriendRequest.objects.filter(
+                status="accepted",
+                sender=friend,
+                receiver=user
+            ).first()
+        
+        if friend_request:
+            friend_request.delete()
+            return Response({"message": "Friend removed successfully"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "Friend request not found"}, status=status.HTTP_404_NOT_FOUND)
 
 # def user_list(request):
 #     print("here2")

@@ -2353,9 +2353,16 @@ async function acceptFriendRequest(requestId) {
               const usernameSpan = document.createElement("span");
               usernameSpan.classList.add("friend-username");
               usernameSpan.textContent = friend.username || "Unknown";
+
+                      //             // Add Remove Button
+              const removeButton = document.createElement("button");
+              removeButton.textContent = "Remove";
+              removeButton.classList.add("remove-friend-btn");
+              removeButton.addEventListener("click", () => removeFriend(friend.username, friendListContainer));
       
               friendDiv.appendChild(avatarImg);
               friendDiv.appendChild(usernameSpan);
+              friendDiv.appendChild(removeButton);
               friendListContainer.appendChild(friendDiv);
             });
           }
@@ -2366,6 +2373,87 @@ async function acceptFriendRequest(requestId) {
           console.error("Error fetching friend list:", error);
         }
       }
+
+        // async function fetchAndDisplayFriends(buttonElement) {
+        //     try {
+        //         const response = await fetch("http://127.0.0.1:8000/friends/list/", {
+        //             method: "GET",
+        //             headers: {
+        //                 "Content-Type": "application/json",
+        //                 "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
+        //             },
+        //         });
+        //         if (!response.ok) throw new Error("Failed to fetch friend list");
+
+        //         const data = await response.json();
+        //         let friendList = data.map(item => ({
+        //             id: item.id,
+        //             username: item.username,
+        //             avatar: item.avatar || "images/default-avatar.png"
+        //         }));
+
+        //         const friendListDiv = document.createElement("div");
+        //         friendListDiv.id = "dynamic-friend-list";
+        //         friendListDiv.className = "friend-list-container";
+
+        //         friendList.forEach(friend => {
+        //             const friendDiv = document.createElement("div");
+        //             friendDiv.classList.add("friend-item");
+
+        //             const avatarImg = document.createElement("img");
+        //             avatarImg.src = friend.avatar.startsWith("https://") 
+        //                 ? friend.avatar 
+        //                 : `http://127.0.0.1:8000${friend.avatar}`;
+        //             avatarImg.alt = friend.username || "Friend Avatar";
+        //             avatarImg.classList.add("user-avatar");
+
+        //             const usernameSpan = document.createElement("span");
+        //             usernameSpan.classList.add("username");
+        //             usernameSpan.textContent = friend.username || "Unknown";
+
+        //             // Add Remove Button
+        //             const removeButton = document.createElement("button");
+        //             removeButton.textContent = "Remove";
+        //             removeButton.classList.add("remove-friend-btn");
+        //             removeButton.addEventListener("click", () => removeFriend(friend.username, friendListDiv));
+
+        //             friendDiv.appendChild(avatarImg);
+        //             friendDiv.appendChild(usernameSpan);
+        //             friendDiv.appendChild(removeButton);
+        //             friendListDiv.appendChild(friendDiv);
+        //         });
+
+        //         buttonElement.insertAdjacentElement('afterend', friendListDiv);
+        //     } catch (error) {
+        //         console.error("Error fetching friends:", error);
+        //     }
+        // }
+
+        async function removeFriend(username, friendListDiv) {
+            try {
+                const response = await fetch(`http://127.0.0.1:8000/friends/remove/${username}/`, {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
+                    },
+                });
+    
+                if (response.ok) {
+                    console.log(`Friend ${username} removed successfully`);
+                    friendListDiv.remove(); // Remove current list
+                    fetchAndDisplayFriends(friendsButton); // Refresh friend list
+                    
+                } else {
+                    const errorData = await response.json();
+                    console.error("Failed to remove friend:", errorData);
+                    alert(errorData.error || "Failed to remove friend");
+                }
+            } catch (error) {
+                console.error("Error removing friend:", error);
+                alert("Error removing friend. Please try again.");
+            }
+        }
 
       async function  fetchAndDisplayFriendschat() {
         try {

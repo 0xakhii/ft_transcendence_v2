@@ -12,6 +12,7 @@ urlpatterns = [
     path("friends/reject/<int:request_id>/", RejectFriendRequestView.as_view(), name="reject-friend-request"),
     path("friends/pending/", PendingFriendRequestsView.as_view(), name="pending-friend-requests"),
     path("friends/list/", FriendListView.as_view(), name="friends-list"),
+    path("friends/remove/<str:username>/", FriendListView.as_view(), name="remove-friend"),
     # path('users/', views.user_list, name='user_list'),
     path("profile/", ProfileDetailView.as_view(), name="profile-detail"),
     path('users/', UserListView.as_view(),name='userlistview'),
