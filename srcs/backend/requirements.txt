@@ -17,6 +17,7 @@ django-cors-headers==4.4.0
 debugpy==1.5.1
 channels_redis==4.2.1
 daphne===4.1.2
+django-redis==5.2.0
 djangorestframework-simplejwt===5.4.0
 requests===2.32.3
 pillow===11.1.0

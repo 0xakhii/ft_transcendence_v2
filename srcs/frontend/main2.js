@@ -900,18 +900,19 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
         `,
         game: `
-            <div class="main">
-                <div class="header">
-                    <img class="logo" src="images/Pongify_logo.png">
-                    <div class="test">
-                        <a href="#/dashboard" data-page="home">HOME</a>
-                        <a href="#/profile" data-page="profile">PROFILE</a>
-                        <a href="#/game" data-page="game" class="active">GAME</a>
-                        <a href="" data-page="tournament">TOURNAMENT</a>
-                        <a href="#/chat" data-page="chat">CHAT</a>
-                        <a href="" data-page="settings">SETTINGS</a>
-                    </div>
-                </div>
+    <div class="main">
+        <div class="header">
+            <img class="logo" src="images/Pongify_logo.png">
+            <div class="test">
+                <a href="#/dashboard" data-page="home">HOME</a>
+                <a href="#/profile" data-page="profile">PROFILE</a>
+                <a href="#/game" data-page="game">GAME</a>
+                <a href="" data-page="tournament">TOURNAMENT</a>
+                <a id="chat" href="#/chat" data-page="chat" class="active">CHAT</a>
+                <button id="signout-btn" type="button">Sign Out</button>
+            </div>
+            <div id="current-user" data-username="{{ request.user.username }}" data-user-id="{{ request.user.id }}"></div>
+        </div>
                 <div class="btn">
                     <button type="button" class="local-mode-btn">Play Local Game</button>
                     <img class="f_img" src="dashboard img/full_button.png">
@@ -923,19 +924,19 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
         `,
         game_v2: `
-            <div class="main">
-                <div class="header">
-                    <img class="logo" src="images/Pongify_logo.png">
-                    <div class="test">
-                        <a href="#/dashboard" data-page="home">HOME</a>
-                        <a href="#/profile" data-page="profile">PROFILE</a>
-                        <a href="#/game" data-page="game" class="active">GAME</a>
-                        <a href="" data-page="tournament">TOURNAMENT</a>
-                        <a href="#/chat" data-page="chat">CHAT</a>
-                        <a href="" data-page="settings">SETTINGS</a>
-                    </div>
-                </div>
+    <div class="main">
+        <div class="header">
+            <img class="logo" src="images/Pongify_logo.png">
+            <div class="test">
+                <a href="#/dashboard" data-page="home">HOME</a>
+                <a href="#/profile" data-page="profile">PROFILE</a>
+                <a href="#/game" data-page="game">GAME</a>
+                <a href="" data-page="tournament">TOURNAMENT</a>
+                <a id="chat" href="#/chat" data-page="chat" class="active">CHAT</a>
+                <button id="signout-btn" type="button">Sign Out</button>
             </div>
+            <div id="current-user" data-username="{{ request.user.username }}" data-user-id="{{ request.user.id }}"></div>
+        </div>
         `,
         chat: `
     <div class="main">

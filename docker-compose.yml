@@ -15,6 +15,7 @@ services:
       - "3000:3000"
     depends_on:
       - db
+      - redis
     volumes:
       - ./srcs/backend:/ft_transcendence/
     restart: on-failure
@@ -31,4 +32,11 @@ services:
     restart: on-failure
     depends_on:
       - front
+    init: true
+  
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    restart: on-failure
     init: true
