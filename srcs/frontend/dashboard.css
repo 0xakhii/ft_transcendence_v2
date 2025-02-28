@@ -458,7 +458,7 @@ body
   }
 /************************startplay btn********************************/
 
-.start-playing-btn
+/* .start-playing-btn button-outline-primary
 {
     border: none;
     background: linear-gradient(to right , #ed1c24, #93278f, #2e3192);
@@ -470,7 +470,7 @@ body
     text-align: center;
     padding-top: 1.2vh;
     font-weight: bold;
-    font-size: 1vw;
+    font-size: clamp(0.5rem, 2.5vw, 1.5rem);
     margin: 20px auto;
     display: flex;
     justify-content: center;
@@ -487,14 +487,41 @@ body
     background-color: #bfb9ed;
     color: #18181b;
     transform: scale(1.05);
+} */
+
+/* css bootstrap */
+
+.start-playing-btn {
+    position: fixed;    
+    bottom: 20px;   
+    right: 20px;     
+    z-index: 1000;   /* Ensure it's above other elements */
 }
+.btn-lg {
+    --bs-btn-padding-y: 0.5rem;
+    --bs-btn-padding-x: 10rem;
+    --bs-btn-font-size: 3rem;
+    --bs-btn-border-radius: var(--bs-border-radius-lg);
+    --bs-btn-font-family: 'Poppins', sans-serif;
+    --bs-btn-font-weight: bold;
+}
+
 .paragraph
 {
     width: 400px;
 }
-.paragraph h2
-{
-    font-size: 2.5vw;
+@keyframes typing {
+    from { width: 0; }
+    to { width: 70%; }
+}
+
+@keyframes blink-caret {
+    from, to { border-color: transparent; }
+    70% { border-color: #bfb9ed; }
+}
+
+.paragraph h2 {
+    font-size: clamp(1.5rem, 2.5vw, 3rem);
     font-weight: bold;
     margin: 0;
     padding: 0;
@@ -504,11 +531,17 @@ body
     position: absolute;
     top: 300px;
     left: 120px;
+    text-shadow: blueviolet;
+    white-space: nowrap;
+    overflow: hidden;
+    border-right: 0.15em solid #bfb9ed;
+    animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
 }
+
 
 .paragraph p
 {
-    font-size: 0.8vw;
+    font-size: clamp(1rem, 0.5vw, 2rem);
     font-weight: bold;
     margin: 0;
     padding: 0;

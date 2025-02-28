@@ -822,7 +822,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <p>"Pongify" is a reimagined version of the classic Pong game, bringing a 
                         fresh and engaging multiplayer experience. Compete with friends, join tournaments, 
                         and relive the nostalgia with enhanced graphics and smooth gameplay.</p>
-                        <button class="start-playing-btn" id="startplay" >Start Playing</button>
+                       <button class="btn btn-outline-primary btn-lg start-playing-btn" id="startplay">START !</button>
                     </div>
                     <div>
                         <div class="friend-requests-container">
@@ -913,6 +913,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
             <div id="current-user" data-username="{{ request.user.username }}" data-user-id="{{ request.user.id }}"></div>
         </div>
+            <div class="midd">
                 <div class="btn">
                     <button type="button" class="local-mode-btn">Play Local Game</button>
                     <img class="f_img" src="dashboard img/full_button.png">
@@ -922,6 +923,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <img class="f_img" src="dashboard img/full_buton_2.png">
                 </div>
             </div>
+        </div>
         `,
         game_v2: `
     <div class="main">
@@ -3861,6 +3863,7 @@ async function acceptFriendRequest(requestId) {
     // Load the initial page
     preloadStylesheet('dashboard.css'); // Dashboard CSS
     preloadStylesheet('profile.css'); // Profile page CSS
+    preloadStylesheet('assets/bootstrap.min.css'); // Bootstrap CSS
     // preloadStylesheet('styleGame.css'); // Game page CSS (if applicable)
     loadCSS('chat.css'); // Load the dashboard CSS
 

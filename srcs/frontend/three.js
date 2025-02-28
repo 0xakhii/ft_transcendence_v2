@@ -79,6 +79,7 @@ export class PongGame {
 
         this.socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
+            console.log('Received game data:', data);
             this.updateGameState(data);
         };
 
@@ -89,7 +90,6 @@ export class PongGame {
                 player2_id: this.player2Id,
                 score1: this.score1,
                 score2: this.score2,
-                date: new Date().toISOString(),
             });
         };
 
@@ -99,7 +99,14 @@ export class PongGame {
                 this.socket.send(JSON.stringify({ action: 'move', key: event.key }));
             }
         };
+        this._socketKeyUpListener = (event) => {
+            const validKeys = ['a', 'd', 'ArrowLeft', 'ArrowRight'];
+            if (validKeys.includes(event.key) && this.socket.readyState === WebSocket.OPEN) {
+                this.socket.send(JSON.stringify({ action: 'move', key: null }));
+            }
+        };
         document.addEventListener('keydown', this._socketKeyListener);
+        document.addEventListener('keyup', this._socketKeyUpListener);
     }
 
     initObjects() {
@@ -327,8 +334,8 @@ export class PongGame {
             document.removeEventListener('keydown', this._handleLocalInput);
             document.removeEventListener('keyup', this._handleLocalInput);
         }
-        if (this.mode === 'multiplayer' && this._socketKeyListener) {
-            document.removeEventListener('keydown', this._socketKeyListener);
+        if (this.mode === 'multiplayer' && this._socketKeyUpListener) {
+            document.removeEventListener('keyup', this._socketKeyUpListener);
         }
 
         if (this.socket) {
