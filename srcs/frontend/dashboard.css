@@ -257,6 +257,10 @@ body
     color: #fff; /* Optional: Ensure the text color remains visible */
 }
 
+.friend-box
+{
+    margin-left: 300px;
+}
 /******************************frineds border********************************/
 #user-list-container {
     position: absolute;
@@ -508,7 +512,8 @@ body
 
 .paragraph
 {
-    width: 400px;
+    width: 700px;
+    height: 400px;
 }
 @keyframes typing {
     from { width: 0; }
@@ -528,9 +533,9 @@ body
     text-align: center;
     color: #bfb9ed;
     font-family: "Poppins", sans-serif;
-    position: absolute;
+    /* position: absolute;
     top: 300px;
-    left: 120px;
+    left: 120px; */
     text-shadow: blueviolet;
     white-space: nowrap;
     overflow: hidden;
@@ -548,10 +553,10 @@ body
     text-align: center;
     color: #bfb9ed;
     font-family: "Poppins", sans-serif;
-    position: absolute;
-    left: 150px;
+    /* position: absolute; */
+    /* left: 150px;
     width: 700px;
-    top: 420px;
+    top: 420px; */
 }
 .signout
 {

@@ -234,7 +234,7 @@ body
   {
     position: absolute;
     top: 400px;
-    left: 19%;
+    /* left: 19%; */
     width: 180px;
     height: 180px;
     border-radius: 80px;

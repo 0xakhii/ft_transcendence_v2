@@ -824,7 +824,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         and relive the nostalgia with enhanced graphics and smooth gameplay.</p>
                        <button class="btn btn-outline-primary btn-lg start-playing-btn" id="startplay">START !</button>
                     </div>
-                    <div>
+                    <div class="friend-box">
                         <div class="friend-requests-container">
                             <h2 id="no-friend" style="display: block;">No friend requests found</h2>
                             <div id="friend-requests-list"></div>
@@ -2287,95 +2287,91 @@ async function acceptFriendRequest(requestId) {
       }
     }
 
-    async function fetchAndDisplayFriends(friendsButton) {
+    async function fetchAndDisplayFriends(buttonElement) {
         try {
-
             console.log("authToken: ", localStorage.getItem("authToken"));
-          const response = await fetch("http://127.0.0.1:8000/friends/list/", {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
-            },
-          });
-      
-          if (!response.ok) {
-            console.error("Failed to fetch friend list. Status:", response.status);
-            return;
-          }
-      
-          const data = await response.json();
-          console.log("Friend list API response:", data);
-      
-          let friendList = [];
-          if (data.data && Array.isArray(data.data)) {
-            friendList = data.data.map(item => Object.assign({}, item.attributes, { id: item.id }));
-          } else {
-            console.error("Unexpected response format for friend list:", data);
-            return;
-          }
-      
-          // Check if the friend list container already exists
-          let friendListContainer = document.getElementById("dynamic-friend-list");
-          if (friendListContainer) {
-            friendListContainer.remove(); // Remove it if it exists to toggle off
-            return;
-          }
-      
-          // Create a new container for the friend list
-          friendListContainer = document.createElement("div");
-          friendListContainer.id = "dynamic-friend-list";
-          friendListContainer.classList.add("friend-list-container");
-      
-          if (friendList.length === 0)
-          {
-            let noFriendsMessage = document.createElement("h2"); // Create a new paragraph element
-            noFriendsMessage.textContent = "No friends found.";
-            noFriendsMessage.classList.add("no-friends-message"); // Add styling class
-            friendListContainer.appendChild(noFriendsMessage);
-          } else {
-            friendList.forEach(friend => {
-              const friendDiv = document.createElement("div");
-              friendDiv.classList.add("friend-item");
-      
-              // Avatar image
-              const avatarImg = document.createElement("img");
-            if (friend.avatar.startsWith("https://"))
-            {
-                avatarImg.src = friend.avatar || "images/default-avatar.png";
-                avatarImg.alt = friend.username || "Friend Avatar";
-                avatarImg.classList.add("friend-avatar");
-            }
-            else
-            {
-              avatarImg.src = `http://127.0.0.1:8000${friend.avatar}` || "images/default-avatar.png";
-              avatarImg.alt = friend.username || "Friend Avatar";
-              avatarImg.classList.add("friend-avatar");
-            }
-              // Username
-              const usernameSpan = document.createElement("span");
-              usernameSpan.classList.add("friend-username");
-              usernameSpan.textContent = friend.username || "Unknown";
-
-                      //             // Add Remove Button
-              const removeButton = document.createElement("button");
-              removeButton.textContent = "Remove";
-              removeButton.classList.add("remove-friend-btn");
-              removeButton.addEventListener("click", () => removeFriend(friend.username, friendListContainer));
-      
-              friendDiv.appendChild(avatarImg);
-              friendDiv.appendChild(usernameSpan);
-              friendDiv.appendChild(removeButton);
-              friendListContainer.appendChild(friendDiv);
+            const response = await fetch("http://127.0.0.1:8000/friends/list/", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
+                },
             });
-          }
-      
-          // Insert the container right after the Friends button
-          friendsButton.insertAdjacentElement("afterend", friendListContainer);
+
+            if (!response.ok) {
+                console.error("Failed to fetch friend list. Status:", response.status);
+                return;
+            }
+
+            const data = await response.json();
+            console.log("Friend list API response:", data);
+
+            let friendList = [];
+            if (data.data && Array.isArray(data.data)) {
+                friendList = data.data.map(item => Object.assign({}, item.attributes, { id: item.id }));
+            } else {
+                console.error("Unexpected response format for friend list:", data);
+                return;
+            }
+
+            // Check if the friend list container already exists
+            let friendListContainer = document.getElementById("dynamic-friend-list");
+            if (friendListContainer) {
+                friendListContainer.remove(); // Remove it if it exists to toggle off
+                return;
+            }
+
+            // Create a new container for the friend list
+            friendListContainer = document.createElement("div");
+            friendListContainer.id = "dynamic-friend-list";
+            friendListContainer.classList.add("friend-list-container");
+
+            if (friendList.length === 0) {
+                let noFriendsMessage = document.createElement("h2"); // Create a new paragraph element
+                noFriendsMessage.textContent = "No friends found.";
+                noFriendsMessage.classList.add("no-friends-message"); // Add styling class
+                friendListContainer.appendChild(noFriendsMessage);
+            } else {
+                friendList.forEach(friend => {
+                    const friendDiv = document.createElement("div");
+                    friendDiv.classList.add("friend-item");
+
+                    // Avatar image
+                    const avatarImg = document.createElement("img");
+                    if (friend.avatar.startsWith("https://")) {
+                        avatarImg.src = friend.avatar || "images/default-avatar.png";
+                        avatarImg.alt = friend.username || "Friend Avatar";
+                        avatarImg.classList.add("friend-avatar");
+                    } else {
+                        avatarImg.src = `http://127.0.0.1:8000${friend.avatar}` || "images/default-avatar.png";
+                        avatarImg.alt = friend.username || "Friend Avatar";
+                        avatarImg.classList.add("friend-avatar");
+                    }
+
+                    // Username
+                    const usernameSpan = document.createElement("span");
+                    usernameSpan.classList.add("friend-username");
+                    usernameSpan.textContent = friend.username || "Unknown";
+
+                    // Add Remove Button
+                    const removeButton = document.createElement("button");
+                    removeButton.textContent = "Remove";
+                    removeButton.classList.add("remove-friend-btn");
+                    removeButton.addEventListener("click", () => removeFriend(friend.username, friendListContainer, buttonElement));
+
+                    friendDiv.appendChild(avatarImg);
+                    friendDiv.appendChild(usernameSpan);
+                    friendDiv.appendChild(removeButton);
+                    friendListContainer.appendChild(friendDiv);
+                });
+            }
+
+            // Insert the container right after the Friends button
+            buttonElement.insertAdjacentElement("afterend", friendListContainer);
         } catch (error) {
-          console.error("Error fetching friend list:", error);
+            console.error("Error fetching friend list:", error);
         }
-      }
+    }
 
         // async function fetchAndDisplayFriends(buttonElement) {
         //     try {
@@ -2432,7 +2428,7 @@ async function acceptFriendRequest(requestId) {
         //     }
         // }
 
-        async function removeFriend(username, friendListDiv) {
+        async function removeFriend(username, friendListDiv, buttonElement) {
             try {
                 const response = await fetch(`http://127.0.0.1:8000/friends/remove/${username}/`, {
                     method: "DELETE",
@@ -2445,14 +2441,15 @@ async function acceptFriendRequest(requestId) {
                 if (response.ok) {
                     console.log(`Friend ${username} removed successfully`);
                     friendListDiv.remove(); // Remove current list
-                    fetchAndDisplayFriends(friendsButton); // Refresh friend list
+                    fetchAndDisplayFriends(buttonElement); // Refresh friend list
                     
                 } else {
                     const errorData = await response.json();
                     console.error("Failed to remove friend:", errorData);
                     alert(errorData.error || "Failed to remove friend");
                 }
-            } catch (error) {
+            }
+            catch (error) {
                 console.error("Error removing friend:", error);
                 alert("Error removing friend. Please try again.");
             }
@@ -3576,7 +3573,7 @@ async function acceptFriendRequest(requestId) {
                 console.error("Receiver or sender not set. Cannot connect WebSocket.");
                 return;
             }
-            const users = [sender, receiver].sort();
+            const users = [sender, receiver];
             const url = `ws://127.0.0.1:8000/ws/chat/${users[0]}/${users[1]}/`;
             console.log("Attempting to connect to WebSocket:", url);
     

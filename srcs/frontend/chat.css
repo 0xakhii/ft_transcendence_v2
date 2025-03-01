@@ -16,7 +16,7 @@ body {
     flex-direction: column;
 }
 
-/* Header styling (consistent with dashboard.css) */
+/* Header styling (unchanged) */
 .header {
     display: flex;
     justify-content: space-between;
@@ -82,7 +82,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 0; /* Adjusted from your original to fit the container */
+    padding: 0;
 }
 
 .app-container {
@@ -91,20 +91,20 @@ body {
     height: 600px;
     border-radius: 15px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    background-color: rgba(24, 30, 42, 0.9); /* Added for consistency */
+    background-color: rgba(24, 30, 42, 0.9);
 }
 
-/* Friend list styling (mirroring dashboard.css .friend-list-container and .friend-item) */
+/* Friend list styling */
 .user-list {
     width: 30%;
     background: transparent;
     overflow-y: auto;
     padding: 10px;
-    border-radius: 15px 0 0 15px; /* Adjusted to match your original */
+    border-radius: 15px 0 0 15px;
     border: grey 1px solid;
     display: flex;
     flex-direction: column;
-    gap: 10px; /* Matches dashboard.css */
+    gap: 10px;
 }
 
 .user {
@@ -115,11 +115,11 @@ body {
     cursor: pointer;
     border-radius: 5px;
     font-family: 'Poppins', sans-serif;
-    transition: background-color 0.3s ease; /* Added for hover effect */
+    transition: background-color 0.3s ease;
 }
 
 .user:hover {
-    background-color: rgba(191, 185, 237, 0.2); /* Matches dashboard.css hover */
+    background-color: rgba(191, 185, 237, 0.2);
 }
 
 .icon {
@@ -127,23 +127,22 @@ body {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background-color: #F78689; /* Your original color */
+    background-color: #F78689;
 }
 
 .icon img {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    object-fit: cover; /* Ensures image fits nicely */
+    object-fit: cover;
 }
 
 .user div {
     font-size: 16px;
     color: #bfb9ed;
-    font-weight: bold; /* Matches dashboard.css */
+    font-weight: bold;
 }
 
-/* No friends message (mirroring dashboard.css .no-friends-message) */
 .user-list .no-friends {
     font-family: 'Poppins', sans-serif;
     text-align: center;
@@ -165,7 +164,7 @@ body {
     padding: 15px;
     color: white;
     text-align: center;
-    border-radius: 0 15px 0 0; /* Adjusted for your design */
+    border-radius: 0 15px 0 0;
     font-size: 1.5rem;
 }
 
@@ -173,61 +172,60 @@ body {
     flex-grow: 1;
     overflow-y: auto;
     padding: 15px;
-    border-top: 1px solid #ddd;
+    background-color: rgba(24, 30, 42, 0.95); /* Slight background for contrast */
 }
 
-.user-message {
-    text-align: left;
+/* Message styling */
+.message {
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 10px;
 }
 
-.user-message .message-text {
-    background: #007aff;
-    color: white;
-    padding: 10px;
+.sender-message {
+    justify-content: flex-end; /* Align sent messages to the right */
+}
+
+.receiver-message {
+    justify-content: flex-start; /* Align received messages to the left */
+}
+
+.message-sender {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #bfb9ed; /* Sender name color */
+    margin-bottom: 4px;
+}
+
+.message-text {
+    padding: 10px 15px;
     border-radius: 15px;
-    display: inline-block;
     max-width: 60%;
-    margin-left: 0;
+    word-wrap: break-word;
+    font-size: 1rem;
+    line-height: 1.4;
 }
 
-.bot-message {
-    text-align: right;
-    position: relative;
-}
-
-.bot-message .message-text {
-    background: #1a1a1a;
+.sender-message .message-text {
+    background: #6a0dad; /* Purple for sent messages */
     color: white;
-    padding: 10px;
-    border-radius: 15px;
-    display: inline-block;
-    max-width: 60%;
-    margin-right: 0;
+}
+
+.receiver-message .message-text {
+    background: #F78689; /* Pinkish-red for received messages */
+    color: white;
 }
 
 .message-time {
-    font-size: 0.8rem;
-    color: #888;
+    font-size: 0.75rem;
+    color: #bfb9ed;
     margin-left: 10px;
-    opacity: 0;
+    opacity: 0; /* Hidden by default */
     transition: opacity 0.3s ease;
 }
 
 .message:hover .message-time {
-    opacity: 1;
-}
-
-.bot-message .message-time {
-    position: absolute;
-    left: 310px;
-    top: 50%;
-    transform: translateY(-50%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.bot-message:hover .message-time {
-    opacity: 1;
+    opacity: 1; /* Show on hover */
 }
 
 /* Chat input styling */
@@ -236,6 +234,7 @@ body {
     align-items: center;
     padding: 10px;
     border-top: 1px solid #ddd;
+    background-color: rgba(24, 30, 42, 0.9);
 }
 
 .chat-input {
@@ -244,6 +243,9 @@ body {
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 15px;
+    background-color: #fff;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
 }
 
 .btn-container {
@@ -268,7 +270,7 @@ body {
     position: absolute;
     top: 605px;
     z-index: 1000;
-    background: transparent;
+    background: rgba(24, 30, 42, 0.9);
     padding: 10px;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
@@ -293,13 +295,15 @@ body {
     border-radius: 15px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
 }
 
 .send-btn:hover {
     background-color: #5a0c9d;
 }
 
-/* Signout button (from your latest document) */
+/* Signout button */
 .signout {
     position: absolute;
     color: #fff;
@@ -313,7 +317,7 @@ body {
     font-weight: bold;
 }
 
-/* Responsive design */
+/* Responsive design (unchanged) */
 @media (max-width: 1700px) {
     .header a, .header button {
         font-size: 20px;
