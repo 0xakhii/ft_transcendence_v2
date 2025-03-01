@@ -2,765 +2,6 @@ let allUsers = [];
 let lastRequestTime = 0;
 let flag = 0
 import { PongGame, setCurrentGame } from "./three";
-// document.addEventListener("DOMContentLoaded", () => {
-//     const pages = {
-//         signIn: `
-//             <div class="main">
-//                 <div class="border-up">
-//                     <img class="logo" src="images/Pongify_logo.png">
-//                     <h2>WELCOME</h2>
-//                     <p>Login with your 42 Network account or use your own email and password</p>
-//                 </div>
-//                 <div class="border-bottom">
-//                     <form id="login-form">
-//                         <input id="login-username" type="text" class="brd" placeholder="Username"><br>
-//                         <input id="login-password" type="password" class="brd" placeholder="Password">
-//                         <p class="error-msg" style="color: red;"></p>
-//                         <button class="btn" type="submit">Login</button>
-//                     </form>
-//                     <button class="btn2"><img src="images/42.png">Network</button>
-//                     <a href="#" id="go-to-sign-up">Create Account</a>
-//                 </div>
-//             </div>
-//         `,
-//         signUp: `
-//             <div class="main">
-//                 <div class="border-up">
-//                     <img class="logo" src="images/Pongify_logo.png">
-//                     <h2>WELCOME</h2>
-//                     <p>Login with your 42 Network account or use your own email and password</p>
-//                 </div>
-//                 <div class="border-bottom">
-//                     <form id="signup-form">
-//                         <input id="username" type="text" class="brd" placeholder="Username">
-//                         <input id="email" type="email" class="brd" placeholder="Email">
-//                         <input id="password" type="password" class="brd" placeholder="Password">
-//                         <input id="first_name" type="text" class="brd" placeholder="First name">
-//                         <input id="last_name" type="text" class="brd" placeholder="Last name">
-//                         <button class="btn" type="submit">Sign Up</button>
-//                     </form>
-//                     <button class="btn2"><img src="images/42.png">Network</button>
-//                 </div>
-//             </div>
-//         `,
-//         dashboard: `
-//             <div class="main">
-//                 <div class="header">
-//                     <img class="logo" src="images/Pongify_logo.png" >
-//                     <div class="test">
-//                         <a href="#" data-page="home" class="active">HOME</a>
-//                         <a href="#" data-page="profile">PROFILE</a>
-//                         <a href="#" data-page="game">GAME</a>
-//                         <a href="#" data-page="tournament">TOURNAMENT</a>
-//                         <a href="#" data-page="chat">CHAT</a>
-//                         <a href="#" data-page="settings">SETTINGS</a>
-//                     </div>
-//                 </div>
-//             </div>
-//         `,
-//         profile: `
-//             <link rel="stylesheet" href="profile.css">
-//             <div class="profile-container">
-//                 <div class="profile-info">
-//                     <img class="profile-border" src="profile imgs/main_profile_window.png" alt="Profile Border">
-//                     <img id="profile-img" class="profile-img" src="profile imgs/placeholder.png" alt="Profile Image">
-//                     <h2 id="profile-username">Username</h2>
-//                 </div>
-//                 <div class="profile-stats">
-//                     <img class="stats-border wins" src="profile imgs/level_and_wins_window.png" alt="Wins">
-//                     <img class="stats-border level" src="profile imgs/level_and_wins_window.png" alt="Level">
-//                 </div>
-//                 <div class="match-history">
-//                     <img class="match-history-border" src="profile imgs/match_history_window.png" alt="Match History">
-//                 </div>
-//             </div>
-//         `,
-//     };
-
-//     function loadCSS(fileName) {
-//         const existingLink = document.getElementById('dynamic-css');
-//         if (existingLink) existingLink.remove();
-
-//         const link = document.createElement('link');
-//         link.id = 'dynamic-css';
-//         link.rel = 'stylesheet';
-//         link.href = fileName;
-//         document.head.appendChild(link);
-//     }
-
-//     function navigateTo(route) {
-//         window.location.hash = route; // Use hash-based routing
-//         renderPage(route);
-//     }
-
-//     function renderPage(route) {
-//         const app = document.getElementById('app');
-//         switch (route) {
-//             case '#/sign-in':
-//                 app.innerHTML = pages.signIn;
-//                 loadCSS('style2.css');
-//                 setupSignIn();
-//                 break;
-//             case '#/sign-up':
-//                 app.innerHTML = pages.signUp;
-//                 loadCSS('sign-up-page.css');
-//                 setupSignUp();
-//                 break;
-//             case '#/dashboard':
-//                 app.innerHTML = pages.home;
-//                 loadCSS('dashboard.css');
-//                 break;
-//             case '#/profile':
-//                 app.innerHTML = pages.profile;
-//                 loadCSS('profile.css');
-//                 loadProfileInfo();
-//                 break;
-//             default:
-//                 app.innerHTML = pages.signIn;
-//                 loadCSS('style2.css');
-//                 setupSignIn();
-//                 break;
-//         }
-//     }
-
-//     // Initialize page based on hash
-//     // window.addEventListener('hashchange', () => {
-//     // renderPage(window.location.hash);
-//     // function navigateTo(route) {
-//     //     window.history.pushState({}, '', route);
-//     //     renderPage(route);
-//     // }
-
-//     function setupSignIn() {
-//         const loginForm = document.getElementById('login-form');
-//         const goToSignUp = document.getElementById('go-to-sign-up');
-//         const errorMsg = document.querySelector('.error-msg');
-
-//         goToSignUp.addEventListener('click', (e) => {
-//             e.preventDefault();
-//             navigateTo('/sign-up');
-//         });
-
-//         loginForm.addEventListener('submit', async (e) => {
-//             e.preventDefault();
-//             // const username = document.getElementById('login-username').value.trim();
-//             // const password = document.getElementById('login-password').value.trim();
-
-//             // errorMsg.textContent = '';
-//             // if (!username || !password) {
-//             //     errorMsg.textContent = 'Username and password are required!';
-//             //     return;
-//             // }
-
-//             // try {
-//             //     const response = await fetch('http://127.0.0.1:8000/login/', {
-//             //         method: 'POST',
-//             //         headers: { 'Content-Type': 'application/json' },
-//             //         body: JSON.stringify({ username, password }),
-//                 // });
-//             const username = document.querySelector('input[placeholder="Username"]').value.trim();
-//             const password = document.querySelector('input[placeholder="Password"]').value.trim();
-//             const errorMsg = document.querySelector('.error-msg');
-
-//             // Clear any previous error message
-//             errorMsg.style.display = 'none';
-//             errorMsg.textContent = '';
-
-//             if (!username || !password) {
-//                 errorMsg.style.display = 'block';
-//                 errorMsg.textContent = 'Username and password are required!';
-//                 return;
-//             }
-
-//             try {
-//                 const response = await fetch('http://127.0.0.1:8000/login/', {
-//                     method: 'POST',
-//                     headers: {
-//                         'Content-Type': 'application/json',
-//                     },
-//                     body: JSON.stringify({ username, password }),
-//                 });
-
-
-//                 if (response.ok) 
-//                 {
-//                     const data = await response.json();
-//                     localStorage.setItem('authToken', data.access);
-//                     navigateTo('/dashboard');
-//                 } else {
-//                     const errorData = await response.json();
-//                     errorMsg.textContent = errorData.error || 'Invalid username or password';
-//                 }
-//             } catch (error) {
-//                 console.error('Error during login:', error);
-//                 errorMsg.textContent = 'Something went wrong. Please try again later.';
-//             }
-//         });
-//     }
-
-//     function setupSignUp() {
-//         const signupForm = document.getElementById('signup-form');
-//         signupForm.addEventListener('submit', async (e) => {
-//             e.preventDefault();
-
-//             const username = document.getElementById('username').value.trim();
-//             const email = document.getElementById('email').value.trim();
-//             const password = document.getElementById('password').value.trim();
-//             const firstName = document.getElementById('first_name').value.trim();
-//             const lastName = document.getElementById('last_name').value.trim();
-
-//             try {
-//                 const response = await fetch('http://127.0.0.1:8000/register/', {
-//                     method: 'POST',
-//                     headers: { 'Content-Type': 'application/json' },
-//                     body: JSON.stringify({ username, email, password, first_name: firstName, last_name: lastName }),
-//                 });
-
-//                 if (response.ok) {
-//                     navigateTo('/sign-in');
-//                 } else {
-//                     const errorData = await response.json();
-//                     alert(errorData.error || 'Sign-up failed');
-//                 }
-//             } catch (error) {
-//                 console.error('Error during sign-up:', error);
-//                 alert('An error occurred. Please try again.');
-//             }
-//         });
-//     }
-
-//     async function loadProfileInfo() {
-//         try {
-//             const token = localStorage.getItem('authToken');
-//             if (!token) return;
-
-//             const response = await fetch('http://127.0.0.1:8000/profile/update/', {
-//                 method: 'GET',
-//                 headers: {
-//                     'Content-Type': 'application/json',
-//                     Authorization: `Bearer ${token}`,
-//                 },
-//             });
-
-//             if (response.ok) {
-//                 const data = await response.json();
-//                 document.getElementById('profile-img').src = data.image?.link || 'default-avatar.png';
-//                 document.getElementById('profile-username').innerText = data.login || 'Unknown User';
-//             }
-//         } catch (error) {
-//             console.error('Error loading profile info:', error);
-//         }
-//     }
-
-//     // window.onpopstate = () => renderPage(window.location.pathname);
-//     renderPage(window.location.pathname);
-//     renderPage(window.location.hash || '#/sign-in');
-// });
-
-
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-// document.addEventListener("DOMContentLoaded", () => {
-//     const pages = {
-//         signIn: `
-//             <div class="main">
-//                 <div class="border-up">
-//                     <img class="logo" src="images/Pongify_logo.png">
-//                     <h2>WELCOME</h2>
-//                     <p>Login with your 42 Network account or use your own email and password</p>
-//                 </div>
-//                 <div class="border-bottom">
-//                     <form id="login-form">
-//                         <input id="login-username" type="text" class="brd" placeholder="Username"><br>
-//                         <input id="login-password" type="password" class="brd" placeholder="Password">
-//                         <p class="error-msg" style="color: red;"></p>
-//                         <button class="btn" type="submit">Login</button>
-//                     </form>
-//                     <button class="btn2"><img src="images/42.png">Network</button>
-//                     <a href="#" id="go-to-sign-up">Create Account</a>
-//                 </div>
-//             </div>
-//         `,
-//         signUp: `
-//             <div class="main">
-//                 <div class="border-up">
-//                     <img class="logo" src="images/Pongify_logo.png">
-//                     <h2>WELCOME</h2>
-//                     <p>Login with your 42 Network account or use your own email and password</p>
-//                 </div>
-//                 <div class="border-bottom">
-//                     <form id="signup-form">
-//                         <input id="username" type="text" class="brd" placeholder="Username">
-//                         <input id="email" type="email" class="brd" placeholder="Email">
-//                         <input id="password" type="password" class="brd" placeholder="Password">
-//                         <input id="first_name" type="text" class="brd" placeholder="First name">
-//                         <input id="last_name" type="text" class="brd" placeholder="Last name">
-//                         <button class="btn" type="submit">Sign Up</button>
-//                     </form>
-//                     <button class="btn2"><img src="images/42.png">Network</button>
-//                 </div>
-//             </div>
-//         `,
-//         dashboard: `
-//             <div class="main">
-//                 <div class="header">
-//                     <img class="logo" src="images/Pongify_logo.png" >
-//                     <div class="test">
-//                         <a href="#" data-page="home" class="active">HOME</a>
-//                         <a href="#" data-page="profile">PROFILE</a>
-//                         <a href="#" data-page="game">GAME</a>
-//                         <a href="#" data-page="tournament">TOURNAMENT</a>
-//                         <a href="#" data-page="chat">CHAT</a>
-//                         <a href="#" data-page="settings">SETTINGS</a>
-//                     </div>
-//                 </div>
-//             </div>
-//         `,
-//         profile: `
-//             <link rel="stylesheet" href="profile.css">
-//             <div class="profile-container">
-//                 <div class="profile-info">
-//                     <img class="profile-border" src="profile imgs/main_profile_window.png" alt="Profile Border">
-//                     <img id="profile-img" class="profile-img" src="profile imgs/placeholder.png" alt="Profile Image">
-//                     <h2 id="profile-username">Username</h2>
-//                 </div>
-//                 <div class="profile-stats">
-//                     <img class="stats-border wins" src="profile imgs/level_and_wins_window.png" alt="Wins">
-//                     <img class="stats-border level" src="profile imgs/level_and_wins_window.png" alt="Level">
-//                 </div>
-//                 <div class="match-history">
-//                     <img class="match-history-border" src="profile imgs/match_history_window.png" alt="Match History">
-//                 </div>
-//             </div>
-//         `,
-//     };
-
-//     function loadCSS(fileName) {
-//         const existingLink = document.getElementById('dynamic-css');
-//         if (existingLink) existingLink.remove();
-
-//         const link = document.createElement('link');
-//         link.id = 'dynamic-css';
-//         link.rel = 'stylesheet';
-//         link.href = fileName;
-//         document.head.appendChild(link);
-//     }
-
-//     function navigateTo(route) {
-//         window.history.pushState({}, '', route); // This will change the URL
-//         renderPage(route); // Call renderPage after changing the URL
-//     }
-
-//     function renderPage(route) {
-//         const app = document.getElementById('app');
-//         switch (route) {
-//             case '#/sign-in':
-//                 app.innerHTML = pages.signIn;
-//                 loadCSS('style2.css');
-//                 setupSignIn();
-//                 break;
-//             case '#/sign-up':
-//                 app.innerHTML = pages.signUp;
-//                 loadCSS('sign-up-page.css');
-//                 setupSignUp();
-//                 break;
-//             case '#/dashboard':
-//                 app.innerHTML = pages.dashboard;
-//                 loadCSS('dashboard.css');
-//                 break;
-//             case '#/profile':
-//                 app.innerHTML = pages.profile;
-//                 loadCSS('profile.css');
-//                 loadProfileInfo();
-//                 break;
-//             default:
-//                 app.innerHTML = pages.signIn;
-//                 loadCSS('style2.css');
-//                 setupSignIn();
-//                 break;
-//         }
-//     }
-
-//     function setupSignIn() {
-//         const loginForm = document.getElementById('login-form');
-//         const goToSignUp = document.getElementById('go-to-sign-up');
-//         const errorMsg = document.querySelector('.error-msg');
-
-//         goToSignUp.addEventListener('click', (e) => {
-//             e.preventDefault();
-//             navigateTo('#/sign-up');
-//         });
-
-//         loginForm.addEventListener('submit', async (e) => {
-//             e.preventDefault();
-//             const username = document.querySelector('input[placeholder="Username"]').value.trim();
-//             const password = document.querySelector('input[placeholder="Password"]').value.trim();
-//             const errorMsg = document.querySelector('.error-msg');
-
-//             // Clear any previous error message
-//             errorMsg.style.display = 'none';
-//             errorMsg.textContent = '';
-
-//             if (!username || !password) {
-//                 errorMsg.style.display = 'block';
-//                 errorMsg.textContent = 'Username and password are required!';
-//                 return;
-//             }
-
-//             try {
-//                 const response = await fetch('http://127.0.0.1:8000/login/', {
-//                     method: 'POST',
-//                     headers: {
-//                         'Content-Type': 'application/json',
-//                     },
-//                     body: JSON.stringify({ username, password }),
-//                 });
-
-//                 if (response.ok) {
-//                     const data = await response.json();
-//                     localStorage.setItem('authToken', data.access);
-//                     navigateTo('#/dashboard');
-//                 } else {
-//                     const errorData = await response.json();
-//                     errorMsg.textContent = errorData.error || 'Invalid username or password';
-//                 }
-//             } catch (error) {
-//                 console.error('Error during login:', error);
-//                 errorMsg.textContent = 'Something went wrong. Please try again later.';
-//             }
-//         });
-//     }
-
-//     function setupSignUp() {
-//         const signupForm = document.getElementById('signup-form');
-//         signupForm.addEventListener('submit', async (e) => {
-//             e.preventDefault();
-
-//             const username = document.getElementById('username').value.trim();
-//             const email = document.getElementById('email').value.trim();
-//             const password = document.getElementById('password').value.trim();
-//             const firstName = document.getElementById('first_name').value.trim();
-//             const lastName = document.getElementById('last_name').value.trim();
-
-//             try {
-//                 const response = await fetch('http://127.0.0.1:8000/register/', {
-//                     method: 'POST',
-//                     headers: { 'Content-Type': 'application/json' },
-//                     body: JSON.stringify({ username, email, password, first_name: firstName, last_name: lastName }),
-//                 });
-
-//                 if (response.ok) {
-//                     navigateTo('#/sign-in');
-//                 } else {
-//                     const errorData = await response.json();
-//                     alert(errorData.error || 'Sign-up failed');
-//                 }
-//             } catch (error) {
-//                 console.error('Error during sign-up:', error);
-//                 alert('An error occurred. Please try again.');
-//             }
-//         });
-//     }
-
-//     async function loadProfileInfo() {
-//         try {
-//             const token = localStorage.getItem('authToken');
-//             if (!token) return;
-
-//             const response = await fetch('http://127.0.0.1:8000/profile/update/', {
-//                 method: 'GET',
-//                 headers: {
-//                     'Content-Type': 'application/json',
-//                     Authorization: `Bearer ${token}`,
-//                 },
-//             });
-
-//             if (response.ok) {
-//                 const data = await response.json();
-//                 document.getElementById('profile-img').src = data.image?.link || 'default-avatar.png';
-//                 document.getElementById('profile-username').innerText = data.login || 'Unknown User';
-//             }
-//         } catch (error) {
-//             console.error('Error loading profile info:', error);
-//         }
-//     }
-
-//     window.addEventListener('popstate', () => {
-//         renderPage(window.location.hash);
-//     });
-
-//     // Load the initial page
-//     renderPage(window.location.hash || '#/sign-in');
-// });
-
-///////////////////////////////////////////
-
-// document.addEventListener("DOMContentLoaded", () => {
-//     const pages = {
-//         signIn: `
-//             <div class="main">
-//                 <div class="border-up">
-//                     <img class="logo" src="images/Pongify_logo.png">
-//                     <h2>WELCOME</h2>
-//                     <p>Login with your 42 Network account or use your own email and password</p>
-//                 </div>
-//                 <div class="border-bottom">
-//                     <form id="login-form">
-//                         <input id="login-username" type="text" class="brd" placeholder="Username"><br>
-//                         <input id="login-password" type="password" class="brd" placeholder="Password">
-//                         <p class="error-msg" style="color: red;"></p>
-//                         <button class="btn" type="submit">Login</button>
-//                     </form>
-//                     <button class="btn2"><img src="images/42.png">Network</button>
-//                     <a href="#" id="go-to-sign-up">Create Account</a>
-//                 </div>
-//             </div>
-//         `,
-//         signUp: `
-//             <div class="main">
-//                 <div class="border-up">
-//                     <img class="logo" src="images/Pongify_logo.png">
-//                     <h2>WELCOME</h2>
-//                     <p>Login with your 42 Network account or use your own email and password</p>
-//                 </div>
-//                 <div class="border-bottom">
-//                     <form id="signup-form">
-//                         <input id="username" type="text" class="brd" placeholder="Username">
-//                         <input id="email" type="email" class="brd" placeholder="Email">
-//                         <input id="password" type="password" class="brd" placeholder="Password">
-//                         <input id="first_name" type="text" class="brd" placeholder="First name">
-//                         <input id="last_name" type="text" class="brd" placeholder="Last name">
-//                         <button class="btn" type="submit">Sign Up</button>
-//                     </form>
-//                     <button class="btn2"><img src="images/42.png">Network</button>
-//                 </div>
-//             </div>
-//         `,
-//         dashboard: `
-//             <div class="main">
-//                 <div class="header">
-//                     <img class="logo" src="images/Pongify_logo.png" >
-//                     <div class="test">
-//                         <a href="#" data-page="home" class="active">HOME</a>
-//                         <a href="#" data-page="profile">PROFILE</a>
-//                         <a href="#" data-page="game">GAME</a>
-//                         <a href="#" data-page="tournament">TOURNAMENT</a>
-//                         <a href="#" data-page="chat">CHAT</a>
-//                         <a href="#" data-page="settings">SETTINGS</a>
-//                     </div>
-//                 </div>
-//             </div>
-//         `,
-//         home: `
-//             <div class="play_local">
-//                 <div class="btn">
-//                     <button type="button" onclick="location.href='game.html';">Play Local Game</button>
-//                 </div>
-//                 <img class="f_img" src="dashboard img/full_button.png">
-//             </div>
-//             <div class="btn2">
-//                 <button type="button" onclick="location.href='game.html';">Play Online Game</button>
-//             </div>
-//             <img class="f_img" src="dashboard img/full_buton_2.png">
-//             <div>
-//                 <!-- Add Friends Button -->
-//                 <button class="f_img_l" id="add-friends-btn" type="button">Add Friends</button>
-//                 <!-- Search Bar (Initially Hidden) -->
-//                 <div id="search-bar-container" style="display: none;">
-//                     <input class="search_bar" type="text" id="search-bar" placeholder="Search friends...">
-//                 </div>
-//                 <!-- Friends Button -->
-//                 <button class="f_img_l2" id="friends-btn" type="button">Friends</button>
-//                 <img class="f_img_last" src="dashboard img/FREINDLIST_041332.png">
-//             </div>
-//         `,
-//         profile: `
-//             <link rel="stylesheet" href="profile.css">
-//             <div class="profile-container">
-//                 <div class="profile-info">
-//                     <img class="profile-border" src="profile imgs/main_profile_window.png" alt="Profile Border">
-//                     <img id="profile-img" class="profile-img" src="profile imgs/placeholder.png" alt="Profile Image">
-//                     <h2 id="profile-username">Username</h2>
-//                 </div>
-//                 <div class="profile-stats">
-//                     <img class="stats-border wins" src="profile imgs/level_and_wins_window.png" alt="Wins">
-//                     <img class="stats-border level" src="profile imgs/level_and_wins_window.png" alt="Level">
-//                 </div>
-//                 <div class="match-history">
-//                     <img class="match-history-border" src="profile imgs/match_history_window.png" alt="Match History">
-//                 </div>
-//             </div>
-//         `,
-//     };
-
-//     function loadCSS(fileName) {
-//         const existingLink = document.getElementById('dynamic-css');
-//         if (existingLink) existingLink.remove();
-
-//         const link = document.createElement('link');
-//         link.id = 'dynamic-css';
-//         link.rel = 'stylesheet';
-//         link.href = fileName;
-//         document.head.appendChild(link);
-//     }
-
-//     function navigateTo(route) {
-//         window.history.pushState({}, '', route); // This will change the URL
-//         renderPage(route); // Call renderPage after changing the URL
-//     }
-
-//     function renderPage(route) {
-//         const app = document.getElementById('app');
-
-//         switch (route) {
-//             case '#/sign-in':
-//                 app.innerHTML = pages.signIn;
-//                 loadCSS('style2.css');
-//                 setupSignIn();
-//                 break;
-//             case '#/sign-up':
-//                 app.innerHTML = pages.signUp;
-//                 loadCSS('sign-up-page.css');
-//                 setupSignUp();
-//                 break;
-//             case '#/dashboard':
-//                 app.innerHTML = pages.dashboard;
-//                 loadCSS('dashboard.css');
-//                 break;
-//             case '#/home':
-//                 content.innerHTML = pages.home; // Only content section
-//                 loadCSS('dashboard.css');
-//                 break;
-//             case '#/profile':
-//                 content.innerHTML = pages.profile; // Only content section
-//                 loadCSS('profile.css');
-//                 loadProfileInfo();
-//                 break;
-//             default:
-//                 app.innerHTML = pages.signIn;
-//                 loadCSS('style2.css');
-//                 setupSignIn();
-//                 break;
-//         }
-//     }
-
-//     function setupSignIn() {
-//         const loginForm = document.getElementById('login-form');
-//         const goToSignUp = document.getElementById('go-to-sign-up');
-//         const errorMsg = document.querySelector('.error-msg');
-
-//         goToSignUp.addEventListener('click', (e) => {
-//             e.preventDefault();
-//             navigateTo('#/sign-up');
-//         });
-
-//         loginForm.addEventListener('submit', async (e) => {
-//             e.preventDefault();
-//             const username = document.querySelector('input[placeholder="Username"]').value.trim();
-//             const password = document.querySelector('input[placeholder="Password"]').value.trim();
-//             const errorMsg = document.querySelector('.error-msg');
-
-//             // Clear any previous error message
-//             errorMsg.style.display = 'none';
-//             errorMsg.textContent = '';
-
-//             if (!username || !password) {
-//                 errorMsg.style.display = 'block';
-//                 errorMsg.textContent = 'Username and password are required!';
-//                 return;
-//             }
-
-//             try {
-//                 const response = await fetch('http://127.0.0.1:8000/login/', {
-//                     method: 'POST',
-//                     headers: {
-//                         'Content-Type': 'application/json',
-//                     },
-//                     body: JSON.stringify({ username, password }),
-//                 });
-
-//                 if (response.ok) {
-//                     const data = await response.json();
-//                     localStorage.setItem('authToken', data.access);
-//                     navigateTo('#/dashboard');
-//                 } else {
-//                     const errorData = await response.json();
-//                     errorMsg.textContent = errorData.error || 'Invalid username or password';
-//                 }
-//             } catch (error) {
-//                 console.error('Error during login:', error);
-//                 errorMsg.textContent = 'Something went wrong. Please try again later.';
-//             }
-//         });
-//     }
-
-//     function setupSignUp() {
-//         const signupForm = document.getElementById('signup-form');
-//         signupForm.addEventListener('submit', async (e) => {
-//             e.preventDefault();
-
-//             const username = document.getElementById('username').value.trim();
-//             const email = document.getElementById('email').value.trim();
-//             const password = document.getElementById('password').value.trim();
-//             const firstName = document.getElementById('first_name').value.trim();
-//             const lastName = document.getElementById('last_name').value.trim();
-
-//             try {
-//                 const response = await fetch('http://127.0.0.1:8000/register/', {
-//                     method: 'POST',
-//                     headers: { 'Content-Type': 'application/json' },
-//                     body: JSON.stringify({ username, email, password, first_name: firstName, last_name: lastName }),
-//                 });
-
-//                 if (response.ok) {
-//                     navigateTo('#/sign-in');
-//                 } else {
-//                     const errorData = await response.json();
-//                     alert(errorData.error || 'Sign-up failed');
-//                 }
-//             } catch (error) {
-//                 console.error('Error during sign-up:', error);
-//                 alert('An error occurred. Please try again.');
-//             }
-//         });
-//     }
-
-//     async function loadProfileInfo() {
-//         try {
-//             const token = localStorage.getItem('authToken');
-//             if (!token) return;
-
-//             const response = await fetch('http://127.0.0.1:8000/profile/update/', {
-//                 method: 'GET',
-//                 headers: {
-//                     'Content-Type': 'application/json',
-//                     Authorization: `Bearer ${token}`,
-//                 },
-//             });
-
-//             if (response.ok) {
-//                 const data = await response.json();
-//                 document.getElementById('profile-img').src = data.image?.link || 'default-avatar.png';
-//                 document.getElementById('profile-username').innerText = data.login || 'Unknown User';
-//             }
-//         } catch (error) {
-//             console.error('Error loading profile info:', error);
-//         }
-//     }
-
-//     window.addEventListener('popstate', () => {
-//         renderPage(window.location.hash);
-//     });
-
-//     // Load the initial page
-//     renderPage(window.location.hash || '#/sign-in');
-// });
-
 
 document.addEventListener("DOMContentLoaded", () => {
     const pages = {
@@ -906,9 +147,9 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="test">
                 <a href="#/dashboard" data-page="home">HOME</a>
                 <a href="#/profile" data-page="profile">PROFILE</a>
-                <a href="#/game" data-page="game">GAME</a>
+                <a href="#/game" data-page="game" class="active">GAME</a>
                 <a href="" data-page="tournament">TOURNAMENT</a>
-                <a id="chat" href="#/chat" data-page="chat" class="active">CHAT</a>
+                <a id="chat" href="#/chat" data-page="chat">CHAT</a>
                 <button id="signout-btn" type="button">Sign Out</button>
             </div>
             <div id="current-user" data-username="{{ request.user.username }}" data-user-id="{{ request.user.id }}"></div>
@@ -999,24 +240,6 @@ document.addEventListener("DOMContentLoaded", () => {
     `,
     };
     
-    // const urlParams = new URLSearchParams(window.location.hash.split('?')[1]);
-    // const token = urlParams.get('access_token');
-    // localStorage.setItem("authToken", token);
-
-    // const urlParams = new URLSearchParams(window.location.hash.split('?')[1]);
-    // const token = urlParams.get('access_token');
-    // const user_id = urlParams.get('user_id');
-
-    // const logedauth = localStorage.getItem("authToken");
-    // console.log("Access token before:", logedauth);
-
-    // if (token) {
-    //     localStorage.setItem("authToken", token);
-    // }
-    // if (user_id) {
-    //     localStorage.setItem("user_id", user_id);
-    // }
-
     let token;
     let user_id;
     
@@ -1042,31 +265,12 @@ document.addEventListener("DOMContentLoaded", () => {
       user_id = localStorage.getItem("user_id");
       console.log("No query parameters found. Using token from localStorage:", token);
     }
-    // console.log("Access token from 42 Network:", token);
-    // console.log("User ID from 42 Network:", user_id);
-    // const token = localStorage.getItem("authToken");
-    
-    // console.log("Access token before:", token);
-
     if (token)
     {
         const currentHash = window.location.hash;
-        // if (currentHash.startsWith("#/sign-in"))
-        // {
-        //     navigateTo('#/dashboard');
-        // }
         navigateTo(currentHash);
     }
-    // const currentHash = window.location.hash;
-    // console.log("Current hash:", currentHash);
-    // if (token && currentHash.startsWith("#/sign-in")) {
-    //     // Optionally, set a flag so that this redirect only happens once
-    //     if (!localStorage.getItem("hasRedirected")) {
-    //         localStorage.setItem("hasRedirected", "true");
-    //         navigateTo('#/dashboard');
-    //     }
-    // }
-    // console.log(urlParams)
+
     console.log("Access token from 42 Network:", token);
     function preloadStylesheet(url) {
         const link = document.createElement('link');
@@ -1332,11 +536,6 @@ document.addEventListener("DOMContentLoaded", () => {
         signupForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            // const username = document.getElementById('username').value.trim();
-            // const email = document.getElementById('email').value.trim();
-            // const password = document.getElementById('password').value.trim();
-            // const first_name = document.getElementById('first_name').value.trim();
-            // const last_name = document.getElementById('last_name').value.trim();
             const formData = {
                 username: document.getElementById('username').value,
                 email: document.getElementById('email').value,
@@ -1423,473 +622,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // async function loadProfileInfo() {
-    //     try {
-
-    //         const access_token = localStorage.getItem('authToken');
-    //         // if (!token) return;
-    //         if (!access_token) 
-    //         {
-    //             console.log("No access token found in localStorage." , {access_token});
-    //             return;
-    //         }
-    //         const response = await fetch('http://127.0.0.1:8000/profile/', {
-    //             method: 'GET',
-    //             headers: {
-    //                 "Authorization": `Bearer ${access_token}`,
-    //                 'Content-Type': 'application/json',
-    //                 // 'Accept': 'application/vnd.api+json',
-    //             },
-    //         });
-    //         console.log('Response Headers:', response);
-            
-    //         if (response.ok)
-    //         {
-    //             console.log("ALOOOOOc")
-    //             // const data = await response.json();
-    //             const result = await response.json();
-    //             const profileData = result.data.attributes;
-    //             console.log(result)
-    //             // document.getElementById('profile-img').src = data.image?.link || 'default-avatar.png';
-    //             // document.getElementById('profile-username').innerText = data.login || 'Unknown User';
-    //             document.getElementById('profile-img').src = profileData.avatar || 'default-avatar.png';
-    //             document.getElementById('profile-username').innerText = profileData.username || 'Unknown User';
-    //         }
-    //     } catch (error) {
-    //         console.error('Error loading profile info:', error);
-    //     }
-    // }
-    
-    // function initializeHomeFunctionality() {
-    //     const addFriendsButton = document.getElementById("add-friends-btn");
-    //     const friendsButton = document.getElementById("friends-btn");
-    //     const searchBarContainer = document.getElementById("search-bar-container");
-
-    //     // Add Friends Button: Toggle search bar visibility
-    //     if (addFriendsButton && searchBarContainer) {
-    //         addFriendsButton.addEventListener("click", () => {
-    //             if (searchBarContainer.style.display === "none") {
-    //                 searchBarContainer.style.display = "block";
-    //             } else {
-    //                 searchBarContainer.style.display = "none";
-    //             }
-    //         });
-    //     }
-
-    //     // Friends Button: Placeholder functionality
-    //     if (friendsButton) {
-    //         friendsButton.addEventListener("click", () => {
-    //             alert("Fetching your friends from the backend...");
-    //         });
-    //     }
-    // }
-
-    // function displayUserSearchResults(users) {
-    //     // Create (or select) a container for search results
-    //     let resultsContainer = document.getElementById("friend-search-results");
-    //     if (!resultsContainer) {
-    //       resultsContainer = document.createElement("div");
-    //       resultsContainer.id = "friend-search-results";
-    //       const searchBarContainer = document.getElementById("search-bar-container");
-    //       searchBarContainer.appendChild(resultsContainer);
-    //     }
-    //     resultsContainer.innerHTML = ""; // Clear previous results
-      
-    //     users.forEach(user => {
-    //       const userDiv = document.createElement("div");
-    //       userDiv.classList.add("user-result");
-    //       userDiv.textContent = user.username;
-          
-    //       const inviteButton = document.createElement("button");
-    //       inviteButton.textContent = "Invite";
-    //       inviteButton.addEventListener("click", async () => {
-    //         try {
-    //           // Send a friend request using the backend endpoint
-    //           const response = await fetch(`http://127.0.0.1:8000/friends/send/${user.id}/`, {
-        //             method: "POST",
-        //             headers: {
-    //               "Content-Type": "application/json",
-    //               // Include Authorization if required:
-    //               "Authorization": `Bearer ${localStorage.getItem("authToken")}`
-    //             }
-    //           });
-    //           if (response.ok) {
-        //             alert(`Friend request sent to ${user.username}`);
-    //           } else {
-    //             const errorData = await response.json();
-    //             alert(errorData.error || "Failed to send friend request");
-    //           }
-    //         } catch (error) {
-    //           console.error("Error sending friend request:", error);
-    //         }
-    //       });
-          
-    //       userDiv.appendChild(inviteButton);
-    //       resultsContainer.appendChild(userDiv);
-    //     });
-    //   }
-      
-    //   function displayFriendsList(friends) {
-    //     // Create (or select) a container for the friends list
-    //     let friendsContainer = document.getElementById("friends-list-container");
-    //     if (!friendsContainer) {
-    //       friendsContainer = document.createElement("div");
-    //       friendsContainer.id = "friends-list-container";
-    //       document.body.appendChild(friendsContainer);
-    //     }
-    //     friendsContainer.innerHTML = ""; // Clear previous list
-    //     friendsContainer.style.display = "block"; // Make sure it is visible
-      
-    //     friends.forEach(friend => {
-    //       const friendDiv = document.createElement("div");
-    //       friendDiv.classList.add("friend-item");
-    //       friendDiv.textContent = friend.username;
-    //       friendsContainer.appendChild(friendDiv);
-    //     });
-    //   }
-
-    //   function initializeHomeFunctionality() {
-        //     const addFriendsButton = document.getElementById("add-friends-btn");
-    //     const friendsButton = document.getElementById("friends-btn");
-    //     const searchBarContainer = document.getElementById("search-bar-container");
-    //     const searchInput = document.getElementById("search-bar");
-      
-    //     // Toggle the search bar when Add Friends is clicked
-    //     if (addFriendsButton && searchBarContainer) {
-    //       addFriendsButton.addEventListener("click", () => {
-    //         if (searchBarContainer.style.display === "none" || searchBarContainer.style.display === "") {
-        //           searchBarContainer.style.display = "block";
-    //         } else {
-        //           searchBarContainer.style.display = "none";
-        //         }
-    //       });
-    //     }
-      
-    //     // When the user types in the search bar, fetch matching users
-    //     if (searchInput) {
-    //       searchInput.addEventListener("keyup", async (e) => {
-    //         const query = searchInput.value.trim();
-    //         if (!query) {
-        //           // Clear results if input is empty
-    //           const resultsContainer = document.getElementById("friend-search-results");
-    //           if (resultsContainer) resultsContainer.innerHTML = "";
-    //           return;
-    //         }
-    //         try {
-    //           // Assuming your UserListView endpoint supports search via query parameter "search"
-    //           const response = await fetch(`http://127.0.0.1:8000/users/`, {
-    //             method: "GET",
-    //             headers: {
-    //               "Content-Type": "application/json",
-    //             //   "Authorization": `Bearer ${localStorage.getItem("authToken")}`
-    //               // Include Authorization if required:
-    //             }
-    //           });
-    //           if (response.ok) {
-    //             const users = await response.json();
-    //             // Depending on your backend, users might be wrapped in a "data" property (JSON:API)
-    //             const userList = users.data ? users.data.attributes : users;
-    //             displayUserSearchResults(userList);
-    //           } else {
-    //             console.error("Failed to fetch user search results. Status:", response.status);
-    //           }
-    //         } catch (error) {
-    //           console.error("Error fetching user search results:", error);
-    //         }
-    //       });
-    //     }
-      
-    //     // When the Friends button is clicked, fetch the friend list
-    //     if (friendsButton) {
-    //       friendsButton.addEventListener("click", async () => {
-    //         const user_id = localStorage.getItem("user_id");
-    //         if (!user_id) {
-    //           alert("User ID not found. Please sign in again.");
-    //           return;
-    //         }
-    //         try {
-    //           const response = await fetch(`http://127.0.0.1:8000/friends/list/`, {
-    //             method: "POST",
-    //             headers: {
-    //               "Content-Type": "application/json",
-    //               // Include Authorization if required:
-    //               "Authorization": `Bearer ${localStorage.getItem("authToken")}`
-    //             },
-    //           });
-    //           if (response.ok) {
-    //             const friends = await response.json();
-    //             displayFriendsList(friends);
-    //           } else {
-    //             alert("Failed to fetch friend list.");
-    //           }
-    //         } catch (error) {
-    //           console.error("Error fetching friend list:", error);
-    //         }
-    //       });
-    //     }
-    //   }
-    
-    // function initializeHomeFunctionality() {
-    //     const addFriendsButton = document.getElementById("add-friends-btn");
-    //     const friendsButton = document.getElementById("friends-btn");
-    //     const searchBarContainer = document.getElementById("search-bar-container");
-    //     const searchInput = document.getElementById("search-bar");
-      
-    //     // Toggle the search bar when Add Friends is clicked
-    //     if (addFriendsButton && searchBarContainer) {
-    //       addFriendsButton.addEventListener("click", async () => {
-    //         if (searchBarContainer.style.display === "none" || searchBarContainer.style.display === "") {
-    //           searchBarContainer.style.display = "block";
-    //           fetchAndDisplayUsers();
-    //         //   await fetchAndDisplayUsers(); // Fetch all users when the search bar is shown
-    //         } else {
-    //           searchBarContainer.style.display = "none";
-    //         }
-    //       });
-    //     }
-    
-    //     // When the user types in the search bar, fetch matching users
-    //     if (searchInput) {
-    //       searchInput.addEventListener("keyup", async () => {
-    //         const query = searchInput.value.trim();
-    //         if (!query) {
-    //           // If input is empty, show all users again
-    //           await fetchAndDisplayUsers();
-    //         } else {
-    //           await searchAndDisplayUsers(query);
-    //         }
-    //       });
-    //     }
-      
-    //     // When the Friends button is clicked, fetch the friend list
-    //     if (friendsButton) {
-    //       friendsButton.addEventListener("click", async () => {
-        //         const userId = localStorage.getItem("user_id");
-    //         if (!userId) {
-    //           alert("User ID not found. Please sign in again.");
-    //           return;
-    //         }
-    //         try {
-    //           const response = await fetch(`http://127.0.0.1:8000/friends/list/`, {
-    //             method: "GET",
-    //             headers: {
-    //               "Content-Type": "application/json",
-    //               "Authorization": `Bearer ${localStorage.getItem("authToken")}`, // Include Authorization if required
-    //             },
-    //           });
-    //           if (response.ok) {
-    //             const friends = await response.json();
-    //             displayFriendsList(friends);
-    //           } else {
-        //             alert("Failed to fetch friend list.");
-    //           }
-    //         } catch (error) {
-    //           console.error("Error fetching friend list:", error);
-    //         }
-    //       });
-    //     }
-    //   }
-      
-    //   async function fetchAndDisplayUsers() {
-    //     try {
-    //         const response = await fetch("http://127.0.0.1:8000/users/", {
-    //             method: "GET",
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //                 "Authorization": `Bearer ${localStorage.getItem("authToken")}`
-    //             }
-    //         });
-        
-    //         if (!response.ok) {
-    //             console.error("Failed to fetch users. Status:", response.status);
-    //             return;
-    //         }
-        
-    //         const users = await response.json();
-        
-    //         // Check the structure of the response
-    //         if (Array.isArray(users)) {
-    //             displayUserSearchResults(users); // If response is an array
-    //         } else if (users.data) {
-    //             displayUserSearchResults(users.data); // If response contains `data` key
-    //         } else {
-        //             console.error("Unexpected response format:", users);
-        //         }
-        //     } catch (error) {
-    //         console.error("Error fetching all users:", error);
-    //     }
-    // }
-      
-    //   async function searchAndDisplayUsers(query) {
-    //     try {
-    //       const response = await fetch(`http://127.0.0.1:8000/users/?search=${query}`, {
-    //         method: "GET",
-    //         headers: {
-    //           "Content-Type": "application/json",
-    //         },
-    //       });
-    //       if (response.ok) {
-    //         const users = await response.json();
-    //         displayUserSearchResults(users);
-    //       } else {
-    //         console.error("Failed to fetch search results. Status:", response.status);
-    //       }
-    //     } catch (error) {
-    //       console.error("Error fetching search results:", error);
-    //     }
-    //   }
-      
-    //   function displayUserSearchResults(users) {
-    //     let resultsContainer = document.getElementById("friend-search-results");
-    //     if (!resultsContainer) {
-    //       resultsContainer = document.createElement("div");
-    //       resultsContainer.id = "friend-search-results";
-    //       const searchBarContainer = document.getElementById("search-bar-container");
-    //       searchBarContainer.appendChild(resultsContainer);
-    //     }
-    //     resultsContainer.innerHTML = ""; // Clear previous results
-      
-    //     users.forEach((user) => {
-    //       const userDiv = document.createElement("div");
-    //       userDiv.classList.add("user-result");
-    //       userDiv.textContent = user.username;
-      
-    //       const inviteButton = document.createElement("button");
-    //       inviteButton.textContent = "Invite";
-    //       inviteButton.addEventListener("click", async () => {
-    //         try {
-    //           const response = await fetch(`http://127.0.0.1:8000/friends/send/${user.id}/`, {
-    //             method: "POST",
-    //             headers: {
-    //               "Content-Type": "application/json",
-    //               "Authorization": `Bearer ${localStorage.getItem("authToken")}`, // Include Authorization if required
-    //             },
-    //           });
-    //           if (response.ok) {
-    //             alert(`Friend request sent to ${user.username}`);
-    //           } else {
-    //             const errorData = await response.json();
-    //             alert(errorData.error || "Failed to send friend request");
-    //           }
-    //         } catch (error) {
-    //           console.error("Error sending friend request:", error);
-    //         }
-    //       });
-      
-    //       userDiv.appendChild(inviteButton);
-    //       resultsContainer.appendChild(userDiv);
-    //     });
-    //   }
-      
-    //   function displayFriendsList(friends) {
-    //     let friendsContainer = document.getElementById("friends-list-container");
-    //     if (!friendsContainer) {
-    //       friendsContainer = document.createElement("div");
-    //       friendsContainer.id = "friends-list-container";
-    //       document.body.appendChild(friendsContainer);
-    //     }
-    //     friendsContainer.innerHTML = ""; // Clear previous list
-    //     friendsContainer.style.display = "block"; // Make sure it is visible
-      
-    //     friends.forEach((friend) => {
-    //       const friendDiv = document.createElement("div");
-    //       friendDiv.classList.add("friend-item");
-    //       friendDiv.textContent = friend.username;
-    //       friendsContainer.appendChild(friendDiv);
-    //     });
-    //   }
-      
-    // async function initializeHomeFunctionality() {
-    //     const addFriendsButton = document.getElementById("add-friends-btn");
-    //     const friendsButton = document.getElementById("friends-btn");
-    //     const searchBarContainer = document.getElementById("search-bar-container");
-    //     const searchInput = document.getElementById("search-bar");
-    //     const friendsRequestButton = document.getElementById("friends-request-btn");
-    //     const friendsListContainer = document.getElementById("friends-list-container");
-      
-    //     // 1. Toggle the search bar when Add Friends is clicked
-    //     if (addFriendsButton && searchBarContainer) {
-    //       addFriendsButton.addEventListener("click", () => {
-    //         friendsListContainer.style.display = "none";
-    //         if (searchBarContainer.style.display === "none" || searchBarContainer.style.display === "" ) 
-    //         {
-    //           searchBarContainer.style.display = "block";
-    //           fetchAndDisplayUsers(); // Fetch and display all users initially
-    //         } else {
-    //           searchBarContainer.style.display = "none";
-    //         }
-    //       });
-    //     }
-        
-    //     if (friendsButton)
-    //         {
-    //             friendsButton.addEventListener("click", async () => {
-    //             searchBarContainer.style.display = "none";
-    //             if (friendsListContainer.style.display === "none" || friendsListContainer.style.display === "") 
-    //             {
-    //                 friendsListContainer.style.display = "block";
-    //                 // fetchAndDisplayFriends();
-    //             }
-    //             else
-    //             {
-    //                 friendsListContainer.style.display = "none";
-    //             }
-    //         });
-    //     }
-    //     if (searchInput) {
-    //         searchInput.addEventListener("keyup", async () => {
-    //             const query = searchInput.value.trim();
-    //             if (!query) {
-    //                 // If input is empty, show all users (limited to 5)
-    //                 fetchAndDisplayUsers();
-    //             } else {
-    //                 await searchAndDisplayUsers(query);
-    //             }
-    //         });
-    //     }
-        
-          
-    // async function initializeHomeFunctionality() {
-    //     const addFriendsButton = document.getElementById("add-friends-btn");
-    //     const friendsButton = document.getElementById("friends-btn");
-    //     const searchBarContainer = document.getElementById("search-bar-container");
-    //     const searchInput = document.getElementById("search-bar");
-      
-    //     // Toggle the search bar when Add Friends is clicked
-    //     if (addFriendsButton && searchBarContainer) {
-    //       addFriendsButton.addEventListener("click", () => {
-    //         // Hide the friend list if it’s open
-    //         const existingFriendList = document.getElementById("dynamic-friend-list");
-    //         if (existingFriendList) existingFriendList.remove();
-    //         if (searchBarContainer.style.display === "none" || searchBarContainer.style.display === "") {
-    //           searchBarContainer.style.display = "block";
-    //           fetchAndDisplayUsers();
-    //         } else {
-    //           searchBarContainer.style.display = "none";
-    //         }
-    //       });
-    //     }
-      
-    //     // Toggle the friend list when Friends is clicked
-    //     if (friendsButton) {
-    //       friendsButton.addEventListener("click", () => {
-    //         searchBarContainer.style.display = "none"; // Hide search bar if open
-    //         fetchAndDisplayFriends(friendsButton); // Fetch and toggle friend list
-    //       });
-    //     }
-      
-    //     if (searchInput) {
-    //       searchInput.addEventListener("keyup", async () => {
-    //         const query = searchInput.value.trim();
-    //         if (!query) {
-    //           fetchAndDisplayUsers();
-    //         } else {
-    //           await searchAndDisplayUsers(query);
-    //         }
-    //       });
-    //     }
-    //   }
-
     async function initializeHomeFunctionality() {
         const addFriendsButton = document.getElementById("add-friends-btn");
         const friendsButton = document.getElementById("friends-btn");
@@ -1968,67 +700,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
     }
-        // 2. Listen for typing in the search bar
-        // if (searchInput) {
-        //   searchInput.addEventListener("keyup", async () => {
-        //     const query = searchInput.value.trim();
-        //     if (!query) {
-        //       // If input is empty, show all users again
-        //       fetchAndDisplayUsers();
-        //     } else {
-        //       searchAndDisplayUsers(query);
-        //     }
-        //   });
-        // }
-      
-        // 3. Friends button: fetch and display friend list
-        // if (friendsButton) {
-        //   friendsButton.addEventListener("click", async () => {
-        //     const user_id = localStorage.getItem("user_id");
-        //     if (!user_id) {
-        //       alert("User ID not found. Please sign in again.");
-        //       return;
-        //     }
-        //     try {
-        //       const response = await fetch(`http://127.0.0.1:8000/friends/list/`, {
-        //         method: "GET",
-        //         headers: {
-        //           "Content-Type": "application/json",
-        //           "Authorization": `Bearer ${localStorage.getItem("authToken")}`
-        //         }
-        //       });
-        //       if (response.ok) {
-        //         const friends = await response.json();
-        //         // displayFriendsList(friends);
-        //       } else {
-        //         alert("Failed to fetch friend list.");
-        //       }
-        //     } catch (error) {
-        //       console.error("Error fetching friend list:", error);
-        //     }
-        //   });
-        // }
-    //   }
-      
-      // Display the friend list in a separate container or modal
-    //   function displayFriendsList(friends) {
-    //     let friendsContainer = document.getElementById("friends-list-container");
-    //     if (!friendsContainer) {
-    //       friendsContainer = document.createElement("div");
-    //       friendsContainer.id = "friends-list-container";
-    //       document.body.appendChild(friendsContainer);
-    //     }
-    //     friendsContainer.innerHTML = ""; // Clear previous list
-    //     friendsContainer.style.display = "block"; // Make sure it is visible
-    
-    //     friends.forEach((friend) => {
-    //       const friendDiv = document.createElement("div");
-    //       friendDiv.classList.add("friend-item");
-    //       friendDiv.textContent = friend.username;
-    //       console.log(friend.username);
-    //       friendsContainer.appendChild(friendDiv);
-    //     });
-    //   }
+
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
           // Pick a random index from 0 to i
@@ -2038,88 +710,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         return array;
       }
-
-      // Fetch and display ALL users
-    //   async function fetchAndDisplayUsers() {
-    //     try {
-    //       const response = await fetch("http://127.0.0.1:8000/users/", {
-    //         method: "GET",
-    //         headers: {
-    //           "Content-Type": "application/json",
-    //           // Include Authorization if your endpoint requires a token:
-    //           "Authorization": `Bearer ${localStorage.getItem("authToken")}`
-    //         }
-    //       });
-      
-    //       if (!response.ok) {
-    //         console.error("Failed to fetch users. Status:", response.status);
-    //         return;
-    //       }
-      
-    //       // Parse the JSON
-    //       const data = await response.json();
-    //       console.log("API Response:", data);
-    //     //   const userslist = data.data;
-      
-    //       // If your backend returns an array directly, or something like { data: [...] }
-    //       let userList = [];
-    //     if (data.data && Array.isArray(data.data)) {
-    //         userList = data.data.map(item => Object.assign({}, item.attributes, { id: item.id }));
-    //       } else {
-    //         console.error("Unexpected response format:", data);
-    //         return;
-    //       }
-          
-    //           // Filter out the current user (if user_id exists in localStorage)
-    //         const currentUserId = localStorage.getItem("user_id");
-    //         if (currentUserId) {
-    //           userList = userList.filter(user => parseInt(user.id) !== parseInt(currentUserId));
-    //         }
     
-    //         shuffleArray(userList);
-    //       // Limit to first 5 users
-    //       const limitedUsers = userList.slice(0, 6);
-      
-    //       // Display them in the #user-list-container
-    //       const container = document.getElementById("user-list-container");
-    //       if (!container) {
-    //         console.error("No container found with id='user-list-container'");
-    //         return;
-    //       }
-    //       container.innerHTML = ""; // Clear previous content
-      
-    //       limitedUsers.forEach(user => {
-        //         // Create a row
-    //         const userRow = document.createElement("div");
-    //         userRow.classList.add("user-row");
-            
-    //         console.log("users : " ,user);
-    //         // Avatar image
-    //         const avatarImg = document.createElement("img");
-    //         // If your backend returns a field like 'avatar_url', adjust accordingly:
-    //         avatarImg.src = user.avatar || "images/default-avatar.png";
-    //         avatarImg.alt = user.username || "User Avatar";
-    
-    //         console.log("avatar 1: " ,avatarImg.src);
-    //         console.log("avatar 2: " ,user.avatar);
-    //         // Username
-    //         const usernameSpan = document.createElement("span");
-    //         usernameSpan.classList.add("username");
-    //         usernameSpan.textContent = user.username || "Unknown";
-
-    //         console.log("username 1: " ,usernameSpan.textContent);
-    //         console.log("username 2: " ,user.username);
-      
-    //         userRow.appendChild(avatarImg);
-    //         userRow.appendChild(usernameSpan);
-    //         container.appendChild(userRow);
-    //       });
-      
-    //     } catch (error) {
-    //       console.error("Error fetching users:", error);
-    //     }
-    //   }
-
     async function sendFriendRequest(receiverId) {
         try {
             console.log("Sending friend request to user ID:", receiverId);
@@ -2373,87 +964,33 @@ async function acceptFriendRequest(requestId) {
         }
     }
 
-        // async function fetchAndDisplayFriends(buttonElement) {
-        //     try {
-        //         const response = await fetch("http://127.0.0.1:8000/friends/list/", {
-        //             method: "GET",
-        //             headers: {
-        //                 "Content-Type": "application/json",
-        //                 "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
-        //             },
-        //         });
-        //         if (!response.ok) throw new Error("Failed to fetch friend list");
 
-        //         const data = await response.json();
-        //         let friendList = data.map(item => ({
-        //             id: item.id,
-        //             username: item.username,
-        //             avatar: item.avatar || "images/default-avatar.png"
-        //         }));
-
-        //         const friendListDiv = document.createElement("div");
-        //         friendListDiv.id = "dynamic-friend-list";
-        //         friendListDiv.className = "friend-list-container";
-
-        //         friendList.forEach(friend => {
-        //             const friendDiv = document.createElement("div");
-        //             friendDiv.classList.add("friend-item");
-
-        //             const avatarImg = document.createElement("img");
-        //             avatarImg.src = friend.avatar.startsWith("https://") 
-        //                 ? friend.avatar 
-        //                 : `http://127.0.0.1:8000${friend.avatar}`;
-        //             avatarImg.alt = friend.username || "Friend Avatar";
-        //             avatarImg.classList.add("user-avatar");
-
-        //             const usernameSpan = document.createElement("span");
-        //             usernameSpan.classList.add("username");
-        //             usernameSpan.textContent = friend.username || "Unknown";
-
-        //             // Add Remove Button
-        //             const removeButton = document.createElement("button");
-        //             removeButton.textContent = "Remove";
-        //             removeButton.classList.add("remove-friend-btn");
-        //             removeButton.addEventListener("click", () => removeFriend(friend.username, friendListDiv));
-
-        //             friendDiv.appendChild(avatarImg);
-        //             friendDiv.appendChild(usernameSpan);
-        //             friendDiv.appendChild(removeButton);
-        //             friendListDiv.appendChild(friendDiv);
-        //         });
-
-        //         buttonElement.insertAdjacentElement('afterend', friendListDiv);
-        //     } catch (error) {
-        //         console.error("Error fetching friends:", error);
-        //     }
-        // }
-
-        async function removeFriend(username, friendListDiv, buttonElement) {
-            try {
-                const response = await fetch(`http://127.0.0.1:8000/friends/remove/${username}/`, {
-                    method: "DELETE",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
-                    },
-                });
-    
-                if (response.ok) {
-                    console.log(`Friend ${username} removed successfully`);
-                    friendListDiv.remove(); // Remove current list
-                    fetchAndDisplayFriends(buttonElement); // Refresh friend list
-                    
-                } else {
-                    const errorData = await response.json();
-                    console.error("Failed to remove friend:", errorData);
-                    alert(errorData.error || "Failed to remove friend");
-                }
-            }
-            catch (error) {
-                console.error("Error removing friend:", error);
-                alert("Error removing friend. Please try again.");
-            }
-        }
+      async function removeFriend(username, friendListDiv, buttonElement) {
+          try {
+              const response = await fetch(`http://127.0.0.1:8000/friends/remove/${username}/`, {
+                  method: "DELETE",
+                  headers: {
+                      "Content-Type": "application/json",
+                      "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
+                  },
+              });
+  
+              if (response.ok) {
+                  console.log(`Friend ${username} removed successfully`);
+                  friendListDiv.remove(); // Remove current list
+                  fetchAndDisplayFriends(buttonElement); // Refresh friend list
+                  
+              } else {
+                  const errorData = await response.json();
+                  console.error("Failed to remove friend:", errorData);
+                  alert(errorData.error || "Failed to remove friend");
+              }
+          }
+          catch (error) {
+              console.error("Error removing friend:", error);
+              alert("Error removing friend. Please try again.");
+          }
+      }
 
       async function  fetchAndDisplayFriendschat() {
         try {
@@ -2525,124 +1062,7 @@ async function acceptFriendRequest(requestId) {
             console.error("Error fetching friend list:", error);
         }
     }
-    // async function loadPendingFriendRequests() {
-    //     try {
-    //       const response = await fetch("http://127.0.0.1:8000/friends/pending/", {
-    //         method: "GET",
-    //         headers: {
-    //           "Content-Type": "application/json",
-    //           "Authorization": `Bearer ${localStorage.getItem("authToken")}`
-    //         }
-    //       });
-            //this one working rememebr it//////////
-    //       if (!response.ok) {
-    //         console.error("Failed to fetch pending friend requests. Status:", response.status);
-    //         return;
-    //       }
-      
-    //       const data = await response.json();
-    //       console.log("Pending friend requests API response:", data);
-          
-    //       // Map the JSON:API response: data.data is an array of friend requests,
-    //       // and each item has an "attributes" property.
-    //       let pendingList = [];
-    //       if (data.data && Array.isArray(data.data)) {
-    //         pendingList = data.data.map(item => Object.assign({}, item.attributes, { id: item.id }));
-    //       } else {
-    //         console.error("Unexpected response format for pending friend requests:", data);
-    //         return;
-    //       }
-      
-    //       const noFriendElem = document.getElementById("no-friend");
-    //       const friendRequestsList = document.getElementById("friend-requests-list");
-    //     //   const searchBarContainer = document.getElementById("search-bar-container");
-    //     //   const addFriendsButton = document.getElementById("add-friends-btn");
-    //       friendRequestsList.innerHTML = "";
-      
-    //       if (pendingList.length === 0)
-    //       {
-    //         noFriendElem.style.display = "block";
-    //       }
-    //       else
-    //       {
-    //         noFriendElem.style.display = "none";
-    //         pendingList.forEach(request => {
-    //           // Create a container for each request
-    //           const requestDiv = document.createElement("div");
-    //           requestDiv.classList.add("friend-request-item");
-              
-    //           // Create an image for the sender's avatar
-    //           const avatarImg = document.createElement("img");
-    //           avatarImg.src = request.sender_avatar || "images/default-avatar.png";
-    //           avatarImg.alt = request.sender_username || "User Avatar";
-    //           avatarImg.classList.add("user-avatar");
-      
-    //           // Create a span for the sender's username
-    //           const usernameSpan = document.createElement("span");
-    //           usernameSpan.classList.add("username");
-    //           usernameSpan.textContent = request.sender_username || "Unknown";
-      
-    //           // Append avatar and username to the request div
-    //           requestDiv.appendChild(avatarImg);
-    //           requestDiv.appendChild(usernameSpan);
-      
-    //           // Append the request div to the list container
-    //           friendRequestsList.appendChild(requestDiv);
-    //         });
-    //       }
-    //     } catch (error) {
-    //       console.error("Error loading pending friend requests:", error);
-    //     }
-    //   }
-      
-    // async function loadPendingFriendRequests() {
-    //     try {
-    //         const response = await fetch("http://127.0.0.1:8000/friends/pending/", {
-    //             method: "GET",
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //                 "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
-    //             },
-    //         });
-    
-    //         if (!response.ok) {
-    //             console.error("Failed to fetch pending friend requests.");
-    //             return;
-    //         }
-    
-    //         const data = await response.json();
-    
-    //         // Get the container elements
-    //         const noFriendRequestsMessage = document.getElementById("no-friend");
-    //         const friendRequestsList = document.getElementById("friend-requests-list");
-    
-    //         // Clear the friend requests list
-    //         friendRequestsList.innerHTML = "";
-    
-    //         if (data.length === 0) {
-    //             // Show the "No friend requests found" message if no requests
-    //             noFriendRequestsMessage.style.display = "block";
-    //         } else {
-    //             // Hide the "No friend requests found" message if requests exist
-    //             noFriendRequestsMessage.style.display = "none";
-    
-    //             // Render each friend request
-    //             data.data.forEach((request) => {
-    //                 const requestElement = document.createElement("div");
-    //                 requestElement.classList.add("friend-request");
-    
-    //                 // Display sender information and actions
-    //                 requestElement.innerHTML = `
-    //                     <p>${request.sender.username} has sent you a friend request.</p>
-    //                 `;
-    
-    //                 friendRequestsList.appendChild(requestElement);
-    //             });
-    //         }
-    //     } catch (error) {
-    //         console.error("Error loading pending friend requests:", error);
-    //     }
-    // }
+
 
     function displayUserSearchResults(users) {
         const resultsContainer = document.getElementById("user-list-container");
@@ -2749,81 +1169,6 @@ async function acceptFriendRequest(requestId) {
         // const limitedFiltered = filteredUsers.slice(0, 5);
         displayUserSearchResults(filteredUsers);
       }
-
-      // Fetch and display users matching a search query
-    //   async function searchAndDisplayUsers(query) {
-    //     try {
-    //       const response = await fetch(`http://127.0.0.1:8000/users/?search=${query}`, {
-    //         method: "GET",
-    //         headers: {
-    //           "Content-Type": "application/json",
-    //           "Authorization": `Bearer ${localStorage.getItem("authToken")}`
-    //         }
-    //       });
-    //       if (response.ok) {
-    //         const users = await response.json();
-    //         const userList = Array.isArray(users) ? users : users.data || [];
-    //         displayUserSearchResults(userList);
-    //       } else {
-    //         console.error("Failed to fetch search results. Status:", response.status);
-    //       }
-    //     } catch (error) {
-    //       console.error("Error fetching search results:", error);
-    //     }
-    //   }
-      
-      // Display the fetched users with avatar + username + invite button
-    //   function displayUserSearchResults(users) {
-    //     let resultsContainer = document.getElementById("friend-search-results");
-    //     if (!resultsContainer) return;
-      
-    //     resultsContainer.innerHTML = ""; // Clear previous results
-      
-    //     users.forEach((user) => {
-    //       const userDiv = document.createElement("div");
-    //       userDiv.classList.add("user-result");
-      
-    //       // If your backend returns an 'avatar_url' or 'avatar' field, use it. Otherwise, use a default image.
-    //       const avatarImg = document.createElement("img");
-    //       avatarImg.src = user.avatar_url || "images/default-avatar.png";
-    //       avatarImg.alt = user.username;
-    //       avatarImg.classList.add("user-avatar");
-      
-    //       const usernameSpan = document.createElement("span");
-    //       usernameSpan.textContent = user.username;
-    //       usernameSpan.classList.add("username");
-      
-    //       const inviteButton = document.createElement("button");
-    //       inviteButton.textContent = "Invite";
-    //       inviteButton.addEventListener("click", async () => {
-    //         try {
-    //           const response = await fetch(`http://127.0.0.1:8000/friends/send/${user.id}/`, {
-    //             method: "POST",
-    //             headers: {
-    //               "Content-Type": "application/json",
-    //               "Authorization": `Bearer ${localStorage.getItem("authToken")}`
-    //             }
-    //           });
-    //           if (response.ok) {
-    //             alert(`Friend request sent to ${user.username}`);
-    //           } else {
-    //             const errorData = await response.json();
-    //             alert(errorData.error || "Failed to send friend request");
-    //           }
-    //         } catch (error) {
-    //           console.error("Error sending friend request:", error);
-    //         }
-    //       });
-      
-    //       userDiv.appendChild(avatarImg);
-    //       userDiv.appendChild(usernameSpan);
-    //       userDiv.appendChild(inviteButton);
-      
-    //       resultsContainer.appendChild(userDiv);
-    //     });
-    //   }
-      
-      
 
     ////////////////////////////edit profile/////////////////////////////
 
@@ -3063,16 +1408,6 @@ async function acceptFriendRequest(requestId) {
                 if (response.ok) {
                     // Update username
                     document.getElementById('profile-username').innerText = newUsername;
-        
-                    // Update avatar if uploaded, using backend URL, not avatarPreview.src
-                    // if (file) {
-                    //     const newAvatarUrl = result.profile?.avatar || 'images/default-avatar.png';
-                    //     console.log("New avatar URL from backend:", newAvatarUrl);
-                    //     const profileImg = document.getElementById('profile-img');
-                    //     profileImg.src = `http://127.0.0.1:8000${newAvatarUrl}?t=${new Date().getTime()}`; // Force reload with base URL
-                    //     profileImg.onload = () => console.log("Image loaded successfully");
-                    //     profileImg.onerror = () => console.error("Image failed to load:", newAvatarUrl);
-                    // }
                     loadProfileInfo();
                     alert("Profile updated successfully!");
                     // Sync with backend
@@ -3092,436 +1427,7 @@ async function acceptFriendRequest(requestId) {
             modal.style.transform = 'scale(0.9)';
             setTimeout(() => document.body.removeChild(overlay), 300);
         });
-        // saveButton.addEventListener('click', async () => {
-        //     const newUsername = usernameInput.value.trim();
-        //     console.log("new user: ", newUsername);
-        //     const file = avatarInput.files[0]; // Get the file from the input
-        
-        //     // If no new username, keep the existing one
-        //     if (!newUsername) {
-        //         usernameInput.value = document.getElementById('profile-username').innerText;
-        //         return;
-        //     }
-        
-        //     try {
-        //         const token = localStorage.getItem('authToken'); // Get the token from localStorage
-        //         const formData = new FormData();
-        
-        //         // Append the username to the FormData
-        //         formData.append('username', newUsername);
-        
-        //         // If a file (avatar) is selected, append it to the FormData
-        //         if (file) {
-        //             formData.append('avatar', file); // Ensure the name matches the backend expected field name
-        //         }
-        
-        //         // Make the PUT request to the backend with the FormData in the body
-        //         const response = await fetch('http://127.0.0.1:8000/profile/update/', {
-        //             method: 'PUT',
-        //             headers: {
-        //                 'Authorization': `Bearer ${token}`,  // Include the Bearer token
-        //                 // Do not set 'Content-Type' here, let the browser handle it automatically
-        //             },
-        //             body: formData,  // Send the FormData as the body of the request
-        //         });
-        
-        //         console.log("Response status:", response.status); // Log the response status
-        //         const result = await response.json(); // Parse the response as JSON
-        //         console.log("Backend response:", result); // Log the result from the backend
-        
-        //         if (response.ok) {
-        //             // Check if the backend returns the avatar URL correctly
-        //             if (result.data && result.data.profile && result.data.profile.attributes && result.data.profile.attributes.avatar) {
-        //                 const avatarUrl = result.data.profile.attributes.avatar;  // Extract the full avatar URL
-        //                 console.log("Updated avatar URL:", avatarUrl);  // Log for debugging
-        
-        //                 // Update the profile image with the new avatar URL
-        //                 const avatarImg = document.getElementById('profile-img');
-        //                 avatarImg.src = avatarUrl;  // Update the profile image source
-        
-        //                 // If needed, also update the avatar preview in the modal
-        //                 const avatarPreview = document.getElementById('avatar-preview');
-        //                 avatarPreview.src = avatarUrl;
-        //             }
-        
-        //             // You can also update the username if needed
-        //             const profileUsername = document.getElementById('profile-username');
-        //             profileUsername.innerText = newUsername;
-        
-        //             loadProfileInfo();  // Optionally refresh the profile data from backend
-        
-        //         } else {
-        //             console.error("Server error:", result);
-        //             alert("Failed to update profile: " + JSON.stringify(result));
-        //         }
-        //     } catch (error) {
-        //         console.error("Error updating profile:", error);
-        //         alert("Error updating profile. Please try again.");
-        //     }
-        
-        //     // Hide the modal after updating
-        //     overlay.style.opacity = '0';
-        //     modal.style.opacity = '0';
-        //     modal.style.transform = 'scale(0.9)';
-        //     setTimeout(() => document.body.removeChild(overlay), 300);
-        // });
-        
-                
     }
-    // function initializeProfileEdit() {
-    //     const editProfileButton = document.getElementById('edit-p-btn');
-    //     if (editProfileButton) {
-    //         editProfileButton.addEventListener('click', openEditProfileModal);
-    //     }
-    // }
-    
-    // function openEditProfileModal() {
-    //     // Create overlay
-    //     const overlay = document.createElement('div');
-    //     overlay.id = 'edit-profile-overlay';
-    //     overlay.style.position = 'fixed';
-    //     overlay.style.top = '0';
-    //     overlay.style.left = '0';
-    //     overlay.style.width = '100%';
-    //     overlay.style.height = '100%';
-    //     overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.6)'; // Slightly darker overlay
-    //     overlay.style.display = 'flex';
-    //     overlay.style.alignItems = 'center';
-    //     overlay.style.justifyContent = 'center';
-    //     overlay.style.zIndex = '1000';
-    //     overlay.style.opacity = '0';
-    //     overlay.style.transition = 'opacity 0.3s ease'; // Fade-in/out animation
-    
-    //     // Create modal container
-    //     const modal = document.createElement('div');
-    //     modal.id = 'edit-profile-modal';
-    //     modal.style.backgroundColor = '#fff';
-    //     modal.style.padding = '25px';
-    //     modal.style.borderRadius = '12px';
-    //     modal.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.2)'; // Soft shadow
-    //     modal.style.width = '350px';
-    //     modal.style.maxWidth = '90%';
-    //     modal.style.fontFamily = "'Poppins', sans-serif";
-    //     modal.style.transform = 'scale(0.9)'; // Start slightly smaller for animation
-    //     modal.style.opacity = '0';
-    //     modal.style.transition = 'transform 0.3s ease, opacity 0.3s ease'; // Scale and fade animation
-    
-    //     // Title
-    //     const title = document.createElement('h3');
-    //     title.innerText = 'Edit Profile';
-    //     title.style.margin = '0 0 20px';
-    //     title.style.fontSize = '24px';
-    //     title.style.color = '#333';
-    //     title.style.textAlign = 'center';
-    
-    //     // Form container
-    //     const form = document.createElement('form');
-    //     form.id = 'edit-profile-form';
-    
-    //     // Username input
-    //     const usernameLabel = document.createElement('label');
-    //     usernameLabel.innerText = 'Username';
-    //     usernameLabel.style.display = 'block';
-    //     usernameLabel.style.marginBottom = '5px';
-    //     usernameLabel.style.fontSize = '14px';
-    //     usernameLabel.style.color = '#555';
-    
-    //     const usernameInput = document.createElement('input');
-    //     usernameInput.type = 'text';
-    //     usernameInput.id = 'edit-username';
-    //     usernameInput.value = document.getElementById('profile-username').innerText || '';
-    //     usernameInput.style.width = '100%';
-    //     usernameInput.style.padding = '10px';
-    //     usernameInput.style.marginBottom = '15px';
-    //     usernameInput.style.border = '1px solid #ddd';
-    //     usernameInput.style.borderRadius = '6px';
-    //     usernameInput.style.fontSize = '16px';
-    //     usernameInput.style.boxSizing = 'border-box';
-    //     usernameInput.style.transition = 'border-color 0.3s ease';
-    
-    //     // Avatar URL input
-    //     const avatarLabel = document.createElement('label');
-    //     avatarLabel.innerText = 'Avatar URL';
-    //     avatarLabel.style.display = 'block';
-    //     avatarLabel.style.marginBottom = '5px';
-    //     avatarLabel.style.fontSize = '14px';
-    //     avatarLabel.style.color = '#555';
-    
-    //     const avatarInput = document.createElement('input');
-    //     avatarInput.type = 'text';
-    //     avatarInput.id = 'edit-avatar';
-    //     avatarInput.value = document.getElementById('profile-img').src || '';
-    //     avatarInput.style.width = '100%';
-    //     avatarInput.style.padding = '10px';
-    //     avatarInput.style.marginBottom = '20px';
-    //     avatarInput.style.border = '1px solid #ddd';
-    //     avatarInput.style.borderRadius = '6px';
-    //     avatarInput.style.fontSize = '16px';
-    //     avatarInput.style.boxSizing = 'border-box';
-    //     avatarInput.style.transition = 'border-color 0.3s ease';
-    
-    //     // Buttons container
-    //     const buttonsDiv = document.createElement('div');
-    //     buttonsDiv.style.display = 'flex';
-    //     buttonsDiv.style.justifyContent = 'space-between';
-    
-    //     const saveButton = document.createElement('button');
-    //     saveButton.innerText = 'Save';
-    //     saveButton.type = 'button'; // Prevent form submission
-    //     saveButton.style.padding = '10px 20px';
-    //     saveButton.style.backgroundColor = '#28a745';
-    //     saveButton.style.color = 'white';
-    //     saveButton.style.border = 'none';
-    //     saveButton.style.borderRadius = '6px';
-    //     saveButton.style.cursor = 'pointer';
-    //     saveButton.style.fontSize = '16px';
-    //     saveButton.style.transition = 'background-color 0.3s ease';
-    
-    //     const cancelButton = document.createElement('button');
-    //     cancelButton.innerText = 'Cancel';
-    //     cancelButton.type = 'button';
-    //     cancelButton.style.padding = '10px 20px';
-    //     cancelButton.style.backgroundColor = '#dc3545';
-    //     cancelButton.style.color = 'white';
-    //     cancelButton.style.border = 'none';
-    //     cancelButton.style.borderRadius = '6px';
-    //     cancelButton.style.cursor = 'pointer';
-    //     cancelButton.style.fontSize = '16px';
-    //     cancelButton.style.transition = 'background-color 0.3s ease';
-    
-    //     // Append elements
-    //     form.appendChild(usernameLabel);
-    //     form.appendChild(usernameInput);
-    //     form.appendChild(avatarLabel);
-    //     form.appendChild(avatarInput);
-    //     buttonsDiv.appendChild(saveButton);
-    //     buttonsDiv.appendChild(cancelButton);
-    //     form.appendChild(buttonsDiv);
-    //     modal.appendChild(title);
-    //     modal.appendChild(form);
-    //     overlay.appendChild(modal);
-    //     document.body.appendChild(overlay);
-    
-    //     // Animation trigger (after appending to DOM)
-    //     setTimeout(() => {
-    //         overlay.style.opacity = '1';
-    //         modal.style.opacity = '1';
-    //         modal.style.transform = 'scale(1)';
-    //     }, 10);
-    
-    //     // Input hover/focus effects
-    //     [usernameInput, avatarInput].forEach(input => {
-    //         input.addEventListener('focus', () => {
-    //             input.style.borderColor = '#28a745';
-    //         });
-    //         input.addEventListener('blur', () => {
-    //             input.style.borderColor = '#ddd';
-    //         });
-    //     });
-    
-    //     // Button hover effects
-    //     saveButton.addEventListener('mouseover', () => {
-    //         saveButton.style.backgroundColor = '#218838';
-    //     });
-    //     saveButton.addEventListener('mouseout', () => {
-    //         saveButton.style.backgroundColor = '#28a745';
-    //     });
-    //     cancelButton.addEventListener('mouseover', () => {
-    //         cancelButton.style.backgroundColor = '#c82333';
-    //     });
-    //     cancelButton.addEventListener('mouseout', () => {
-    //         cancelButton.style.backgroundColor = '#dc3545';
-    //     });
-    
-    //     // Cancel: Fade out and remove
-    //     cancelButton.addEventListener('click', () => {
-    //         overlay.style.opacity = '0';
-    //         modal.style.opacity = '0';
-    //         modal.style.transform = 'scale(0.9)';
-    //         setTimeout(() => document.body.removeChild(overlay), 300); // Match transition duration
-    //     });
-    
-    //     // Save: Update profile and close
-    //     saveButton.addEventListener('click', async () => {
-    //         const newUsername = usernameInput.value.trim();
-    //         const newAvatar = avatarInput.value.trim();
-    
-    //         if (!newUsername) {
-    //             usernameInput.value = document.getElementById('profile-username').innerText;
-    //             return;
-    //         }
-    
-    //         try {
-    //             const token = localStorage.getItem('authToken');
-    //             const response = await fetch('http://127.0.0.1:8000/profile/update/', {
-    //                 method: 'PUT',
-    //                 headers: {
-    //                     'Content-Type': 'application/json',
-    //                     'Authorization': `Bearer ${token}`
-    //                 },
-    //                 body: JSON.stringify({
-    //                     user: { username: newUsername },
-    //                     avatar: newAvatar || undefined // Send avatar only if provided
-    //                 })
-    //             });
-    
-    //             if (response.ok) {
-    //                 const result = await response.json();
-    //                 document.getElementById('profile-username').innerText = newUsername;
-    //                 if (newAvatar) document.getElementById('profile-img').src = newAvatar;
-    //                 alert("Profile updated successfully!");
-    //             } else {
-    //                 const errorData = await response.json();
-    //                 console.error("Update error:", errorData);
-    //                 alert("Failed to update profile: " + JSON.stringify(errorData));
-    //             }
-    //         } catch (error) {
-    //             console.error("Error updating profile:", error);
-    //             alert("Error updating profile. Please try again.");
-    //         }
-    
-    //         overlay.style.opacity = '0';
-    //         modal.style.opacity = '0';
-    //         modal.style.transform = 'scale(0.9)';
-    //         setTimeout(() => document.body.removeChild(overlay), 300);
-    //     });
-    
-    //     // Close on overlay click (outside modal)
-    //     overlay.addEventListener('click', (e) => {
-    //         if (e.target === overlay) {
-    //             overlay.style.opacity = '0';
-    //             modal.style.opacity = '0';
-    //             modal.style.transform = 'scale(0.9)';
-    //             setTimeout(() => document.body.removeChild(overlay), 300);
-    //         }
-    //     });
-    // }
-    // function initializeProfileEdit() {
-    //     const editProfileButton = document.getElementById('edit-p-btn');
-    //     if (editProfileButton) {
-    //       editProfileButton.addEventListener('click', openEditProfileModal);
-    //     }
-    //   }
-      
-
-    // function openEditProfileModal() {
-    //     // Create modal overlay
-    //     const modal = document.createElement('div');
-    //     modal.id = 'edit-profile-modal';
-    //     modal.style.position = 'fixed';
-    //     modal.style.top = '0';
-    //     modal.style.left = '0';
-    //     modal.style.width = '100%';
-    //     modal.style.height = '100%';
-    //     modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
-    //     modal.style.display = 'flex';
-    //     modal.style.alignItems = 'center';
-    //     modal.style.justifyContent = 'center';
-    //     modal.style.zIndex = '1000';
-      
-    //     // Create modal content container
-    //     const modalContent = document.createElement('div');
-    //     modalContent.style.backgroundColor = '#fff';
-    //     modalContent.style.padding = '20px';
-    //     modalContent.style.borderRadius = '8px';
-    //     modalContent.style.minWidth = '300px';
-    //     modalContent.style.textAlign = 'center';
-      
-    //     // Create form elements
-    //     const title = document.createElement('h3');
-    //     title.innerText = 'Edit Profile';
-      
-    //     // Username input
-    //     const usernameLabel = document.createElement('label');
-    //     usernameLabel.innerText = 'Username: ';
-    //     const usernameInput = document.createElement('input');
-    //     usernameInput.type = 'text';
-    //     usernameInput.id = 'edit-username';
-    //     // Prefill with current username
-    //     const currentUsername = document.getElementById('profile-username').innerText || '';
-    //     usernameInput.value = currentUsername;
-    //     usernameInput.style.marginBottom = '10px';
-    //     usernameInput.style.display = 'block';
-        
-    //     // Avatar input
-    //     const avatarLabel = document.createElement('label');
-    //     avatarLabel.innerText = 'Avatar URL: ';
-    //     const avatarInput = document.createElement('input');
-    //     avatarInput.type = 'text';
-    //     avatarInput.id = 'edit-avatar';
-    //     // Prefill with current avatar source
-    //     const currentAvatar = document.getElementById('profile-img').src || '';
-    //     avatarInput.value = currentAvatar;
-    //     avatarInput.style.marginBottom = '10px';
-    //     avatarInput.style.display = 'block';
-      
-    //     // Save and Cancel buttons
-    //     const saveButton = document.createElement('button');
-    //     saveButton.innerText = 'Save';
-    //     saveButton.style.marginRight = '10px';
-    //     const cancelButton = document.createElement('button');
-    //     cancelButton.innerText = 'Cancel';
-      
-    //     // Append elements to modal content
-    //     modalContent.appendChild(title);
-    //     modalContent.appendChild(usernameLabel);
-    //     modalContent.appendChild(usernameInput);
-    //     modalContent.appendChild(avatarLabel);
-    //     modalContent.appendChild(avatarInput);
-    //     modalContent.appendChild(saveButton);
-    //     modalContent.appendChild(cancelButton);
-        
-    //     modal.appendChild(modalContent);
-    //     document.body.appendChild(modal);
-      
-    //     // Event listener for Cancel button: remove the modal
-    //     cancelButton.addEventListener('click', () => {
-    //       document.body.removeChild(modal);
-    //     });
-      
-    //     // Event listener for Save button: update the profile
-    //     saveButton.addEventListener('click', async () => {
-    //       const newUsername = usernameInput.value.trim();
-    //       if (!newUsername) {
-    //         //leave the same value if the input is empty
-    //         usernameInput.value = document.getElementById('profile-username').innerText;
-    //         return;
-    //       }
-    //       const newAvatar = avatarInput.value.trim();
-      
-    //       // Optionally validate your input here
-      
-    //       try {
-    //         const token = localStorage.getItem('authToken');
-    //         const response = await fetch('http://127.0.0.1:8000/profile/update/', {
-    //             method: 'PUT',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //                 'Authorization': `Bearer ${token}`
-    //             },
-    //             body: JSON.stringify({
-    //                 user: { username: newUsername }
-    //                 // avatar: newAvatar  // Omit for testing
-    //             })
-    //         });
-        
-    //         if (response.ok) {
-    //             const result = await response.json();
-    //             document.getElementById('profile-username').innerText = newUsername;
-    //             alert("Profile updated successfully!");
-    //         } else {
-    //             const errorData = await response.json();
-    //             console.error("Update error:", errorData);
-    //             alert("Failed to update profile: " + JSON.stringify(errorData));
-    //         }
-    //     } catch (error) {
-    //         console.error("Error updating profile:", error);
-    //         alert("Error updating profile. Please try again.");
-    //     }
-    //     document.body.removeChild(modal); // Remove modal after update
-    //     });
-    //   }
-      
       /////////////////////////////chat////////////////////////////////////
       
       document.querySelectorAll('.user').forEach(userElem => {
@@ -3531,7 +1437,8 @@ async function acceptFriendRequest(requestId) {
               switchConversation(userId);
           });
       });
-      
+
+
       async function initializechatFunctionality() {
         const sendButton = document.getElementById('send-btn');
         const chatInput = document.getElementById('chat-input');
@@ -3564,6 +1471,8 @@ async function acceptFriendRequest(requestId) {
         let chatSocket = null;
         let messageQueue = [];
         const conversations = JSON.parse(localStorage.getItem('conversations')) || {};
+        // Store blocked users in localStorage
+        let blockedUsers = JSON.parse(localStorage.getItem('blockedUsers')) || [];
     
         await fetchAndDisplayFriendschat();
         loadChatHistory();
@@ -3593,7 +1502,9 @@ async function acceptFriendRequest(requestId) {
                 console.log("WebSocket connected successfully.");
                 while (messageQueue.length > 0) {
                     const message = messageQueue.shift();
-                    chatSocket.send(JSON.stringify({ "message": message }));
+                    if (!blockedUsers.includes(receiver.toLowerCase())) {
+                        chatSocket.send(JSON.stringify({ "message": message }));
+                    }
                 }
             };
     
@@ -3603,6 +1514,11 @@ async function acceptFriendRequest(requestId) {
                 if (data.message) {
                     const timestamp = new Date().toLocaleTimeString();
                     const messageSender = data.sender === sender ? 'sender' : 'receiver';
+                    // Check if the sender is blocked
+                    if (blockedUsers.includes(data.sender.toLowerCase())) {
+                        console.log(`Blocked message from ${data.sender} ignored.`);
+                        return; // Ignore messages from blocked users
+                    }
                     console.log(`Message from ${data.sender} to ${receiver}, displayed as ${messageSender}`);
                     if (!conversations[receiver]) conversations[receiver] = [];
                     const exists = conversations[receiver].some(msg => 
@@ -3632,6 +1548,13 @@ async function acceptFriendRequest(requestId) {
             const userMessage = chatInput.value.trim();
             if (!userMessage || !receiver || !chatSocket) {
                 console.warn("Cannot send message. Missing:", { userMessage, receiver, chatSocket });
+                return;
+            }
+    
+            // Check if the receiver is blocked
+            if (blockedUsers.includes(receiver.toLowerCase())) {
+                alert(`You have blocked ${receiver}. You cannot send messages to blocked users.`);
+                chatInput.value = '';
                 return;
             }
     
@@ -3680,7 +1603,10 @@ async function acceptFriendRequest(requestId) {
             if (conversations[receiver]) {
                 conversations[receiver].forEach(({ text, type, time }) => {
                     const senderName = type === 'sender' ? sender : receiver;
-                    displayMessage(text, type, time, senderName);
+                    // Filter out messages from blocked users
+                    if (!blockedUsers.includes(senderName.toLowerCase())) {
+                        displayMessage(text, type, time, senderName);
+                    }
                 });
             }
         }
@@ -3697,6 +1623,259 @@ async function acceptFriendRequest(requestId) {
             chatHeader.textContent = `Chat with ${receiver}`;
             connectWebSocket();
             loadChatHistory();
+        }
+    
+        async function fetchAndDisplayFriendschat() {
+            try {
+                const response = await fetch("http://127.0.0.1:8000/friends/list/", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
+                    },
+                });
+    
+                if (!response.ok) {
+                    console.error("Failed to fetch friend list. Status:", response.status);
+                    return;
+                }
+    
+                const data = await response.json();
+                console.log("Friend list API response:", data);
+    
+                let friendList = [];
+                if (data.data && Array.isArray(data.data)) {
+                    friendList = data.data.map(item => Object.assign({}, item.attributes, { id: item.id }));
+                } else {
+                    console.error("Unexpected response format for friend list:", data);
+                    return;
+                }
+    
+                const friendListContainer = document.getElementById("chat-friend-list");
+                if (!friendListContainer) {
+                    console.error("Chat friend list container not found.");
+                    return;
+                }
+    
+                friendListContainer.innerHTML = ""; // Clear previous content
+    
+                if (friendList.length === 0) {
+                    const noFriendsMessage = document.createElement("div");
+                    noFriendsMessage.classList.add("no-friends");
+                    noFriendsMessage.textContent = "No friends found.";
+                    friendListContainer.appendChild(noFriendsMessage);
+                } else {
+                    friendList.forEach(friend => {
+                        const friendDiv = document.createElement("div");
+                        friendDiv.classList.add("user");
+                        friendDiv.setAttribute("data-friend-id", friend.id);
+                        friendDiv.setAttribute("data-friend-name", friend.username);
+                        friendDiv.addEventListener("click", () => switchConversation(friend.username));
+    
+                        const iconDiv = document.createElement("div");
+                        iconDiv.classList.add("icon");
+                        const avatarImg = document.createElement("img");
+                        if (friend.avatar.startsWith("https://")) {
+                            avatarImg.src = friend.avatar || "images/default-avatar.png";
+                        } else {
+                            avatarImg.src = `http://127.0.0.1:8000${friend.avatar}` || "images/default-avatar.png";
+                        }
+                        avatarImg.alt = friend.username || "Friend Avatar";
+    
+                        const nameDiv = document.createElement("div");
+                        nameDiv.textContent = friend.username || "Unknown";
+    
+                        // Add View Profile Button
+                        const viewProfileButton = document.createElement("button");
+                        viewProfileButton.textContent = "View Profile";
+                        viewProfileButton.classList.add("view-profile-btn");
+                        viewProfileButton.addEventListener("click", (e) => {
+                            e.stopPropagation(); // Prevent triggering switchConversation
+                            showFriendProfile(friend.username, friend.id, friend.avatar);
+                        });
+    
+                        // Add Block Button
+                        const blockButton = document.createElement("button");
+                        blockButton.textContent = blockedUsers.includes(friend.username.toLowerCase()) ? "Unblock" : "Block";
+                        blockButton.classList.add("block-user-btn");
+                        blockButton.addEventListener("click", (e) => {
+                            e.stopPropagation(); // Prevent triggering switchConversation
+                            toggleBlockUser(friend.username);
+                        });
+    
+                        iconDiv.appendChild(avatarImg);
+                        friendDiv.appendChild(iconDiv);
+                        friendDiv.appendChild(nameDiv);
+                        friendDiv.appendChild(viewProfileButton);
+                        friendDiv.appendChild(blockButton);
+                        friendListContainer.appendChild(friendDiv);
+                    });
+                }
+            } catch (error) {
+                console.error("Error fetching friend list:", error);
+            }
+        }
+    
+        async function showFriendProfile(username, userId, avatarUrl) {
+            try {
+                const token = localStorage.getItem('authToken');
+                // Use FriendListView to fetch the friend's profile
+                const response = await fetch(`http://127.0.0.1:8000/friends/list/`, {
+                    method: 'GET',
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                });
+    
+                if (!response.ok) {
+                    console.error("Failed to fetch friend list for profile. Status:", response.status);
+                    alert("Failed to load profile. Please try again.");
+                    return;
+                }
+    
+                const data = await response.json();
+                console.log("Friend list for profile API response:", data);
+    
+                let friendData = null;
+                if (data.data && Array.isArray(data.data)) {
+                    friendData = data.data.find(item => 
+                        item.attributes.username === username || item.id === userId
+                    );
+                }
+    
+                if (!friendData) {
+                    console.error("Friend not found in list:", username, userId);
+                    alert("Friend profile not found. Please try again.");
+                    return;
+                }
+    
+                const profile = friendData.attributes || {};
+    
+                // Create overlay for the profile modal
+                const overlay = document.createElement('div');
+                overlay.id = 'profile-overlay';
+                overlay.style.position = 'fixed';
+                overlay.style.top = '0';
+                overlay.style.left = '0';
+                overlay.style.width = '100%';
+                overlay.style.height = '100%';
+                overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.6)';
+                overlay.style.display = 'flex';
+                overlay.style.alignItems = 'center';
+                overlay.style.justifyContent = 'center';
+                overlay.style.zIndex = '1001';
+                overlay.style.opacity = '0';
+                overlay.style.transition = 'opacity 0.3s ease';
+    
+                // Create modal container
+                const modal = document.createElement('div');
+                modal.id = 'friend-profile-modal';
+                modal.style.backgroundColor = '#fff';
+                modal.style.padding = '20px';
+                modal.style.borderRadius = '12px';
+                modal.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.2)';
+                modal.style.width = '300px';
+                modal.style.maxWidth = '90%';
+                modal.style.fontFamily = "'Poppins', sans-serif";
+                modal.style.transform = 'scale(0.9)';
+                modal.style.opacity = '0';
+                modal.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+    
+                // Profile content with placeholders for wins and losses
+                const profileContent = `
+                    <h3 style="margin: 0 0 15px; font-size: 20px; color: #333; text-align: center;">${profile.username || username}'s Profile</h3>
+                    <div style="text-align: center;">
+                        <img src="${avatarUrl || profile.avatar || 'images/default-avatar.png'}" alt="${profile.username || username}'s Avatar" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 15px;">
+                        <p style="font-size: 16px; color: #555; margin: 0;">Username: ${profile.username || username}</p>
+                        <p style="font-size: 16px; color: #888; margin: 5px 0;">Wins: <span id="profile-wins">Not available yet</span></p>
+                        <p style="font-size: 16px; color: #888; margin: 5px 0;">Losses: <span id="profile-losses">Not available yet</span></p>
+                    </div>
+                `;
+    
+                modal.innerHTML = profileContent;
+    
+                // Close button
+                const closeButton = document.createElement('button');
+                closeButton.innerText = 'Close';
+                closeButton.style.padding = '8px 16px';
+                closeButton.style.backgroundColor = '#dc3545';
+                closeButton.style.color = 'white';
+                closeButton.style.border = 'none';
+                closeButton.style.borderRadius = '6px';
+                closeButton.style.cursor = 'pointer';
+                closeButton.style.fontSize = '14px';
+                closeButton.style.marginTop = '15px';
+                closeButton.style.display = 'block';
+                closeButton.style.marginLeft = 'auto';
+                closeButton.style.marginRight = 'auto';
+                closeButton.addEventListener('click', () => {
+                    overlay.style.opacity = '0';
+                    modal.style.opacity = '0';
+                    modal.style.transform = 'scale(0.9)';
+                    setTimeout(() => document.body.removeChild(overlay), 300);
+                });
+    
+                modal.appendChild(closeButton);
+                overlay.appendChild(modal);
+                document.body.appendChild(overlay);
+    
+                // Animation trigger
+                setTimeout(() => {
+                    overlay.style.opacity = '1';
+                    modal.style.opacity = '1';
+                    modal.style.transform = 'scale(1)';
+                }, 10);
+    
+                // Close on overlay click (outside modal)
+                overlay.addEventListener('click', (e) => {
+                    if (e.target === overlay) {
+                        overlay.style.opacity = '0';
+                        modal.style.opacity = '0';
+                        modal.style.transform = 'scale(0.9)';
+                        setTimeout(() => document.body.removeChild(overlay), 300);
+                    }
+                });
+            } catch (error) {
+                console.error("Error fetching friend profile:", error);
+                alert("Error loading profile. Please try again.");
+            }
+        }
+    
+        async function toggleBlockUser(username) {
+            try {
+                const normalizedUsername = username.toLowerCase();
+                const isBlocked = blockedUsers.includes(normalizedUsername);
+    
+                if (isBlocked) {
+                    // Unblock the user
+                    blockedUsers = blockedUsers.filter(user => user !== normalizedUsername);
+                    console.log(`Unblocked user: ${username}`);
+                    alert(`You have unblocked ${username}.`);
+                } else {
+                    // Block the user
+                    blockedUsers.push(normalizedUsername);
+                    console.log(`Blocked user: ${username}`);
+                    alert(`You have blocked ${username}. They will no longer be able to send or receive messages from you.`);
+                }
+    
+                localStorage.setItem('blockedUsers', JSON.stringify(blockedUsers));
+                // Refresh the friend list to update the block button text
+                await fetchAndDisplayFriendschat();
+                // If the blocked user is the current receiver, reset the chat
+                if (receiver === username) {
+                    receiver = null;
+                    chatHeader.textContent = "Select a friend to start chatting";
+                    chatMessages.innerHTML = "";
+                    if (chatSocket) {
+                        chatSocket.close(1000, "Blocked user, closing chat");
+                        chatSocket = null;
+                    }
+                }
+            } catch (error) {
+                console.error("Error toggling block status:", error);
+                alert("Error updating block status. Please try again.");
+            }
         }
     
         emojiToggleButton.addEventListener('click', () => {
@@ -3724,137 +1903,7 @@ async function acceptFriendRequest(requestId) {
             }
         }
     }
-    
-    
-    
-      ///////////////////////////////////////////chat////////////////////////////////////
 
-    // function openEditProfileModal() {
-    //     // Create overlay
-    //     const overlay = document.createElement('div');
-    //     overlay.id = 'edit-profile-overlay';
-        
-    //     // Create modal container
-    //     const modal = document.createElement('div');
-    //     modal.id = 'edit-profile-modal';
-        
-    //     // Add content (header, form, buttons)
-    //     const title = document.createElement('h3');
-    //     title.innerText = 'Edit Profile';
-      
-    //     // Create the form
-    //     const form = document.createElement('form');
-    //     form.id = 'edit-profile-form';
-        
-    //     // Username input
-    //     const usernameInput = document.createElement('input');
-    //     usernameInput.type = 'text';
-    //     usernameInput.id = 'edit-username';
-    //     usernameInput.placeholder = 'Type your new username...';
-    //     // Prefill with current username
-    //     const currentUsername = document.getElementById('profile-username')?.innerText || '';
-    //     usernameInput.value = currentUsername;
-      
-    //     // File input for avatar
-    //     const avatarFileInput = document.createElement('input');
-    //     avatarFileInput.type = 'file';
-    //     avatarFileInput.id = 'edit-avatar';
-    //     // If you want to restrict to images only:
-    //     // avatarFileInput.accept = 'image/*';
-      
-    //     // Buttons container
-    //     const buttonsDiv = document.createElement('div');
-    //     buttonsDiv.classList.add('modal-buttons');
-      
-    //     const cancelButton = document.createElement('button');
-    //     cancelButton.innerText = 'Cancel';
-    //     cancelButton.classList.add('cancel-button');
-      
-    //     const saveButton = document.createElement('button');
-    //     saveButton.innerText = 'Save';
-    //     saveButton.classList.add('save-button');
-      
-    //     // Append inputs and buttons to form
-    //     form.appendChild(usernameInput);
-    //     form.appendChild(avatarFileInput);
-    //     buttonsDiv.appendChild(cancelButton);
-    //     buttonsDiv.appendChild(saveButton);
-    //     form.appendChild(buttonsDiv);
-    
-    //     // Append everything to modal
-    //     modal.appendChild(title);
-    //     modal.appendChild(form);
-    
-    //     // Append modal to overlay
-    //     overlay.appendChild(modal);
-      
-    //     // Add overlay to body
-    //     document.body.appendChild(overlay);
-      
-    //     // Cancel button closes the modal
-    //     cancelButton.addEventListener('click', () => {
-    //       document.body.removeChild(overlay);
-    //     });
-      
-    //     // Save button logic
-    //     saveButton.addEventListener('click', async (e) => {
-    //       e.preventDefault(); // Prevent form submission from reloading page
-    
-    //       const newUsername = usernameInput.value.trim();
-    //       const file = avatarFileInput.files[0]; // The uploaded file
-      
-    //       try {
-    //         const token = localStorage.getItem('authToken');
-    //         if (!token) {
-    //           alert('No auth token found. Please log in again.');
-    //           return;
-    //         }
-      
-    //         // Prepare form data for multipart upload
-    //         const formData = new FormData();
-    //         // If the user updated username, we can handle it as JSON or form data.
-    //         // For your serializer: user.username => user: {username: ...}
-    //         formData.append('user.username', newUsername);
-      
-    //         // If a file is selected, append it
-    //         if (file) {
-    //           formData.append('avatar', file);
-    //         }
-      
-    //         const response = await fetch('http://127.0.0.1:8000/profile/update/', {
-    //           method: 'PUT',
-    //           headers: {
-    //             'Authorization': `Bearer ${token}`
-    //             // Don't set Content-Type here; fetch will set it automatically for FormData
-    //           },
-    //           body: formData
-    //         });
-      
-    //         if (response.ok) {
-    //           const result = await response.json();
-    //           // Update the UI with the new username, if any
-    //           document.getElementById('profile-username').innerText = newUsername;
-    
-    //           // If you want to update the avatar preview, you need the new avatar URL from result
-    //           // For instance, if result.profile.avatar is the new URL:
-    //           // document.getElementById('profile-img').src = result.profile.avatar;
-    
-    //           alert('Profile updated successfully!');
-    //         } else {
-        //           const errorData = await response.json();
-    //           console.error('Update error:', errorData);
-    //           alert(errorData.error || 'Failed to update profile.');
-    //         }
-    //       } catch (error) {
-    //         console.error('Error updating profile:', error);
-    //         alert('Error updating profile. Please try again.');
-    //       }
-      
-    //       // Remove the modal after finishing
-    //       document.body.removeChild(overlay);
-    //     });
-    //   }
-      
     //////////////////////////edit profile/////////////////////////////
       
     // Load the initial page
