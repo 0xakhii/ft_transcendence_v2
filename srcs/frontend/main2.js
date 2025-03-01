@@ -173,70 +173,70 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="test">
                 <a href="#/dashboard" data-page="home">HOME</a>
                 <a href="#/profile" data-page="profile">PROFILE</a>
-                <a href="#/game" data-page="game">GAME</a>
+                <a href="#/game" data-page="game" class="active">GAME</a>
                 <a href="" data-page="tournament">TOURNAMENT</a>
-                <a id="chat" href="#/chat" data-page="chat" class="active">CHAT</a>
+                <a id="chat" href="#/chat" data-page="chat">CHAT</a>
                 <button id="signout-btn" type="button">Sign Out</button>
             </div>
             <div id="current-user" data-username="{{ request.user.username }}" data-user-id="{{ request.user.id }}"></div>
         </div>
         `,
         chat: `
-    <div class="main">
-        <div class="header">
-            <img class="logo" src="images/Pongify_logo.png">
-            <div class="test">
-                <a href="#/dashboard" data-page="home">HOME</a>
-                <a href="#/profile" data-page="profile">PROFILE</a>
-                <a href="#/game" data-page="game">GAME</a>
-                <a href="" data-page="tournament">TOURNAMENT</a>
-                <a id="chat" href="#/chat" data-page="chat" class="active">CHAT</a>
-                <button id="signout-btn" type="button">Sign Out</button>
-            </div>
-            <div id="current-user" data-username="{{ request.user.username }}" data-user-id="{{ request.user.id }}"></div>
-        </div>
-        <div class="border">
-            <div class="app-container">
-                <div class="user-list" id="chat-friend-list">
-                    <!-- Friend list will be dynamically populated here -->
+        <div class="main">
+            <div class="header">
+                <img class="logo" src="images/Pongify_logo.png">
+                <div class="test">
+                    <a href="#/dashboard" data-page="home">HOME</a>
+                    <a href="#/profile" data-page="profile">PROFILE</a>
+                    <a href="#/game" data-page="game">GAME</a>
+                    <a href="" data-page="tournament">TOURNAMENT</a>
+                    <a id="chat" href="#/chat" data-page="chat" class="active">CHAT</a>
+                    <button id="signout-btn" type="button">Sign Out</button>
                 </div>
-                <div class="chat-panel">
-                    <div class="chat-header" id="chat-header">
-                        Select a friend to start chatting
+                <div id="current-user" data-username="{{ request.user.username }}" data-user-id="{{ request.user.id }}"></div>
+            </div>
+            <div class="border">
+                <div class="app-container">
+                    <div class="user-list" id="chat-friend-list">
+                        <!-- Friend list will be dynamically populated here -->
                     </div>
-                    <div class="chat-messages" id="chat-messages">
-                        <!-- Messages will be displayed here -->
-                    </div>
-                    <div class="chat-input-container">
-                        <input type="text" class="chat-input" id="chat-input" placeholder="Type a message...">
-                        <div class="btn-container">
-                            <button id="emoji-toggle-btn" class="emoji-toggle-btn">
-                                <img class="emoji" src="https://icons.iconarchive.com/icons/designbolts/emoji/512/Emoji-Blank-icon.png" alt="">
-                            </button>
-                        </div>                    
-                        <div id="emojiPicker" class="emoji-picker">
-                            <span onclick="addEmoji('😀')" class="emoji">😀</span>
-                            <span onclick="addEmoji('😂')" class="emoji">😂</span>
-                            <span onclick="addEmoji('❤️')" class="emoji">❤️</span>
-                            <span onclick="addEmoji('🎉')" class="emoji">🎉</span>
-                            <span onclick="addEmoji('😎')" class="emoji">😎</span>
-                            <span onclick="addEmoji('😅')" class="emoji">😅</span>
-                            <span onclick="addEmoji('😍')" class="emoji">😍</span>
-                            <span onclick="addEmoji('🔥')" class="emoji">🔥</span>
-                            <span onclick="addEmoji('🤔')" class="emoji">🤔</span>
-                            <span onclick="addEmoji('🙌')" class="emoji">🙌</span>
-                            <span onclick="addEmoji('🌟')" class="emoji">🌟</span>
-                            <span onclick="addEmoji('🥳')" class="emoji">🥳</span>
-                            <span onclick="addEmoji('🍆')" class="emoji">🍆</span>
-                            <span onclick="addEmoji('🔥')" class="emoji">🔥</span>
-                            <span onclick="addEmoji('💩')" class="emoji">💩</span>
+                    <div class="chat-panel">
+                        <div class="chat-header" id="chat-header">
+                            Select a friend to start chatting
                         </div>
-                        <button id="send-btn" class="send-btn">Send</button>
+                        <div class="chat-messages" id="chat-messages">
+                            <!-- Messages will be displayed here -->
+                        </div>
+                        <div class="chat-input-container">
+                            <input type="text" class="chat-input" id="chat-input" placeholder="Type a message...">
+                            <div class="btn-container">
+                                <button id="emoji-toggle-btn" class="emoji-toggle-btn">
+                                    <img class="emoji" src="https://icons.iconarchive.com/icons/designbolts/emoji/512/Emoji-Blank-icon.png" alt="">
+                                </button>
+                            </div>                    
+                            <div id="emojiPicker" class="emoji-picker">
+                                <span onclick="addEmoji('😀')" class="emoji">😀</span>
+                                <span onclick="addEmoji('😂')" class="emoji">😂</span>
+                                <span onclick="addEmoji('❤️')" class="emoji">❤️</span>
+                                <span onclick="addEmoji('🎉')" class="emoji">🎉</span>
+                                <span onclick="addEmoji('😎')" class="emoji">😎</span>
+                                <span onclick="addEmoji('😅')" class="emoji">😅</span>
+                                <span onclick="addEmoji('😍')" class="emoji">😍</span>
+                                <span onclick="addEmoji('🔥')" class="emoji">🔥</span>
+                                <span onclick="addEmoji('🤔')" class="emoji">🤔</span>
+                                <span onclick="addEmoji('🙌')" class="emoji">🙌</span>
+                                <span onclick="addEmoji('🌟')" class="emoji">🌟</span>
+                                <span onclick="addEmoji('🥳')" class="emoji">🥳</span>
+                                <span onclick="addEmoji('🍆')" class="emoji">🍆</span>
+                                <span onclick="addEmoji('🔥')" class="emoji">🔥</span>
+                                <span onclick="addEmoji('💩')" class="emoji">💩</span>
+                            </div>
+                            <button id="send-btn" class="send-btn">Send</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
     `,
     };
     
@@ -1687,7 +1687,7 @@ async function acceptFriendRequest(requestId) {
     
                         // Add View Profile Button
                         const viewProfileButton = document.createElement("button");
-                        viewProfileButton.textContent = "View Profile";
+                        viewProfileButton.textContent = "Profile";
                         viewProfileButton.classList.add("view-profile-btn");
                         viewProfileButton.addEventListener("click", (e) => {
                             e.stopPropagation(); // Prevent triggering switchConversation

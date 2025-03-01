@@ -87,7 +87,7 @@ body {
 
 .app-container {
     display: flex;
-    max-width: 800px;
+    max-width: 1100px;
     height: 600px;
     border-radius: 15px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
@@ -322,7 +322,7 @@ body {
 /* chat.css */
 .view-profile-btn {
     margin-left: 10px;
-    padding: 5px 10px;
+    padding: 5px 15px;
     background-color: #8a2be2; /* Purple to match your theme */
     color: white;
     border: none;

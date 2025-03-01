@@ -241,7 +241,7 @@ body
     font-family: "Poppins", sans-serif;
     margin: 7vh 0 0 1vw;
     border-radius: 15px;
-    width: 16%;
+    width: 18%;
     padding: 0.5vh 1vw;
     border: 2px solid #fff;
     background-color: transparent;
@@ -265,11 +265,11 @@ body
 #user-list-container {
     position: absolute;
     top: 530px;
-    width: 250px;
+    width: 390px;
     /* background: transparent; */
     /* border: 1px solid #ccc; */
     border-radius: 8px;
-    padding: 10px;
+    padding: 20px 0 0 45px;
     font-family: 'Poppins', sans-serif;
   }
   
@@ -410,8 +410,8 @@ body
 .friend-list-container {
     position: absolute;
     top: 500px;
-    width: 250%;
-    max-width: 400px;
+    /* width: 250%; */
+    /* max-width: 400px; */
     padding: 10px;
     background: transparent;
     border-radius: 8px;
@@ -573,6 +573,26 @@ body
   padding: 0.5vh 1vw;
   font-weight: bold;
 }
+
+/* dashboard.css or a new CSS file */
+.remove-friend-btn {
+    margin-left: 10px;
+    padding: 5px 10px;
+    background-color: #dc3545; /* Red for removal, can adjust to match purple theme (e.g., #8a2be2) */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: "Poppins", sans-serif;
+    transition: background-color 0.3s ease;
+}
+
+.remove-friend-btn:hover {
+    background-color: #c82333; /* Darker red on hover, or #6a1b9a for purple */
+}
+
+
 /**************************friends list********************************/
 /* .friends-list
 {
@@ -661,6 +681,20 @@ body
     {
         font-size: 1.5vh;
     }
+    #user-list-container {
+        position: absolute;
+        top: 500px;
+        width: 280px;
+        padding: 10px;
+    }
+    .friend-list-container {
+        position: absolute;
+        top: 430px;
+        /* width: 250%;
+        max-width: 400px; */
+        padding: 10px;
+        gap: 10px;
+      }
 }
 
 @media (max-width: 1000px)
@@ -693,6 +727,12 @@ body
     {
         font-size: 1vh;
     }
+    #user-list-container {
+        position: absolute;
+        top: 530px;
+        width: 300px;
+        padding: 10px;
+      }
 }
 @media (max-width: 1700px)
 {
@@ -754,4 +794,10 @@ body
         font-size: 1vh;
         padding: 0;
     }
+    #user-list-container {
+        position: absolute;
+        top: 530px;
+        width: 300px;
+        padding: 10px;
+      }
 }

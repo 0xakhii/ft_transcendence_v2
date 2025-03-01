@@ -58,6 +58,7 @@ body
     /* top: 19vh; */
     width: 12vw;
     /* margin: 20px; */
+    margin-left: 0px;
     margin-top: 20px;
 }
 .border-up h2
