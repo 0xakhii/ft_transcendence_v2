@@ -71,9 +71,9 @@ body
 .f_img
 {
     /* display: flex; */
-    height: 50vh;
-    width: 25vw;
-    margin-right: 5vw;
+    height: 40vh;
+    width: 20vw;
+    margin-right: 6vw;
 }
 
 .btn button
@@ -81,7 +81,7 @@ body
     /* position: left; */
     position: absolute;
     /* top: 39.2%; */
-    left: 22%;
+    left: 11%;
     transform: translate(-50%, -50%) scaleY(1.7);
     background: transparent;
     color: #fff;
@@ -99,7 +99,7 @@ body
 {
     /* width: 35px; */
     position: absolute;
-    left: 52%; 
+    left: 37%; 
     transform: translate(-50%, -50%) scaleY(1.7);
     background: transparent;
     color: #fff;
@@ -114,6 +114,24 @@ body
     margin: 4.5vh 0 0 10vw;
 }
 
+.btn3 button
+{
+    /* width: 35px; */
+    position: absolute;
+    left: 63%; 
+    transform: translate(-50%, -50%) scaleY(1.7);
+    background: transparent;
+    color: #fff;
+    font-family: "Poppins", sans-serif;
+    /* border: none; */
+    border: #fff solid 2px;
+    border-radius: 20px;
+    font-size: clamp(0.5rem, 2.5vw, 1.5rem);
+    font-weight: bold;
+    letter-spacing: 4px;
+    padding: 0 1vw;
+    margin: 4.5vh 0 0 10vw;
+}
 .three-canvas {
 	margin: 0 auto;
 	background: transparent;

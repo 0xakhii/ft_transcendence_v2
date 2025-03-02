@@ -1,4 +1,4 @@
-let allUsers = [];
+  let allUsers = [];
 let lastRequestTime = 0;
 let flag = 0
 import { PongGame, setCurrentGame, TournamentPongGame, currentGame } from "./three";
@@ -52,7 +52,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         <a href="#/dashboard" data-page="home" class="active">HOME</a>
                         <a href="#/profile" data-page="profile">PROFILE</a>
                         <a href="#/game" data-page="game">GAME</a>
-                        <a href="" data-page="tournament">TOURNAMENT</a>
                         <a id="chat" href="#/chat" data-page="chat">CHAT</a>
                         <button id="signout-btn" type="button">Sign Out</button>
                     </div>
@@ -63,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <p>"Pongify" is a reimagined version of the classic Pong game, bringing a 
                         fresh and engaging multiplayer experience. Compete with friends, join tournaments, 
                         and relive the nostalgia with enhanced graphics and smooth gameplay.</p>
-                       <button class="btn btn-outline-primary btn-lg start-playing-btn" id="startplay">START !</button>
+                       <button class="btn btn-outline-info btn-lg start-playing-btn" id="startplay">START !</button>
                     </div>
                     <div class="friend-box">
                         <div class="friend-requests-container">
@@ -118,7 +117,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         <a href="#/dashboard" data-page="home">HOME</a>
                         <a href="#/profile" data-page="profile" class="active">PROFILE</a>
                         <a href="#/game" data-page="game">GAME</a>
-                        <a href="" data-page="tournament">TOURNAMENT</a>
                         <a id="chat" href="#/chat" data-page="chat">CHAT</a>
                         <button id="signout-btn" type="button">Sign Out</button>
                     </div>
@@ -136,7 +134,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     <img class="stats-border level" src="profile imgs/level_and_wins_window.png" alt="Level">
                 </div>
                 <div class="match-history">
-                    <h1>User Profile</h1>
                     <img class="match-history-border" src="profile imgs/match_history_window.png" alt="Match History">
                 </div>
             </div>
@@ -149,7 +146,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 <a href="#/dashboard" data-page="home">HOME</a>
                 <a href="#/profile" data-page="profile">PROFILE</a>
                 <a href="#/game" data-page="game" class="active">GAME</a>
-                <a href="" data-page="tournament">TOURNAMENT</a>
                 <a id="chat" href="#/chat" data-page="chat">CHAT</a>
                 <button id="signout-btn" type="button">Sign Out</button>
             </div>
@@ -164,6 +160,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     <button type="button" class="multiplayer-mode-btn">Play Online Game</button>
                     <img class="f_img" src="dashboard img/full_buton_2.png">
                 </div>
+                <div class="btn3">
+                    <button type="button" class="tournament-btn">Tournament</button>
+                    <img class="f_img" src="dashboard img/full_buton_2.png">
+                </div>
             </div>
         </div>
         `,
@@ -175,7 +175,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 <a href="#/dashboard" data-page="home">HOME</a>
                 <a href="#/profile" data-page="profile">PROFILE</a>
                 <a href="#/game" data-page="game" class="active">GAME</a>
-                <a href="" data-page="tournament">TOURNAMENT</a>
                 <a id="chat" href="#/chat" data-page="chat">CHAT</a>
                 <button id="signout-btn" type="button">Sign Out</button>
             </div>
@@ -190,7 +189,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     <a href="#/dashboard" data-page="home">HOME</a>
                     <a href="#/profile" data-page="profile">PROFILE</a>
                     <a href="#/game" data-page="game">GAME</a>
-                    <a href="" data-page="tournament">TOURNAMENT</a>
                     <a id="chat" href="#/chat" data-page="chat" class="active">CHAT</a>
                     <button id="signout-btn" type="button">Sign Out</button>
                 </div>
@@ -400,6 +398,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     setTimeout(() => {
                         const multiplayerBtn = document.querySelector('.multiplayer-mode-btn');
                         const localBtn = document.querySelector('.local-mode-btn');
+                        const tournamentBtn = document.querySelector('.tournament-btn');
                         if (multiplayerBtn) {
                             multiplayerBtn.addEventListener('click', () => {
                                 if (currentGame) {
@@ -416,6 +415,15 @@ document.addEventListener("DOMContentLoaded", () => {
                                 }
                                 app.innerHTML = pages.game_v2;
                                 setCurrentGame(new PongGame('local'));
+                            });
+                        }
+                        if (tournamentBtn) {
+                            tournamentBtn.addEventListener('click', () => {
+                                if (currentGame) {
+                                    currentGame.dispose();
+                                }
+                                app.innerHTML = pages.game_v2;
+                                setCurrentGame(new TournamentPongGame());
                             });
                         }
                     }, 0);

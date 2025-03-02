@@ -42,7 +42,7 @@ export class PongGame {
         window.addEventListener('resize', () => this.onWindowResize());
     }
 
-    createStartUI() {
+    createStartUI() {   
         this.startDiv = document.createElement('div');
         this.startDiv.id = 'start-ui';
         Object.assign(this.startDiv.style, {
@@ -54,11 +54,28 @@ export class PongGame {
             color: 'white',
             padding: '20px',
             borderRadius: '10px',
-            textAlign: 'center'
+            textAlign: 'center',
+            fontFamily: 'Arial, sans-serif', 
+            fontSize: '18px', 
+            width: '400px', 
+            maxWidth: '90%'
         });
         this.startDiv.innerHTML = `<h2>${this.mode === 'tournament' ? 'Tournament' : this.mode === 'local' ? 'Local' : 'Multiplayer'} Pong</h2>`;
         const startButton = document.createElement('button');
         startButton.textContent = 'Start';
+        Object.assign(startButton.style, {
+            backgroundColor: 'white',
+            border: 'none', 
+            color: 'black',
+            padding: '15px 32px',
+            textAlign: 'center',
+            textDecoration: 'none',
+            display: 'inline-block', 
+            fontSize: '20px', 
+            margin: '10px 2px', 
+            // cursor: 'pointer', 
+            borderRadius: '5px' 
+        });
         startButton.addEventListener('click', () => this.startGame());
         this.startDiv.appendChild(startButton);
         document.body.appendChild(this.startDiv);
@@ -477,20 +494,25 @@ export class TournamentPongGame extends PongGame {
     }
 
     createTournamentUI() {
-        this.tournamentUI = document.createElement('div');
-        this.tournamentUI.id = 'tournament-ui';
-        Object.assign(this.tournamentUI.style, {
-            position: 'absolute',
-            top: '50px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            background: 'rgba(0, 0, 0, 0.7)',
-            color: 'white',
-            padding: '20px',
-            borderRadius: '10px'
-        });
-        document.body.appendChild(this.tournamentUI);
-    }
+    this.tournamentUI = document.createElement('div');
+    this.tournamentUI.id = 'tournament-ui';
+    Object.assign(this.tournamentUI.style, {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        color: 'white',
+        padding: '20px',
+        borderRadius: '10px',
+        textAlign: 'center',
+        backgroundColor: 'transparent',
+        fontFamily: 'Arial, sans-serif',
+        fontSize: '25px',
+        width: '300px', 
+        maxWidth: '90%'
+    });
+    document.body.appendChild(this.tournamentUI);
+}
 
     updateTournamentUI() {
         if (!this.tournamentUI) this.createTournamentUI();
@@ -501,6 +523,8 @@ export class TournamentPongGame extends PongGame {
                 for (let i = 1; i <= 4; i++) {
                     const input = document.createElement('input');
                     input.type = 'text';
+                    input.style.marginBottom = '10px';
+                    input.style.width = '300px';
                     input.placeholder = `Player ${i}`;
                     input.id = `player-${i}`;
                     this.tournamentUI.appendChild(input);

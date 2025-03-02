@@ -11,7 +11,7 @@ up:
 stop:
 	docker compose stop
 rm:
-	docker rm $$(docker ps -aq)
+	docker rm -f $$(docker ps -aq)
 rmi:
 	docker rmi $$(docker images -aq)
 logs:
