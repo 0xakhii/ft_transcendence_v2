@@ -341,14 +341,6 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Startplay button not found after rendering dashboard!");
         }
     }
-    function cleanupBeforeRouteChange() {
-        if (currentGame) {
-            currentGame.dispose();
-            currentGame = null;
-        }
-        const uiElements = document.querySelectorAll('#start-ui, #score-ui, #tournament-ui, .three-canvas');
-        uiElements.forEach(element => element.remove());
-    }
     // function MatchHistory(matchData) {
     //     fetch('http://localhost:8000/match-history/', {
     //         method: 'GET',
@@ -364,7 +356,6 @@ document.addEventListener("DOMContentLoaded", () => {
     function renderPage(route) {
         const app = document.getElementById('app');
         // const contentArea = document.getElementById('content-area');
-        cleanupBeforeRouteChange();
         switch (route) {
             case '#/sign-in':
                 // window.location.hash = '#/sign-in';
