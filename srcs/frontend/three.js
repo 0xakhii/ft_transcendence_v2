@@ -9,6 +9,7 @@ export class PongGame {
         this.paddle1SpeedX = 0;
         this.paddle2SpeedX = 0;
         this.isGameActive = false;
+        this.isRunning = false; // New flag to control animation loop
         this.maxScore = 5;
 
         this.initializeScene();
@@ -32,17 +33,18 @@ export class PongGame {
         this.renderer.setSize(window.innerWidth, height);
         this.renderer.domElement.className = 'three-canvas';
         this.renderer.setClearColor(0x000000, 0);
-        mainDiv.appendChild(this.renderer.domElement);
+        if (mainDiv) mainDiv.appendChild(this.renderer.domElement);
 
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enableDamping = true;
         this.controls.dampingFactor = 0.25;
         this.controls.enableZoom = true;
 
-        window.addEventListener('resize', () => this.onWindowResize());
+        this._onWindowResize = () => this.onWindowResize();
+        window.addEventListener('resize', this._onWindowResize);
     }
 
-    createStartUI() {   
+    createStartUI() {
         this.startDiv = document.createElement('div');
         this.startDiv.id = 'start-ui';
         Object.assign(this.startDiv.style, {
@@ -55,9 +57,9 @@ export class PongGame {
             padding: '20px',
             borderRadius: '10px',
             textAlign: 'center',
-            fontFamily: 'Arial, sans-serif', 
-            fontSize: '18px', 
-            width: '400px', 
+            fontFamily: 'Arial, sans-serif',
+            fontSize: '18px',
+            width: '400px',
             maxWidth: '90%'
         });
         this.startDiv.innerHTML = `<h2>${this.mode === 'tournament' ? 'Tournament' : this.mode === 'local' ? 'Local' : 'Multiplayer'} Pong</h2>`;
@@ -65,22 +67,23 @@ export class PongGame {
         startButton.textContent = 'Start';
         Object.assign(startButton.style, {
             backgroundColor: 'white',
-            border: 'none', 
+            border: 'none',
             color: 'black',
             padding: '15px 32px',
             textAlign: 'center',
             textDecoration: 'none',
-            display: 'inline-block', 
-            fontSize: '20px', 
-            margin: '10px 2px', 
-            // cursor: 'pointer', 
-            borderRadius: '5px' 
+            display: 'inline-block',
+            fontSize: '20px',
+            margin: '10px 2px',
+            borderRadius: '5px'
         });
         startButton.addEventListener('click', () => this.startGame());
         this.startDiv.appendChild(startButton);
         document.body.appendChild(this.startDiv);
 
-        this.renderer.render(this.scene, this.camera);
+        if (this.renderer && this.scene && this.camera) {
+            this.renderer.render(this.scene, this.camera);
+        }
     }
 
     startGame() {
@@ -89,6 +92,7 @@ export class PongGame {
             this.startDiv = null;
         }
         this.isGameActive = true;
+        this.isRunning = true; // Start animation loop
 
         switch (this.mode) {
             case 'local':
@@ -195,30 +199,40 @@ export class PongGame {
     }
 
     updatePaddlePositions(deltaTime) {
-        this.paddle1.position.x = Math.max(-9.8, Math.min(9.8, this.paddle1.position.x + this.paddle1SpeedX * deltaTime));
-        this.paddle2.position.x = Math.max(-9.8, Math.min(9.8, this.paddle2.position.x + this.paddle2SpeedX * deltaTime));
+        if (this.paddle1) {
+            this.paddle1.position.x = Math.max(-9.8, Math.min(9.8, this.paddle1.position.x + this.paddle1SpeedX * deltaTime));
+        }
+        if (this.paddle2) {
+            this.paddle2.position.x = Math.max(-9.8, Math.min(9.8, this.paddle2.position.x + this.paddle2SpeedX * deltaTime));
+        }
     }
 
     updateBallPosition(deltaTime) {
-        const nextBallPosition = this.ball.position.clone().add(this.ball.velocity.clone().multiplyScalar(deltaTime));
-        this.ball.position.copy(nextBallPosition);
-        this.ball.position.y = 0;
+        if (this.ball) {
+            const nextBallPosition = this.ball.position.clone().add(this.ball.velocity.clone().multiplyScalar(deltaTime));
+            this.ball.position.copy(nextBallPosition);
+            this.ball.position.y = 0;
+        }
     }
 
     handleCollisions() {
-        if (this.checkPaddleCollision(this.paddle1)) this.resolvePaddleCollision(this.paddle1);
-        if (this.checkPaddleCollision(this.paddle2)) this.resolvePaddleCollision(this.paddle2);
+        if (this.paddle1 && this.checkPaddleCollision(this.paddle1)) this.resolvePaddleCollision(this.paddle1);
+        if (this.paddle2 && this.checkPaddleCollision(this.paddle2)) this.resolvePaddleCollision(this.paddle2);
 
-        if (this.ball.position.x <= -10) {
-            this.ball.position.x = -9.9;
-            this.ball.velocity.x = Math.abs(this.ball.velocity.x);
-        } else if (this.ball.position.x >= 10) {
-            this.ball.position.x = 9.9;
-            this.ball.velocity.x = -Math.abs(this.ball.velocity.x);
+        if (this.ball) {
+            if (this.ball.position.x <= -10) {
+                this.ball.position.x = -9.9;
+                this.ball.velocity.x = Math.abs(this.ball.velocity.x);
+            } else if (this.ball.position.x >= 10) {
+                this.ball.position.x = 9.9;
+                this.ball.velocity.x = -Math.abs(this.ball.velocity.x);
+            }
         }
     }
 
     checkScoring() {
+        if (!this.ball) return;
+
         if (this.ball.position.z < -16) {
             this.score2 += 1;
             this.resetBall();
@@ -233,6 +247,8 @@ export class PongGame {
     }
 
     checkPaddleCollision(paddle) {
+        if (!this.ball || !paddle) return false;
+
         const paddleHalfLength = 1.7;
         const ballPos = this.ball.position.clone();
         const paddlePos = paddle.position.clone();
@@ -251,6 +267,8 @@ export class PongGame {
     }
 
     resolvePaddleCollision(paddle) {
+        if (!this.ball || !paddle) return;
+
         const pushDistance = this.paddleRadius + this.BallRadius + 0.05;
         this.ball.position.z = paddle.position.z + (this.ball.velocity.z > 0 ? -pushDistance : pushDistance);
         this.ball.velocity.z *= -1;
@@ -264,22 +282,30 @@ export class PongGame {
     }
 
     resetBall() {
-        this.ball.position.set(0, 0, 0);
-        const speed = 0.3;
-        const direction = Math.random() > 0.5 ? 1 : -1;
-        const angle = (Math.random() - 0.5) * Math.PI / 2;
-        this.ball.velocity.set(speed * Math.sin(angle), 0, direction * speed * Math.cos(angle));
+        if (this.ball) {
+            this.ball.position.set(0, 0, 0);
+            const speed = 0.3;
+            const direction = Math.random() > 0.5 ? 1 : -1;
+            const angle = (Math.random() - 0.5) * Math.PI / 2;
+            this.ball.velocity.set(speed * Math.sin(angle), 0, direction * speed * Math.cos(angle));
+        }
     }
 
     animate() {
+        if (!this.isRunning) return; // Stop animation if not running
         requestAnimationFrame(() => this.animate());
+
         if (this.isGameActive && this.mode === 'local') {
             this.handleLocalLogic(1 / 2);
         }
-        this.renderer.render(this.scene, this.camera);
+        if (this.renderer && this.scene && this.camera) {
+            this.renderer.render(this.scene, this.camera);
+        }
     }
 
     onWindowResize() {
+        if (!this.camera || !this.renderer) return;
+
         this.camera.aspect = window.innerWidth / window.innerHeight;
         this.camera.updateProjectionMatrix();
         const mainDiv = document.querySelector('.main');
@@ -290,27 +316,37 @@ export class PongGame {
 
     endGame() {
         this.isGameActive = false;
-        if (this.mode === 'local')
-            this.storeMatchHistory({});
+        if (this.mode === 'local') this.storeMatchHistory({});
         this.disposeGameObjects();
         this.createStartUI();
     }
 
     disposeGameObjects() {
-        if (this.paddle1) this.scene.remove(this.paddle1);
-        if (this.paddle2) this.scene.remove(this.paddle2);
-        if (this.ball) this.scene.remove(this.ball);
-        if (this.wall) this.scene.remove(this.wall);
-        if (this.wall2) this.scene.remove(this.wall2);
-        this.paddle1 = null;
-        this.paddle2 = null;
-        this.ball = null;
-        this.wall = null;
-        this.wall2 = null;
+        if (this.paddle1) {
+            this.scene.remove(this.paddle1);
+            this.paddle1 = null;
+        }
+        if (this.paddle2) {
+            this.scene.remove(this.paddle2);
+            this.paddle2 = null;
+        }
+        if (this.ball) {
+            this.scene.remove(this.ball);
+            this.ball = null;
+        }
+        if (this.wall) {
+            this.scene.remove(this.wall);
+            this.wall = null;
+        }
+        if (this.wall2) {
+            this.scene.remove(this.wall2);
+            this.wall2 = null;
+        }
 
         if (this.mode === 'local' && this._handleLocalInput) {
             document.removeEventListener('keydown', this._handleLocalInput);
             document.removeEventListener('keyup', this._handleLocalInput);
+            this._handleLocalInput = null;
         }
         if (this.scoreDiv) {
             this.scoreDiv.remove();
@@ -335,21 +371,45 @@ export class PongGame {
     }
 
     dispose() {
+        this.isRunning = false; // Stop animation loop
+        this.isGameActive = false;
         this.cleanupUI();
         this.disposeGameObjects();
-        window.removeEventListener('resize', this.onWindowResize.bind(this));
-        
+
+        if (this._onWindowResize) {
+            window.removeEventListener('resize', this._onWindowResize);
+            this._onWindowResize = null;
+        }
+
         if (this.mode === 'multiplayer' && this._socketKeyUpListener) {
             document.removeEventListener('keyup', this._socketKeyUpListener);
             document.removeEventListener('keydown', this._socketKeyListener);
+            this._socketKeyUpListener = null;
+            this._socketKeyListener = null;
         }
         if (this.socket) {
             this.socket.close();
             this.socket = null;
         }
-        this.renderer = null;
+
+        if (this.renderer) {
+            this.renderer.dispose();
+            this.renderer = null;
+        }
+        if (this.controls) {
+            this.controls.dispose();
+            this.controls = null;
+        }
+        if (this.scene) {
+            while (this.scene.children.length > 0) {
+                this.scene.remove(this.scene.children[0]);
+            }
+            this.scene = null;
+        }
+        this.camera = null;
     }
 
+    // Remaining methods (WebSocket, fetch, etc.) remain largely unchanged
     setupMatchmakingWebSocket() {
         this.socket = new WebSocket('ws://localhost:8000/ws/matchmaking/');
         this.socket.onopen = () => {
@@ -413,12 +473,14 @@ export class PongGame {
     }
 
     updateGameState(data) {
-        this.paddle1.position.x = data.paddle1_x;
-        this.paddle2.position.x = data.paddle2_x;
-        this.ball.position.x = data.ball_x;
-        this.ball.position.z = data.ball_z;
-        this.ball.velocity.x = data.ball_velocity_x;
-        this.ball.velocity.z = data.ball_velocity_z;
+        if (this.paddle1) this.paddle1.position.x = data.paddle1_x;
+        if (this.paddle2) this.paddle2.position.x = data.paddle2_x;
+        if (this.ball) {
+            this.ball.position.x = data.ball_x;
+            this.ball.position.z = data.ball_z;
+            this.ball.velocity.x = data.ball_velocity_x;
+            this.ball.velocity.z = data.ball_velocity_z;
+        }
         this.score1 = data.score1;
         this.score2 = data.score2;
     }
@@ -429,13 +491,13 @@ export class PongGame {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(state),
         })
-        .then((response) => response.json())
-        .then((data) => {
-            this.paddle1.position.set(data.LeftPaddle.x, data.LeftPaddle.y, data.LeftPaddle.z);
-            this.paddle2.position.set(data.RightPaddle.x, data.RightPaddle.y, data.RightPaddle.z);
-            this.ball.position.set(data.ball.x, data.ball.y, data.ball.z);
-        })
-        .catch((error) => console.error('Error fetching initial game data:', error));
+            .then((response) => response.json())
+            .then((data) => {
+                if (this.paddle1) this.paddle1.position.set(data.LeftPaddle.x, data.LeftPaddle.y, data.LeftPaddle.z);
+                if (this.paddle2) this.paddle2.position.set(data.RightPaddle.x, data.RightPaddle.y, data.RightPaddle.z);
+                if (this.ball) this.ball.position.set(data.ball.x, data.ball.y, data.ball.z);
+            })
+            .catch((error) => console.error('Error fetching initial game data:', error));
     }
 
     fetchUserData() {
@@ -446,14 +508,14 @@ export class PongGame {
                 'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
             },
         })
-        .then((response) => response.json())
-        .then((data) => (this.user = data))
-        .catch((error) => console.error('Error fetching user data:', error));
+            .then((response) => response.json())
+            .then((data) => (this.user = data))
+            .catch((error) => console.error('Error fetching user data:', error));
     }
 
     storeMatchHistory(matchData) {
         if (this.mode !== 'local') return;
-    
+
         fetch('http://localhost:8000/match-history/', {
             method: 'POST',
             headers: {
@@ -461,15 +523,15 @@ export class PongGame {
                 'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
             },
             body: JSON.stringify({
-                player1_username: this.user.username,
+                player1_username: this.user?.username || 'player1',
                 player2_username: 'player2',
                 score1: this.score1,
                 score2: this.score2,
             }),
         })
-        .then((response) => response.json())
-        .then((data) => console.log('Local match history stored:', data))
-        .catch((error) => console.error('Error storing local match history:', error));
+            .then((response) => response.json())
+            .then((data) => console.log('Local match history stored:', data))
+            .catch((error) => console.error('Error storing local match history:', error));
     }
 }
 
@@ -496,25 +558,25 @@ export class TournamentPongGame extends PongGame {
     }
 
     createTournamentUI() {
-    this.tournamentUI = document.createElement('div');
-    this.tournamentUI.id = 'tournament-ui';
-    Object.assign(this.tournamentUI.style, {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        color: 'white',
-        padding: '20px',
-        borderRadius: '10px',
-        textAlign: 'center',
-        backgroundColor: 'transparent',
-        fontFamily: 'Arial, sans-serif',
-        fontSize: '25px',
-        width: '300px', 
-        maxWidth: '90%'
-    });
-    document.body.appendChild(this.tournamentUI);
-}
+        this.tournamentUI = document.createElement('div');
+        this.tournamentUI.id = 'tournament-ui';
+        Object.assign(this.tournamentUI.style, {
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            color: 'white',
+            padding: '20px',
+            borderRadius: '10px',
+            textAlign: 'center',
+            backgroundColor: 'transparent',
+            fontFamily: 'Arial, sans-serif',
+            fontSize: '25px',
+            width: '300px',
+            maxWidth: '90%'
+        });
+        document.body.appendChild(this.tournamentUI);
+    }
 
     updateTournamentUI() {
         if (!this.tournamentUI) this.createTournamentUI();
@@ -597,12 +659,16 @@ export class TournamentPongGame extends PongGame {
     }
 
     animate() {
+        if (!this.isRunning) return; // Stop animation if not running
         requestAnimationFrame(() => this.animate());
+
         if (this.isGameActive) {
             this.handleLocalLogic(1 / 2);
             if (this.mode === 'tournament') this.checkMatchEnd();
         }
-        this.renderer.render(this.scene, this.camera);
+        if (this.renderer && this.scene && this.camera) {
+            this.renderer.render(this.scene, this.camera);
+        }
     }
 
     dispose() {
@@ -617,6 +683,9 @@ export class TournamentPongGame extends PongGame {
 export let currentGame = null;
 
 export function setCurrentGame(gameInstance) {
-    if (currentGame) currentGame.dispose();
+    if (currentGame) {
+        currentGame.dispose();
+        currentGame = null;
+    }
     currentGame = gameInstance;
 }

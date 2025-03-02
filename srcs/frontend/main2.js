@@ -356,6 +356,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function renderPage(route) {
         const app = document.getElementById('app');
         // const contentArea = document.getElementById('content-area');
+        if (currentGame) currentGame.dispose();
         switch (route) {
             case '#/sign-in':
                 // window.location.hash = '#/sign-in';
@@ -391,45 +392,31 @@ document.addEventListener("DOMContentLoaded", () => {
                 setupSignOut();
                 break;
                 case '#/game':
-                    if (currentGame) {
-                        currentGame.dispose();
-                        currentGame = null;
-                    }
                     window.location.hash = '#/game';
                     app.innerHTML = pages.game;
                     loadCSS('styleGame.css');
-                    setTimeout(() => {
-                        const multiplayerBtn = document.querySelector('.multiplayer-mode-btn');
-                        const localBtn = document.querySelector('.local-mode-btn');
-                        const tournamentBtn = document.querySelector('.tournament-btn');
-                        if (multiplayerBtn) {
-                            multiplayerBtn.addEventListener('click', () => {
-                                if (currentGame) {
-                                    currentGame.dispose();
-                                }
-                                app.innerHTML = pages.game_v2;
-                                setCurrentGame(new PongGame('multiplayer'));
-                            });
-                        }
-                        if (localBtn) {
-                            localBtn.addEventListener('click', () => {
-                                if (currentGame) {
-                                    currentGame.dispose();
-                                }
-                                app.innerHTML = pages.game_v2;
-                                setCurrentGame(new PongGame('local'));
-                            });
-                        }
-                        if (tournamentBtn) {
-                            tournamentBtn.addEventListener('click', () => {
-                                if (currentGame) {
-                                    currentGame.dispose();
-                                }
-                                app.innerHTML = pages.game_v2;
-                                setCurrentGame(new TournamentPongGame());
-                            });
-                        }
-                    }, 0);
+                    if (currentGame) currentGame.dispose();
+                    const multiplayerBtn = document.querySelector('.multiplayer-mode-btn');
+                    const localBtn = document.querySelector('.local-mode-btn');
+                    const tournamentBtn = document.querySelector('.tournament-btn');
+                    if (multiplayerBtn) {
+                        multiplayerBtn.addEventListener('click', () => {
+                            app.innerHTML = pages.game_v2;
+                            setCurrentGame(new PongGame('multiplayer'));
+                        });
+                    }
+                    if (localBtn) {
+                        localBtn.addEventListener('click', () => {
+                            app.innerHTML = pages.game_v2;
+                            setCurrentGame(new PongGame('local'));
+                        });
+                    }
+                    if (tournamentBtn) {
+                        tournamentBtn.addEventListener('click', () => {
+                            app.innerHTML = pages.game_v2;
+                            setCurrentGame(new TournamentPongGame());
+                        });
+                    }
                     break;
             case '#/chat':
                 window.location.hash = '#/chat';
