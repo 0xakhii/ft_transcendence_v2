@@ -149,7 +149,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 <a id="chat" href="#/chat" data-page="chat">CHAT</a>
                 <button id="signout-btn" type="button">Sign Out</button>
             </div>
-            <div id="current-user" data-username="{{ request.user.username }}" data-user-id="{{ request.user.id }}"></div>
         </div>
             <div class="midd">
                 <div class="btn">
@@ -178,7 +177,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 <a id="chat" href="#/chat" data-page="chat">CHAT</a>
                 <button id="signout-btn" type="button">Sign Out</button>
             </div>
-            <div id="current-user" data-username="{{ request.user.username }}" data-user-id="{{ request.user.id }}"></div>
         </div>
         `,
         chat: `
@@ -192,7 +190,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     <a id="chat" href="#/chat" data-page="chat" class="active">CHAT</a>
                     <button id="signout-btn" type="button">Sign Out</button>
                 </div>
-                <div id="current-user" data-username="{{ request.user.username }}" data-user-id="{{ request.user.id }}"></div>
             </div>
             <div class="border">
                 <div class="app-container">
