@@ -417,6 +417,8 @@ export class PongGame {
         this.paddle2.position.x = data.paddle2_x;
         this.ball.position.x = data.ball_x;
         this.ball.position.z = data.ball_z;
+        this.ball.velocity.x = data.ball_velocity_x;
+        this.ball.velocity.z = data.ball_velocity_z;
         this.score1 = data.score1;
         this.score2 = data.score2;
     }

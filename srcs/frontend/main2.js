@@ -349,6 +349,18 @@ document.addEventListener("DOMContentLoaded", () => {
         const uiElements = document.querySelectorAll('#start-ui, #score-ui, #tournament-ui, .three-canvas');
         uiElements.forEach(element => element.remove());
     }
+    // function MatchHistory(matchData) {
+    //     fetch('http://localhost:8000/match-history/', {
+    //         method: 'GET',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+    //         },
+    //     })
+    //     .then((response) => response.json())
+    //     .then((data) => console.log('Local match history stored:', data))
+    //     .catch((error) => console.error('Error storing local match history:', error));
+    // }
     function renderPage(route) {
         const app = document.getElementById('app');
         // const contentArea = document.getElementById('content-area');

@@ -335,6 +335,8 @@ class GameConsumer(AsyncWebsocketConsumer):
             "paddle2_x": state["paddles"]["player2"]["x"],
             "ball_x": state["ball"]["x"],
             "ball_z": state["ball"]["z"],
+            "ball_vx": state["ball"]["vx"],
+            "ball_vz": state["ball"]["vz"],
             "score1": state["scores"]["player1"],
             "score2": state["scores"]["player2"]
         }))
