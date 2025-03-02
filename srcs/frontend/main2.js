@@ -1,7 +1,7 @@
 let allUsers = [];
 let lastRequestTime = 0;
 let flag = 0
-import { PongGame, setCurrentGame } from "./three";
+import { PongGame, setCurrentGame, TournamentPongGame, currentGame } from "./three";
 
 document.addEventListener("DOMContentLoaded", () => {
     const pages = {
@@ -136,6 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <img class="stats-border level" src="profile imgs/level_and_wins_window.png" alt="Level">
                 </div>
                 <div class="match-history">
+                    <h1>User Profile</h1>
                     <img class="match-history-border" src="profile imgs/match_history_window.png" alt="Match History">
                 </div>
             </div>
@@ -342,10 +343,18 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Startplay button not found after rendering dashboard!");
         }
     }
+    function cleanupBeforeRouteChange() {
+        if (currentGame) {
+            currentGame.dispose();
+            currentGame = null;
+        }
+        const uiElements = document.querySelectorAll('#start-ui, #score-ui, #tournament-ui, .three-canvas');
+        uiElements.forEach(element => element.remove());
+    }
     function renderPage(route) {
         const app = document.getElementById('app');
         // const contentArea = document.getElementById('content-area');
-
+        cleanupBeforeRouteChange();
         switch (route) {
             case '#/sign-in':
                 // window.location.hash = '#/sign-in';
@@ -380,21 +389,37 @@ document.addEventListener("DOMContentLoaded", () => {
                 initializeProfileEdit();
                 setupSignOut();
                 break;
-            case '#/game':
-                window.location.hash = '#/game';
-                app.innerHTML = pages.game;
-                loadCSS('styleGame.css');
-
-                document.querySelector('.multiplayer-mode-btn').addEventListener('click', () => {
-                    app.innerHTML = pages.game_v2;
-                    setCurrentGame(new PongGame('multiplayer'));
-                });
-                
-                document.querySelector('.local-mode-btn').addEventListener('click', () => {
-                    app.innerHTML = pages.game_v2;
-                    setCurrentGame(new PongGame('local'));
-                });
-                break;
+                case '#/game':
+                    if (currentGame) {
+                        currentGame.dispose();
+                        currentGame = null;
+                    }
+                    window.location.hash = '#/game';
+                    app.innerHTML = pages.game;
+                    loadCSS('styleGame.css');
+                    setTimeout(() => {
+                        const multiplayerBtn = document.querySelector('.multiplayer-mode-btn');
+                        const localBtn = document.querySelector('.local-mode-btn');
+                        if (multiplayerBtn) {
+                            multiplayerBtn.addEventListener('click', () => {
+                                if (currentGame) {
+                                    currentGame.dispose();
+                                }
+                                app.innerHTML = pages.game_v2;
+                                setCurrentGame(new PongGame('multiplayer'));
+                            });
+                        }
+                        if (localBtn) {
+                            localBtn.addEventListener('click', () => {
+                                if (currentGame) {
+                                    currentGame.dispose();
+                                }
+                                app.innerHTML = pages.game_v2;
+                                setCurrentGame(new PongGame('local'));
+                            });
+                        }
+                    }, 0);
+                    break;
             case '#/chat':
                 window.location.hash = '#/chat';
                 app.innerHTML = pages.chat;
