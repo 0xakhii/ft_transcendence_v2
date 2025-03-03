@@ -338,18 +338,18 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Startplay button not found after rendering dashboard!");
         }
     }
-    // function MatchHistory(matchData) {
-    //     fetch('http://localhost:8000/match-history/', {
-    //         method: 'GET',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //             'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
-    //         },
-    //     })
-    //     .then((response) => response.json())
-    //     .then((data) => console.log('Local match history stored:', data))
-    //     .catch((error) => console.error('Error storing local match history:', error));
-    // }
+    function MatchHistory(matchData) {
+        fetch('http://localhost:8000/match-history/', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+            },
+        })
+        .then((response) => response.json())
+        .then((data) => console.log('Local match history stored:', data))
+        .catch((error) => console.error('Error storing local match history:', error));
+    }
     function renderPage(route) {
         const app = document.getElementById('app');
         // const contentArea = document.getElementById('content-area');
@@ -386,6 +386,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 loadCSS('profile.css');
                 loadProfileInfo();
                 initializeProfileEdit();
+                MatchHistory();
                 setupSignOut();
                 break;
                 case '#/game':
