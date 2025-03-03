@@ -47,36 +47,12 @@ export class PongGame {
     createStartUI() {
         this.startDiv = document.createElement('div');
         this.startDiv.id = 'start-ui';
-        Object.assign(this.startDiv.style, {
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            background: 'rgba(0, 0, 0, 0.7)',
-            color: 'white',
-            padding: '20px',
-            borderRadius: '10px',
-            textAlign: 'center',
-            fontFamily: 'Arial, sans-serif',
-            fontSize: '18px',
-            width: '400px',
-            maxWidth: '90%'
-        });
-        this.startDiv.innerHTML = `<h2>${this.mode === 'tournament' ? 'Tournament' : this.mode === 'local' ? 'Local' : 'Multiplayer'} Pong</h2>`;
+        this.startDiv.className = 'start-ui'
+        // this.startDiv.innerHTML = `<h2>${this.mode === 'tournament' ? 'Tournament' : this.mode === 'local' ? 'Local' : 'Multiplayer'} Pong</h2>`;
+        this.startDiv.innerHTML = `<h2 class="start-heading">${this.mode === 'tournament' ? 'Tournament' : this.mode === 'local' ? 'Local' : 'Multiplayer'} Pong</h2>`;
         const startButton = document.createElement('button');
         startButton.textContent = 'Start';
-        Object.assign(startButton.style, {
-            backgroundColor: 'white',
-            border: 'none',
-            color: 'black',
-            padding: '15px 32px',
-            textAlign: 'center',
-            textDecoration: 'none',
-            display: 'inline-block',
-            fontSize: '20px',
-            margin: '10px 2px',
-            borderRadius: '5px'
-        });
+        startButton.className = 'game-start-button';
         startButton.addEventListener('click', () => this.startGame());
         this.startDiv.appendChild(startButton);
         document.body.appendChild(this.startDiv);
@@ -569,21 +545,7 @@ export class TournamentPongGame extends PongGame {
     createTournamentUI() {
         this.tournamentUI = document.createElement('div');
         this.tournamentUI.id = 'tournament-ui';
-        Object.assign(this.tournamentUI.style, {
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            color: 'white',
-            padding: '20px',
-            borderRadius: '10px',
-            textAlign: 'center',
-            backgroundColor: 'transparent',
-            fontFamily: 'Arial, sans-serif',
-            fontSize: '25px',
-            width: '300px',
-            maxWidth: '90%'
-        });
+        this.tournamentUI.className = 'tournament-ui';
         document.body.appendChild(this.tournamentUI);
     }
 
@@ -592,10 +554,12 @@ export class TournamentPongGame extends PongGame {
         this.tournamentUI.innerHTML = '';
         switch (this.tournament.stage) {
             case 'nameInput':
-                this.tournamentUI.innerHTML = '<h2>Enter Player Names</h2>';
+                // this.tournamentUI.innerHTML = '<h2>Enter Player Names</h2>';
+                this.tournamentUI.innerHTML = '<h2 class="tournament-heading">Enter Player Names</h2>';
                 for (let i = 1; i <= 4; i++) {
                     const input = document.createElement('input');
                     input.type = 'text';
+                    input.className = 'tn-player-input';
                     input.style.marginBottom = '10px';
                     input.style.width = '300px';
                     input.placeholder = `Player ${i}`;
@@ -605,6 +569,7 @@ export class TournamentPongGame extends PongGame {
                 }
                 const startButton = document.createElement('button');
                 startButton.textContent = 'Start Tournament';
+                startButton.className = 'tn-start-button';
                 startButton.addEventListener('click', () => this.startTournament());
                 this.tournamentUI.appendChild(startButton);
                 break;
