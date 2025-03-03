@@ -415,6 +415,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             setCurrentGame(new TournamentPongGame());
                         });
                     }
+                    setupSignOut();
                     break;
             case '#/chat':
                 window.location.hash = '#/chat';

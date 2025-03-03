@@ -9,6 +9,11 @@ import os
 import time
 import random
 import math
+import jwt
+from channels.db import database_sync_to_async
+from django.contrib.auth import get_user_model
+from rest_framework_simplejwt.tokens import AccessToken, TokenError
+
 
 logger = logging.getLogger(__name__)
 
@@ -20,6 +25,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         self.redis_port = int(os.environ.get('REDIS_PORT', 6379))
         self.user_id = None
         self.channel_layer = get_channel_layer()
+        self.auth_token = None
 
     async def connect(self):
         await self.accept()
@@ -57,14 +63,35 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             data = json.loads(text_data)
             logger.info(f"Received message from {self.user_id}: {data}")
             if data['action'] == 'join_queue':
+                self.auth_token = data.get('authToken')
                 await self.join_queue(data)
         except json.JSONDecodeError:
             logger.error(f"Invalid JSON from {self.user_id}: {text_data}")
         except Exception as e:
             logger.error(f"Error in receive for {self.user_id}: {str(e)}")
 
+    @database_sync_to_async
+    def validate_token(self, token):
+        """Validate the JWT token and return the username."""
+        try:
+            access_token = AccessToken(token)
+            user = get_user_model().objects.get(id=access_token['user_id'])
+            return user.username
+        except (TokenError, get_user_model().DoesNotExist) as e:
+            logger.error(f"Token validation failed: {str(e)}")
+            return None
+
     async def join_queue(self, event):
         try:
+            validated_username = await self.validate_token(self.auth_token)
+            if not validated_username:
+                await self.send(text_data=json.dumps({
+                    "type": "error",
+                    "message": "Invalid authentication token"
+                }))
+                return
+
+            self.user_id = validated_username
             queue_contents = await self.get_queue_contents()
             if self.user_id in queue_contents:
                 logger.info(f"User {self.user_id} already in queue")
@@ -84,11 +111,14 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                 if player1_id and player2_id:
                     game_group_name = f"game_{player1_id}_{player2_id}_{int(asyncio.get_event_loop().time())}"
                     
+                    your_role = "player1" if self.user_id == player1_id else "player2"
+
                     match_data = {
                         "type": "match_found",
                         "player1_id": player1_id,
                         "player2_id": player2_id,
-                        "game_group_name": game_group_name
+                        "game_group_name": game_group_name,
+                        "your_role": your_role
                     }
                     
                     await self.channel_layer.group_send("matchmaking", {
@@ -241,7 +271,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                     self.game_state = json.loads(stored_state)
                     player_role = self.game_state["players"].get(self.user_id)
                     if player_role:
-                        speed = 0.1
+                        speed = 0.3
                         if data['key'] in ['a', 'ArrowLeft']:
                             self.game_state["paddles"][player_role]["speed_x"] = -speed
                         elif data['key'] in ['d', 'ArrowRight']:
@@ -324,6 +354,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                 if paddle_left - ball_radius <= intersect_x <= paddle_right + ball_radius:
                     self.game_state["ball"]["x"] = intersect_x
                     self.game_state["ball"]["z"] = paddle["z"] + (self.game_state["ball"]["vz"] > 0 and -ball_radius - paddle_radius or ball_radius + paddle_radius)
+                    self.game_state["ball"]["vz"] *= -1
                     return True
         return self.check_paddle_collision(player_role)
 
@@ -345,7 +376,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         ball_radius = self.game_state["ball_radius"]
         paddle_radius = self.game_state["paddle_radius"]
 
-        push_distance = paddle_radius + ball_radius + 0.05
+        push_distance = paddle_radius + ball_radius + 0.01
         ball["z"] = paddle["z"] + (ball["vz"] > 0 and -push_distance or push_distance)
         ball["vz"] *= -1
         delta_x = ball["x"] - paddle["x"]
@@ -358,7 +389,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             ball["vz"] = (ball["vz"] / magnitude) * 0.2
 
     def reset_ball(self):
-        speed = 0.1
+        speed = 0.3
         direction = random.choice([1, -1])
         angle = (random.random() - 0.5) * math.pi / 2
         self.game_state["ball"] = {
