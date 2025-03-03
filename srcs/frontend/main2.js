@@ -110,24 +110,23 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
         `,
         profile: `
-            <div class="main">
-                <div class="header">
-                    <img class="logo" src="images/Pongify_logo.png">
-                    <div class="test">
-                        <a href="#/dashboard" data-page="home">HOME</a>
-                        <a href="#/profile" data-page="profile" class="active">PROFILE</a>
-                        <a href="#/game" data-page="game">GAME</a>
-                        <a id="chat" href="#/chat" data-page="chat">CHAT</a>
-                        <button id="signout-btn" type="button">Sign Out</button>
-                    </div>
+        <div class="main">
+            <div class="header">
+                <img class="logo" src="images/Pongify_logo.png">
+                <div class="test">
+                    <a href="#/dashboard" data-page="home">HOME</a>
+                    <a href="#/profile" data-page="profile" class="active">PROFILE</a>
+                    <a href="#/game" data-page="game">GAME</a>
+                    <a id="chat" href="#/chat" data-page="chat">CHAT</a>
+                    <button id="signout-btn" type="button">Sign Out</button>
                 </div>
+            </div>
             <div class="profile-container">
                 <div class="profile-info">
                     <img class="profile-border" src="profile imgs/main_profile_window.png">
                     <img class="p_img" id="profile-img" class="profile-img" src="profile images/luffy_snipper.jpg">
                     <h2 class="p_username" id="profile-username" class="profile-username">Username</h2>
                     <button class="edit_p" id="edit-p-btn" type="button">Edit Profile</button>
-                    
                 </div>
                 <div class="profile-stats">
                     <img class="stats-border wins" src="profile imgs/level_and_wins_window.png" alt="Wins">
@@ -135,9 +134,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
                 <div class="match-history">
                     <img class="match-history-border" src="profile imgs/match_history_window.png" alt="Match History">
+                    <div class="match-history-content">
+                        <div id="match-history-list" class="match-history-list"></div>
+                    </div>
                 </div>
             </div>
-        `,
+        </div>
+    `,
         game: `
     <div class="main">
         <div class="header">
@@ -415,6 +418,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             setCurrentGame(new TournamentPongGame());
                         });
                     }
+                    setupSignOut();
                     break;
             case '#/chat':
                 window.location.hash = '#/chat';
@@ -590,6 +594,64 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("authToken", token);
     console.log("Token set in localStorage:", localStorage.getItem("authToken"));
     
+
+    async function displayMatchHistory() {
+        try {
+            const access_token = localStorage.getItem('authToken');
+            // if (!access_token || !isJwtValid(access_token)) {
+            //     console.log("No valid access token found in localStorage.");
+            //     navigateTo('#/sign-in');
+            //     return;
+            // }
+    
+            const response = await fetch('http://127.0.0.1:8000/match-history/', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${access_token}`,
+                },
+            });
+    
+            if (response.ok) {
+                const data = await response.json();
+                console.log("Match History Data:", data);
+    
+                const matchHistoryList = document.getElementById('match-history-list');
+                if (matchHistoryList) {
+                    matchHistoryList.innerHTML = ''; 
+    
+                    if (data.match_history && data.match_history.length > 0) {
+                        const sortedMatches = data.match_history.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    
+                        sortedMatches.forEach(match => {
+                            const matchDiv = document.createElement('div');
+                            matchDiv.classList.add('match-history-item');
+                            matchDiv.innerHTML = `
+                                <p>${match.player1_username} vs ${match.player2_username} (${match.score1}-${match.score2})</p>
+                                <p>Date: ${new Date(match.created_at).toLocaleString()}</p>
+                            `;
+                            matchHistoryList.appendChild(matchDiv);
+                        });
+                    } else {
+                        matchHistoryList.innerHTML = '<p>No match history found.</p>';
+                    }
+                }
+            } else {
+                console.error("Failed to fetch match history:", await response.json());
+                const matchHistoryList = document.getElementById('match-history-list');
+                if (matchHistoryList) {
+                    matchHistoryList.innerHTML = '<p>Failed to load match history. Please try again later.</p>';
+                }
+            }
+        } catch (error) {
+            console.error('Error displaying match history:', error);
+            const matchHistoryList = document.getElementById('match-history-list');
+            if (matchHistoryList) {
+                matchHistoryList.innerHTML = '<p>An error occurred. Please try again later.</p>';
+            }
+        }
+    }
+
     async function loadProfileInfo() {
         try {
             const access_token = localStorage.getItem('authToken');
@@ -631,6 +693,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     profileImg.onerror = () => console.error("Image failed to load:", avatarUrl);
                     document.getElementById('profile-username').innerText = username;
                 }
+                await displayMatchHistory();
             } else {
                 console.error("GET Error:", await response.json());
                 document.getElementById('profile-img').src = 'images/default-avatar.png';
@@ -642,6 +705,8 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('profile-username').innerText = 'Unknown User';
         }
     }
+
+
 
     async function initializeHomeFunctionality() {
         const addFriendsButton = document.getElementById("add-friends-btn");

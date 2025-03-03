@@ -312,6 +312,7 @@ body
     top: 500px;
     width: 250%;
     max-width: 400px;
+    margin-left: 40px;
     /* margin: 20px auto; */
     padding: 10px;
     /* border: 1px solid #ddd; */
@@ -325,7 +326,9 @@ body
     text-align: center;
     font-size: 18px;
     color: #666;
-    margin-bottom: 10px;
+    /* margin-bottom: 10px; */
+    /* margin: 50px; */
+    padding: 50px;
   }
   
   /* Container for the list of friend requests */
@@ -369,15 +372,15 @@ body
 /* Style for the Accept button */
 .friend-request-item .accept-button {
     padding: 5px 10px;
-    margin-left: 10px;
+    margin-left: 55px;
     border: none;
     border-radius: 4px;
-    background-color: #28a745; /* Green color for accept */
+    background-color: #28a745;
     color: white;
-    font-family: 'Poppins', sans-serif; /* Matches your font */
+    font-family: 'Poppins', sans-serif;
     font-size: 14px;
     cursor: pointer;
-    transition: background-color 0.3s ease; /* Smooth hover effect */
+    transition: background-color 0.3sease;
   }
   
   .friend-request-item .accept-button:hover {
@@ -409,10 +412,11 @@ body
 /* Container for the dynamically inserted friend list */
 .friend-list-container {
     position: absolute;
-    top: 500px;
-    /* width: 250%; */
+    top: 490px;
+    /* width: 390px; */
     /* max-width: 400px; */
     padding: 10px;
+    margin-left: 2.2vw;
     background: transparent;
     border-radius: 8px;
     display: flex;
@@ -458,7 +462,8 @@ body
     text-align: center;
     font-size: 18px;
     color: #666;
-    margin-bottom: 10px;
+    /* margin-bottom: 10px; */
+    padding: 100px;
   }
 /************************startplay btn********************************/
 
@@ -576,16 +581,16 @@ body
 
 /* dashboard.css or a new CSS file */
 .remove-friend-btn {
-    margin-left: 10px;
     padding: 5px 10px;
-    background-color: #dc3545; /* Red for removal, can adjust to match purple theme (e.g., #8a2be2) */
+    background-color: #dc3545;
     color: white;
     border: none;
+    margin-left: 6vw;
     border-radius: 5px;
     cursor: pointer;
     font-size: 12px;
     font-family: "Poppins", sans-serif;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3sease;
 }
 
 .remove-friend-btn:hover {
@@ -683,18 +688,58 @@ body
     }
     #user-list-container {
         position: absolute;
-        top: 500px;
+        top: 340px;
         width: 280px;
         padding: 10px;
     }
-    .friend-list-container {
+    .friend-list-container
+    {
         position: absolute;
-        top: 430px;
+        top: 320px;
         /* width: 250%;
         max-width: 400px; */
         padding: 10px;
         gap: 10px;
-      }
+    }
+    #user-list-container {
+        top: 370px;
+        width: 300px;
+        padding: 10px;
+    }
+    #no-friend {
+        text-align: center;
+        font-size: 15px;
+        padding: 25px;
+        padding: 20px;
+    }
+    .friend-requests-container {
+        top: 340px;
+        width: 250%;
+        max-width: 400px;
+        margin-left: 40px;
+        padding: 10px;
+    }
+    .user-row .username {
+        font-weight: bold;
+        font-size: 15px;
+    }
+    .user-row {
+        font-size: 15px;
+        padding: 3px;
+    }
+    .user-row img {
+        width: 30px;
+        height: 30px;
+        margin-right: 10px;
+    }
+    .invite-button {
+        padding: 3px 7px;
+        margin-left: auto;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background-color 0.3sease;
+    }
+
 }
 
 @media (max-width: 1000px)
@@ -732,7 +777,12 @@ body
         top: 530px;
         width: 300px;
         padding: 10px;
-      }
+    }
+    #no-friend {
+        text-align: center;
+        font-size: 12px;
+        padding: 25px;
+    }
 }
 @media (max-width: 1700px)
 {
