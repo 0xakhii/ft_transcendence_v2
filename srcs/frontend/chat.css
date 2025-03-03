@@ -96,7 +96,7 @@ body {
 
 /* Friend list styling */
 .user-list {
-    width: 30%;
+    width: 310px;
     background: transparent;
     overflow-y: auto;
     padding: 10px;
@@ -321,7 +321,7 @@ body {
 
 /* chat.css */
 .view-profile-btn {
-    margin-left: 10px;
+    margin-left: auto;
     padding: 5px 15px;
     background-color: #8a2be2; /* Purple to match your theme */
     color: white;
