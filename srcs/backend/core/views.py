@@ -31,15 +31,16 @@ class MatchHistoryView(APIView):
                 player2_username=data['player2_username'],
                 score1=data['score1'],
                 score2=data['score2'],
+                result=data.get('result', 'pending')
             )
             match.save()
 
             user_history = MatchHistory.objects.filter(user=request.user).values(
-                'player1_username', 'player2_username', 'score1', 'score2', 'created_at'
+                'player1_username', 'player2_username', 'score1', 'score2', 'result', 'created_at'
             )
 
             return JsonResponse({
-                'message': 'Local match history saved',
+                'message': 'Match history saved',
                 'user_history': list(user_history)
             }, status=201)
 
@@ -51,7 +52,7 @@ class MatchHistoryView(APIView):
     def get(self, request):
         try:
             user_history = MatchHistory.objects.filter(user=request.user).values(
-                'player1_username', 'player2_username', 'score1', 'score2', 'created_at'
+                'player1_username', 'player2_username', 'score1', 'score2', 'result', 'created_at'
             )
 
             return JsonResponse({

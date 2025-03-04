@@ -14,7 +14,6 @@ from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import AccessToken, TokenError
 
-
 logger = logging.getLogger(__name__)
 
 class MatchmakingConsumer(AsyncWebsocketConsumer):
@@ -418,3 +417,107 @@ class GameConsumer(AsyncWebsocketConsumer):
             "type": "game_ended",
             "message": event["message"]
         }))
+
+class FriendsMatchConsumer(AsyncWebsocketConsumer):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.redis = None
+        self.redis_host = 'redis'
+        self.redis_port = 6379
+        self.user_id = None
+        self.friend_username = None
+        self.channel_layer = get_channel_layer()
+        self.connected_users = {}
+
+    async def connect(self):
+        await self.accept()
+        max_retries = 5
+        for attempt in range(max_retries):
+            try:
+                self.redis = await aioredis.from_url(f"redis://{self.redis_host}:{self.redis_port}")
+                break
+            except Exception as e:
+                if attempt == max_retries - 1:
+                    await self.send(json.dumps({"type": "error", "message": "Failed to connect to Redis"}))
+                    await self.close()
+                    return
+                await asyncio.sleep(2)
+        await self.channel_layer.group_add("friends_lobby", self.channel_name)
+
+    async def disconnect(self, close_code):
+        if self.user_id in self.connected_users:
+            del self.connected_users[self.user_id]
+        await self.channel_layer.group_discard("friends_lobby", self.channel_name)
+        if self.redis:
+            await self.redis.close()
+        logger.info(f"User {self.user_id} disconnected from friends lobby")
+
+    async def receive(self, text_data):
+        data = json.loads(text_data)
+        logger.info(f"Received from {self.user_id}: {data}")
+        if data['action'] == 'invite_friend':
+            await self.handle_invite_friend(data)
+
+    @database_sync_to_async
+    def validate_token(self, token):
+        try:
+            access_token = AccessToken(token)
+            user = get_user_model().objects.get(id=access_token['user_id'])
+            return user.username
+        except (TokenError, get_user_model().DoesNotExist) as e:
+            logger.error(f"Token validation failed: {str(e)}")
+            return None
+
+    async def handle_invite_friend(self, data):
+        auth_token = data.get('authToken')
+        self.friend_username = data.get('friend_username')
+        self.user_id = await self.validate_token(auth_token)
+        if not self.user_id or not self.friend_username:
+            await self.send(json.dumps({"type": "error", "message": "Invalid token or friend username"}))
+            return
+
+        self.connected_users[self.user_id] = self.channel_name
+        logger.info(f"User {self.user_id} invited {self.friend_username}")
+
+        try:
+            friend_user = await database_sync_to_async(get_user_model().objects.get)(username=self.friend_username)
+            friend_id = friend_user.username
+
+            if friend_id in self.connected_users:
+                await self.start_friends_match(self.user_id, friend_id)
+            else:
+                await self.send(json.dumps({"type": "waiting", "message": f"Waiting for {self.friend_username} to join"}))
+                await self.redis.set(f"friend_invite:{self.friend_username}", self.user_id, ex=300)  # 5-minute expiry
+        except get_user_model().DoesNotExist:
+            await self.send(json.dumps({"type": "error", "message": f"Friend {self.friend_username} not found"}))
+            return
+
+    async def start_friends_match(self, player1_id, player2_id):
+        game_group_name = f"game_{player1_id}_{player2_id}_{int(asyncio.get_event_loop().time())}"
+        
+        await self.channel_layer.send(self.connected_users[player1_id], {
+            "type": "match_found",
+            "data": {
+                "type": "match_found",
+                "player1_id": player1_id,
+                "player2_id": player2_id,
+                "game_group_name": game_group_name
+            }
+        })
+
+        await self.channel_layer.send(self.connected_users[player2_id], {
+            "type": "match_found",
+            "data": {
+                "type": "match_found",
+                "player1_id": player1_id,
+                "player2_id": player2_id,
+                "game_group_name": game_group_name
+            }
+        })
+
+        logger.info(f"Started friends match: {player1_id} vs {player2_id}")
+
+    async def match_found(self, event):
+        data = event["data"]
+        logger.info(f"Sending match_found to {self.user_id}: {data}")
+        await self.send(json.dumps(data))

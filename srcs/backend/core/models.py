@@ -11,6 +11,7 @@ class MatchHistory(models.Model):
     score1 = models.IntegerField()
     score2 = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
+    result = models.CharField(max_length=50, null=True, default="pending")
 
     def __str__(self):
-        return f"{self.user.username}: {self.player1_username} vs {self.player2_username} ({self.score1}-{self.score2})"
+        return f"{self.user.username}: {self.player1_username} vs {self.player2_username} ({self.score1}-{self.score2}) - {self.result}"

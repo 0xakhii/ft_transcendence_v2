@@ -1,7 +1,8 @@
 from django.urls import re_path
-from .consumers import MatchmakingConsumer, GameConsumer
+from .consumers import MatchmakingConsumer, GameConsumer, FriendsMatchConsumer
 
 websocket_urlpatterns = [
 	re_path(r'ws/matchmaking/$', MatchmakingConsumer.as_asgi()),
     re_path(r'ws/game/(?P<game_group_name>[^/]+)/$', GameConsumer.as_asgi()),
+	re_path(r'ws/friends/$', FriendsMatchConsumer.as_asgi()),
 ]

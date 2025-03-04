@@ -628,6 +628,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             matchDiv.classList.add('match-history-item');
                             matchDiv.innerHTML = `
                                 <p>${match.player1_username} vs ${match.player2_username} (${match.score1}-${match.score2})</p>
+                                <p>WINNER: ${match.result}</p>
                                 <p>Date: ${new Date(match.created_at).toLocaleString()}</p>
                             `;
                             matchHistoryList.appendChild(matchDiv);

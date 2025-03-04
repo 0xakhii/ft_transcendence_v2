@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 export class PongGame {
-    constructor(mode) {
+    constructor(mode, friendId = null) {
         this.mode = mode;
         this.score = { player1: 0, player2: 0 };
         this.maxScore = 5;
@@ -13,6 +13,7 @@ export class PongGame {
         this.player2Id = null;
         this.gameGroupName = null;
         this.playerRole = null;
+        this.friendUsername = friendId;
 
         this.initializeScene();
         this.initializeRenderer();
@@ -88,8 +89,8 @@ export class PongGame {
     }
 
     initObjects() {
-        this.paddle1 = this.createPaddle('blue', new THREE.Vector3(0, 0, -15)); // Player 1
-        this.paddle2 = this.createPaddle('red', new THREE.Vector3(0, 0, 15));   // Player 2
+        this.paddle1 = this.createPaddle('blue', new THREE.Vector3(0, 0, -15));
+        this.paddle2 = this.createPaddle('red', new THREE.Vector3(0, 0, 15));
         this.ball = this.createBall();
         this.wall = this.createWall(new THREE.Vector3(-10, 0, 0));
         this.wall2 = this.createWall(new THREE.Vector3(10, 0, 0));
@@ -132,10 +133,22 @@ export class PongGame {
         this.isGameActive = true;
         this.isRunning = true;
 
-        if (this.mode === 'local') {
-            this.setupLocalMode();
-        } else if (this.mode === 'multiplayer') {
-            this.setupMatchmakingWebSocket();
+        switch (this.mode) {
+            case 'local':
+                this.setupLocalMode();
+                break;
+            case 'multiplayer':
+                this.setupMatchmakingWebSocket();
+                break;
+            case 'friends':
+                if (!this.friendUsername) {
+                    console.error('No friend selected for private match');
+                    alert('Please select a friend from the chat to play a private match.');
+                    this.endGame();
+                    return;
+                }
+                this.setupFriendsMatchWebSocket();
+                break;
         }
     }
 
@@ -160,10 +173,40 @@ export class PongGame {
         document.addEventListener('keyup', handleInput);
     }
 
+    async setupFriendsMatchWebSocket() {
+        this.socket = new WebSocket('ws://localhost:8000/ws/friends/');
+        this.socket.onopen = () => {
+            this.socket.send(JSON.stringify({
+                action: 'invite_friend',
+                authToken: localStorage.getItem('authToken'),
+                friend_username: this.friendUsername
+            }));
+        };
+        this.socket.onmessage = async (event) => this.handleFriendsMatchMessage(event);
+        this.socket.onerror = (error) => console.error('Friends match WebSocket error:', error);
+    }
+    
+    async handleFriendsMatchMessage(event) {
+        const data = JSON.parse(event.data);
+        if (data.type === 'match_found') {
+            this.player1Id = data.player1_id;
+            this.player2Id = data.player2_id;
+            this.gameGroupName = data.game_group_name;
+            this.socket.close();
+            await this.fetchUserData();
+            this.setupGameWebSocket();
+        } else if (data.type === 'waiting') {
+            console.log('Waiting for friend to accept:', data.message);
+        } else if (data.type === 'error') {
+            console.error('Friends match error:', data.message);
+            alert(data.message);
+            this.endGame();
+        }
+    }
+
     async setupMatchmakingWebSocket() {
         this.socket = new WebSocket('ws://localhost:8000/ws/matchmaking/');
         this.socket.onopen = () => {
-            console.log('Connected to matchmaking WebSocket');
             this.socket.send(JSON.stringify({
                 action: 'join_queue',
                 authToken: localStorage.getItem('authToken')
@@ -171,7 +214,6 @@ export class PongGame {
         };
         this.socket.onmessage = async (event) => {
             const data = JSON.parse(event.data);
-            console.log('Matchmaking response:', data);
             if (data.type === 'match_found') {
                 this.player1Id = data.player1_id;
                 this.player2Id = data.player2_id;
@@ -189,7 +231,6 @@ export class PongGame {
     setupGameWebSocket() {
         this.socket = new WebSocket(`ws://localhost:8000/ws/game/${this.gameGroupName}/`);
         this.socket.onopen = () => {
-            console.log('Connected to game WebSocket');
             this.initObjects();
             this.determinePlayerRole();
             this.createScoreUI();
@@ -210,11 +251,9 @@ export class PongGame {
             return;
         }
         this.playerRole = this.localUserId === this.player1Id ? 'player1' : 'player2';
-        console.log(`Player role for ${this.localUserId}: ${this.playerRole} (P1: ${this.player1Id}, P2: ${this.player2Id})`);
     }
 
     updateCameraPosition() {
-        console.log('Updating camera for role:', this.playerRole);
         if (this.playerRole === 'player1') {
             this.camera.position.set(0, 18, -25);
             this.camera.lookAt(0, 0, 0);
@@ -248,13 +287,11 @@ export class PongGame {
                 this.endGame();
             }
         } else if (data.type === 'game_ended') {
-            console.log(data.message);
             this.endGame();
         }
     }
 
     handleGameClose() {
-        console.log('Game WebSocket disconnected');
         if (this.isGameActive) this.endGame();
     }
 
@@ -390,6 +427,11 @@ export class PongGame {
                 player2_username: this.player2Id,
                 score1: this.score.player1,
                 score2: this.score.player2,
+                result: this.score.player1 > this.score.player2 
+                    ? `${this.player1Id}` 
+                    : this.score.player2 > this.score.player1 
+                    ? `${this.player2Id}` 
+                    : 'draw'
             }),
         })
             .then((response) => response.json())
