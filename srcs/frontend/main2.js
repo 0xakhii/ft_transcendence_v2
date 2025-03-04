@@ -1862,7 +1862,6 @@ async function acceptFriendRequest(requestId) {
                                 break;
                             case "error":
                                 console.error(data.message);
-                                alert(data.message);
                                 if (data.message === "Authentication required") {
                                     navigateTo('#/sign-in');
                                 }
@@ -1881,14 +1880,10 @@ async function acceptFriendRequest(requestId) {
                     navigateTo('#/game');
                     const app = document.getElementById('app');
                     app.innerHTML = pages.game_v2;
+                    setCurrentGame(new PongGame('friends', data.player1_id === localStorage.getItem('user_id') ? data.player2_id : data.player1_id));
                     currentGame.gameGroupName = data.game_group_name;
                     currentGame.player1Id = data.player1_id;
                     currentGame.player2Id = data.player2_id;
-                    // setCurrentGame(new PongGame('friends', data.player1_id === localStorage.getItem('user_id') ? data.player2_id : data.player1_id));
-                    currentGame.initObjects();
-                    currentGame.createScoreUI();
-                    currentGame.updateCameraPosition();
-                    currentGame.animate();
                     currentGame.setupFriendsMatchWebSocket();
                 }
                 if (friendList.length === 0) {
@@ -1949,24 +1944,7 @@ async function acceptFriendRequest(requestId) {
                             }
                         });
                         
-                        // const inviteGameButton = document.createElement("button");
-                        // inviteGameButton.textContent = "Invite to Game";
-                        // inviteGameButton.classList.add("invite-game-btn");
-                        // inviteGameButton.addEventListener("click", async (e) => {
-                        //     e.stopPropagation();
-                        //     const token = localStorage.getItem('authToken');
-                        //     const sender = await getCurrentUsername(token);
-                        //     if (!sender) {
-                        //         console.error("Unable to identify current user.");
-                        //         return;
-                        //     }
-        
-                        //     // Start the game immediately for the sender
-                        //     console.log(`Starting game for ${sender} with ${friend.username}`);
-                        //     setCurrentGame(new PongGame('friends', friend.username)); // Your friend's suggested line
-                        //     const game = currentGame; // Access the current game instance
-                        //     game.startGame(); // Start playing immediately
-        
+                        
                         //     // Display a message in the sender's chat
                         //     const chatMessages = document.getElementById('chat-messages');
                         //     if (chatMessages) {

@@ -147,7 +147,10 @@ export class PongGame {
                     this.endGame();
                     return;
                 }
-                this.setupFriendsMatchWebSocket();
+                if (!this.socket) {
+                    console.log("Socket not set, calling setupFriendsMatchWebSocket");
+                    this.setupFriendsMatchWebSocket();
+                }
                 break;
         }
     }
@@ -174,24 +177,26 @@ export class PongGame {
     }
 
     async setupFriendsMatchWebSocket() {
+        console.log("Setting up friends match WebSocket with gameGroupName:", this.gameGroupName);
         this.initObjects();
         this.createScoreUI();
-        this.updateCameraPosition();
-        this.animate();
-    
         this.socket = new WebSocket(`ws://localhost:8000/ws/game/${this.gameGroupName}/`);
         this.socket.onopen = () => {
-            console.log(`Connected to game room: ${this.gameGroupName}`);
-            this.initObjects();
+            console.log(`WebSocket opened for ${this.gameGroupName}`);
             this.determinePlayerRole();
-            this.createScoreUI();
+            this.updateCameraPosition();
+            this.setupMultiplayerControls();
             this.isRunning = true;
             this.isGameActive = true;
-            this.updateCameraPosition();
+            this.startGame();
             this.animate();
         };
-        this.socket.onmessage = (event) => this.handleGameMessage(event);
-        this.socket.onclose = () => this.handleGameClose();
+        this.socket.onmessage = (event) => {
+            this.handleGameMessage(event);
+        };
+        this.socket.onclose = () => {
+            this.handleGameClose();
+        };
     }
 
     async setupMatchmakingWebSocket() {

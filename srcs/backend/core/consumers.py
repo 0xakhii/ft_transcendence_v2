@@ -446,23 +446,19 @@ class FriendsMatchConsumer(AsyncWebsocketConsumer):
             pong = await self.redis.ping()
             if not pong:
                 raise Exception("Redis ping failed")
-            logger.info(f"Instance {self.instance_id}: Connected to Redis")
         except Exception as e:
             logger.error(f"Instance {self.instance_id}: Redis connection failed: {e}")
             await self.send(json.dumps({"type": "error", "message": "Server error, Redis unavailable"}))
             await self.close()
             return
         await self.channel_layer.group_add("friends_lobby", self.channel_name)
-        logger.info(f"Instance {self.instance_id}: Joined friends_lobby at {self.channel_name}")
 
     async def disconnect(self, close_code):
         if self.is_authenticated and self.user_id:
             await self.redis.hdel("connected_users", self.user_id)
-            logger.info(f"Instance {self.instance_id}: Removed {self.user_id} from connected_users")
         await self.channel_layer.group_discard("friends_lobby", self.channel_name)
         if self.redis:
             await self.redis.close()
-        logger.info(f"Instance {self.instance_id}: Disconnected, code: {close_code}")
 
     async def receive(self, text_data):
         data = json.loads(text_data)
@@ -504,7 +500,6 @@ class FriendsMatchConsumer(AsyncWebsocketConsumer):
 
         self.is_authenticated = True
         await self.redis.hset("connected_users", self.user_id, self.channel_name)
-        logger.info(f"Instance {self.instance_id}: Authenticated {self.user_id}")
         await self.send(json.dumps({"type": "authenticated", "message": "Authentication successful"}))
 
     async def handle_invite_friend(self, data):
@@ -516,14 +511,12 @@ class FriendsMatchConsumer(AsyncWebsocketConsumer):
         friend_channel = await self.redis.hget("connected_users", friend_username)
         invite_key = f"invite:{self.user_id}:{friend_username}"
         await self.redis.set(invite_key, self.user_id, ex=600)
-        logger.info(f"Instance {self.instance_id}: Stored invite {invite_key} in Redis")
 
         if not friend_channel:
             await self.send(json.dumps({"type": "waiting", "message": f"{friend_username} is not online"}))
             return
 
         friend_channel = friend_channel.decode('utf-8')
-        logger.info(f"Instance {self.instance_id}: Inviting {friend_username} at {friend_channel}")
         await self.channel_layer.send(friend_channel, {
             "type": "invite_received",
             "inviter": self.user_id,
@@ -580,15 +573,12 @@ class FriendsMatchConsumer(AsyncWebsocketConsumer):
 
         await self.channel_layer.send(inviter_channel, {"type": "match_found", "data": match_data})
         await self.channel_layer.send(invitee_channel, {"type": "match_found", "data": match_data})
-        logger.info(f"Instance {self.instance_id}: Started match {game_group_name}")
 
     async def invite_received(self, event):
-        logger.info(f"Instance {self.instance_id}: Invite received for {self.user_id} from {event['inviter']}")
         await self.send(json.dumps({
             "type": "invite_received",
             "inviter": event["inviter"],
         }))
 
     async def match_found(self, event):
-        logger.info(f"Instance {self.instance_id}: Match found for {self.user_id}")
         await self.send(json.dumps(event["data"]))
