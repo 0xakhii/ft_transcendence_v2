@@ -291,8 +291,8 @@ export class PongGame {
     }
 
     updateGameState(data) {
-        this.paddle1.position.x = data.paddle1_x || 0;
-        this.paddle2.position.x = data.paddle2_x || 0;
+        this.paddle1.position.x = -data.paddle1_x || 0;
+        this.paddle2.position.x = -data.paddle2_x || 0;
         this.ball.position.set(data.ball_x || 0, 0, data.ball_z || 0);
         this.ball.velocity = new THREE.Vector3(data.ball_velocity_x || 0, 0, data.ball_velocity_z || 0);
         this.score.player1 = data.score1 || 0;
