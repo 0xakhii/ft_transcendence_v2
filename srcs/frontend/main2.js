@@ -1712,6 +1712,26 @@ async function acceptFriendRequest(requestId) {
             loadChatHistory();
         }
     
+        async function getCurrentUsername(token) {
+            try {
+                const response = await fetch('http://127.0.0.1:8000/profile/', {
+                    method: 'GET',
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    return data.data?.attributes?.username || null;
+                }
+                return null;
+            } catch (error) {
+                console.error("Error fetching current username:", error);
+                return null;
+            }
+        }
+        
         async function fetchAndDisplayFriendschat() {
             try {
                 const response = await fetch("http://127.0.0.1:8000/friends/list/", {
@@ -1721,15 +1741,15 @@ async function acceptFriendRequest(requestId) {
                         "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
                     },
                 });
-    
+        
                 if (!response.ok) {
                     console.error("Failed to fetch friend list. Status:", response.status);
                     return;
                 }
-    
+        
                 const data = await response.json();
                 console.log("Friend list API response:", data);
-    
+        
                 let friendList = [];
                 if (data.data && Array.isArray(data.data)) {
                     friendList = data.data.map(item => Object.assign({}, item.attributes, { id: item.id }));
@@ -1737,15 +1757,15 @@ async function acceptFriendRequest(requestId) {
                     console.error("Unexpected response format for friend list:", data);
                     return;
                 }
-    
+        
                 const friendListContainer = document.getElementById("chat-friend-list");
                 if (!friendListContainer) {
                     console.error("Chat friend list container not found.");
                     return;
                 }
-    
+        
                 friendListContainer.innerHTML = ""; // Clear previous content
-    
+        
                 if (friendList.length === 0) {
                     const noFriendsMessage = document.createElement("div");
                     noFriendsMessage.classList.add("no-friends");
@@ -1758,7 +1778,7 @@ async function acceptFriendRequest(requestId) {
                         friendDiv.setAttribute("data-friend-id", friend.id);
                         friendDiv.setAttribute("data-friend-name", friend.username);
                         friendDiv.addEventListener("click", () => switchConversation(friend.username));
-    
+        
                         const iconDiv = document.createElement("div");
                         iconDiv.classList.add("icon");
                         const avatarImg = document.createElement("img");
@@ -1768,33 +1788,66 @@ async function acceptFriendRequest(requestId) {
                             avatarImg.src = `http://127.0.0.1:8000${friend.avatar}` || "images/default-avatar.png";
                         }
                         avatarImg.alt = friend.username || "Friend Avatar";
-    
+                        iconDiv.appendChild(avatarImg);
+        
                         const nameDiv = document.createElement("div");
                         nameDiv.textContent = friend.username || "Unknown";
-    
-                        // Add View Profile Button
+        
                         const viewProfileButton = document.createElement("button");
                         viewProfileButton.textContent = "Profile";
                         viewProfileButton.classList.add("view-profile-btn");
                         viewProfileButton.addEventListener("click", (e) => {
-                            e.stopPropagation(); // Prevent triggering switchConversation
+                            e.stopPropagation();
                             showFriendProfile(friend.username, friend.id, friend.avatar);
                         });
-    
-                        // Add Block Button
+        
                         const blockButton = document.createElement("button");
                         blockButton.textContent = blockedUsers.includes(friend.username.toLowerCase()) ? "Unblock" : "Block";
                         blockButton.classList.add("block-user-btn");
                         blockButton.addEventListener("click", (e) => {
-                            e.stopPropagation(); // Prevent triggering switchConversation
+                            e.stopPropagation();
                             toggleBlockUser(friend.username);
                         });
-    
-                        iconDiv.appendChild(avatarImg);
+        
+                        const inviteGameButton = document.createElement("button");
+                        inviteGameButton.textContent = "Invite to Game";
+                        inviteGameButton.classList.add("invite-game-btn");
+                        inviteGameButton.addEventListener("click", async (e) => {
+                            e.stopPropagation();
+                            const token = localStorage.getItem('authToken');
+                            const sender = await getCurrentUsername(token);
+                            if (!sender) {
+                                console.error("Unable to identify current user.");
+                                return;
+                            }
+        
+                            // Start the game immediately for the sender
+                            console.log(`Starting game for ${sender} with ${friend.username}`);
+                            setCurrentGame(new PongGame('friends', friend.username)); // Your friend's suggested line
+                            const game = currentGame; // Access the current game instance
+                            game.startGame(); // Start playing immediately
+        
+                            // Display a message in the sender's chat
+                            const chatMessages = document.getElementById('chat-messages');
+                            if (chatMessages) {
+                                displayMessage(`Started game with ${friend.username}! Waiting for them to join...`, 'sender', new Date().toLocaleTimeString(), sender, chatMessages);
+                            } else {
+                                console.warn("chatMessages not found for sender, creating placeholder");
+                                const placeholder = document.createElement('div');
+                                placeholder.id = 'chat-messages';
+                                document.querySelector('.chat-panel').appendChild(placeholder); // Adjust selector if needed
+                                displayMessage(`Started game with ${friend.username}! Waiting for them to join...`, 'sender', new Date().toLocaleTimeString(), sender, placeholder);
+                            }
+        
+                            // Display an invitation message in the receiver's chat (simulated client-side)
+                            // displayInviteMessage(sender, friend.username);
+                        });
+        
                         friendDiv.appendChild(iconDiv);
                         friendDiv.appendChild(nameDiv);
                         friendDiv.appendChild(viewProfileButton);
                         friendDiv.appendChild(blockButton);
+                        friendDiv.appendChild(inviteGameButton);
                         friendListContainer.appendChild(friendDiv);
                     });
                 }
