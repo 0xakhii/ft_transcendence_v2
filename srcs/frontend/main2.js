@@ -1788,7 +1788,6 @@ async function acceptFriendRequest(requestId) {
                 return null;
             }
         }
-        
         async function fetchAndDisplayFriendschat() {
             try {
                 const response = await fetch("http://127.0.0.1:8000/friends/list/", {
@@ -1822,7 +1821,76 @@ async function acceptFriendRequest(requestId) {
                 }
         
                 friendListContainer.innerHTML = ""; // Clear previous content
-        
+                let friendsSocket = null;
+
+                const initializeFriendsWebSocket = () => {
+                    const token = localStorage.getItem("authToken");
+                    if (!token) {
+                        console.error("No auth token available.");
+                        navigateTo('#/sign-in');
+                        return;
+                    }
+
+                    friendsSocket = new WebSocket('ws://127.0.0.1:8000/ws/friends/');
+                    friendsSocket.onopen = () => {
+                        console.log("Friends WebSocket connected");
+                        friendsSocket.send(JSON.stringify({
+                            action: "authenticate",
+                            authToken: token,
+                        }));
+                    };
+
+                    friendsSocket.onmessage = (event) => {
+                        const data = JSON.parse(event.data);
+                        switch (data.type) {
+                            case "invite_received":
+                                if (confirm(`${data.inviter} has invited you to a Pong match. Accept?`)) {
+                                    friendsSocket.send(JSON.stringify({
+                                        action: "accept_invite",
+                                        inviter: data.inviter,
+                                    }));
+                                }
+                                break;
+                            case "match_found":
+                                startPrivateMatch(data);
+                                break;
+                            case "invite_sent":
+                                console.log(data.message);
+                                break;
+                            case "waiting":
+                                console.log(data.message);
+                                break;
+                            case "error":
+                                console.error(data.message);
+                                alert(data.message);
+                                if (data.message === "Authentication required") {
+                                    navigateTo('#/sign-in');
+                                }
+                                break;
+                        }
+                    };
+
+                    friendsSocket.onerror = (error) => console.error("Friends WebSocket error:", error);
+                    friendsSocket.onclose = (event) => {
+                        console.log("Friends WebSocket closed:", event.code, event.reason);
+                        if (event.code !== 1000) setTimeout(initializeFriendsWebSocket, 2000);
+                    };
+                };
+                initializeFriendsWebSocket();
+                function startPrivateMatch(data) {
+                    navigateTo('#/game');
+                    const app = document.getElementById('app');
+                    app.innerHTML = pages.game_v2;
+                    currentGame.gameGroupName = data.game_group_name;
+                    currentGame.player1Id = data.player1_id;
+                    currentGame.player2Id = data.player2_id;
+                    // setCurrentGame(new PongGame('friends', data.player1_id === localStorage.getItem('user_id') ? data.player2_id : data.player1_id));
+                    currentGame.initObjects();
+                    currentGame.createScoreUI();
+                    currentGame.updateCameraPosition();
+                    currentGame.animate();
+                    currentGame.setupFriendsMatchWebSocket();
+                }
                 if (friendList.length === 0) {
                     const noFriendsMessage = document.createElement("div");
                     noFriendsMessage.classList.add("no-friends");
@@ -1865,7 +1933,22 @@ async function acceptFriendRequest(requestId) {
                             e.stopPropagation();
                             toggleBlockUser(friend.username);
                         });
-        
+                        const inviteGameButton = document.createElement("button");
+                        inviteGameButton.textContent = "Invite to Game";
+                        inviteGameButton.classList.add("invite-game-btn");
+                        inviteGameButton.addEventListener("click", (e) => {
+                            e.stopPropagation();
+                            if (friendsSocket && friendsSocket.readyState === WebSocket.OPEN) {
+                                friendsSocket.send(JSON.stringify({
+                                    action: "invite_friend",
+                                    friend_username: friend.username,
+                                }));
+                            } else {
+                                console.error("Friends WebSocket not connected");
+                                alert("Unable to send invite. Please wait or refresh.");
+                            }
+                        });
+                        
                         // const inviteGameButton = document.createElement("button");
                         // inviteGameButton.textContent = "Invite to Game";
                         // inviteGameButton.classList.add("invite-game-btn");
@@ -1905,6 +1988,7 @@ async function acceptFriendRequest(requestId) {
                         friendDiv.appendChild(viewProfileButton);
                         friendDiv.appendChild(blockButton);
                         // friendDiv.appendChild(inviteGameButton);
+                        friendDiv.appendChild(inviteGameButton);
                         friendListContainer.appendChild(friendDiv);
                     });
                 }

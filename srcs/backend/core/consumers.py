@@ -271,12 +271,20 @@ class GameConsumer(AsyncWebsocketConsumer):
                     player_role = self.game_state["players"].get(self.user_id)
                     if player_role:
                         speed = 0.3
-                        if data['key'] in ['a', 'ArrowLeft']:
-                            self.game_state["paddles"][player_role]["speed_x"] = -speed
-                        elif data['key'] in ['d', 'ArrowRight']:
-                            self.game_state["paddles"][player_role]["speed_x"] = speed
-                        else:
-                            self.game_state["paddles"][player_role]["speed_x"] = 0
+                        if player_role == "player1":
+                            if data['key'] in ['a', 'ArrowLeft']:
+                                self.game_state["paddles"][player_role]["speed_x"] = -speed
+                            elif data['key'] in ['d', 'ArrowRight']:
+                                self.game_state["paddles"][player_role]["speed_x"] = speed
+                            else:
+                                self.game_state["paddles"][player_role]["speed_x"] = 0
+                        elif player_role == "player2":
+                            if data['key'] in ['a', 'ArrowLeft']:
+                                self.game_state["paddles"][player_role]["speed_x"] = speed
+                            elif data['key'] in ['d', 'ArrowRight']:
+                                self.game_state["paddles"][player_role]["speed_x"] = -speed
+                            else:
+                                self.game_state["paddles"][player_role]["speed_x"] = 0
                         await self.redis.set(game_state_key, json.dumps(self.game_state))
 
     async def game_loop(self):
@@ -418,45 +426,58 @@ class GameConsumer(AsyncWebsocketConsumer):
             "message": event["message"]
         }))
 
+import uuid
+
 class FriendsMatchConsumer(AsyncWebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.redis = None
-        self.redis_host = 'redis'
-        self.redis_port = 6379
+        self.redis_host = os.environ.get('REDIS_HOST', 'redis')
+        self.redis_port = int(os.environ.get('REDIS_PORT', 6379))
         self.user_id = None
-        self.friend_username = None
+        self.is_authenticated = False
+        self.instance_id = str(uuid.uuid4())
         self.channel_layer = get_channel_layer()
-        self.connected_users = {}
 
     async def connect(self):
         await self.accept()
-        max_retries = 5
-        for attempt in range(max_retries):
-            try:
-                self.redis = await aioredis.from_url(f"redis://{self.redis_host}:{self.redis_port}")
-                break
-            except Exception as e:
-                if attempt == max_retries - 1:
-                    await self.send(json.dumps({"type": "error", "message": "Failed to connect to Redis"}))
-                    await self.close()
-                    return
-                await asyncio.sleep(2)
+        try:
+            self.redis = await aioredis.from_url(f"redis://{self.redis_host}:{self.redis_port}")
+            pong = await self.redis.ping()
+            if not pong:
+                raise Exception("Redis ping failed")
+            logger.info(f"Instance {self.instance_id}: Connected to Redis")
+        except Exception as e:
+            logger.error(f"Instance {self.instance_id}: Redis connection failed: {e}")
+            await self.send(json.dumps({"type": "error", "message": "Server error, Redis unavailable"}))
+            await self.close()
+            return
         await self.channel_layer.group_add("friends_lobby", self.channel_name)
+        logger.info(f"Instance {self.instance_id}: Joined friends_lobby at {self.channel_name}")
 
     async def disconnect(self, close_code):
-        if self.user_id in self.connected_users:
-            del self.connected_users[self.user_id]
+        if self.is_authenticated and self.user_id:
+            await self.redis.hdel("connected_users", self.user_id)
+            logger.info(f"Instance {self.instance_id}: Removed {self.user_id} from connected_users")
         await self.channel_layer.group_discard("friends_lobby", self.channel_name)
         if self.redis:
             await self.redis.close()
-        logger.info(f"User {self.user_id} disconnected from friends lobby")
+        logger.info(f"Instance {self.instance_id}: Disconnected, code: {close_code}")
 
     async def receive(self, text_data):
         data = json.loads(text_data)
-        logger.info(f"Received from {self.user_id}: {data}")
-        if data['action'] == 'invite_friend':
+        action = data.get('action')
+        logger.info(f"Instance {self.instance_id}: Received: {data}")
+
+        if action == "authenticate":
+            await self.handle_authenticate(data)
+        elif not self.is_authenticated:
+            await self.send(json.dumps({"type": "error", "message": "Authentication required"}))
+            return
+        elif action == "invite_friend":
             await self.handle_invite_friend(data)
+        elif action == "accept_invite":
+            await self.handle_accept_invite(data)
 
     @database_sync_to_async
     def validate_token(self, token):
@@ -464,60 +485,110 @@ class FriendsMatchConsumer(AsyncWebsocketConsumer):
             access_token = AccessToken(token)
             user = get_user_model().objects.get(id=access_token['user_id'])
             return user.username
-        except (TokenError, get_user_model().DoesNotExist) as e:
-            logger.error(f"Token validation failed: {str(e)}")
+        except Exception as e:
+            logger.error(f"Instance {self.instance_id}: Token validation failed: {e}")
             return None
 
-    async def handle_invite_friend(self, data):
+    async def handle_authenticate(self, data):
         auth_token = data.get('authToken')
-        self.friend_username = data.get('friend_username')
+        if not auth_token:
+            await self.send(json.dumps({"type": "error", "message": "No token provided"}))
+            await self.close()
+            return
+
         self.user_id = await self.validate_token(auth_token)
-        if not self.user_id or not self.friend_username:
-            await self.send(json.dumps({"type": "error", "message": "Invalid token or friend username"}))
+        if not self.user_id:
+            await self.send(json.dumps({"type": "error", "message": "Invalid token"}))
+            await self.close()
             return
 
-        self.connected_users[self.user_id] = self.channel_name
-        logger.info(f"User {self.user_id} invited {self.friend_username}")
+        self.is_authenticated = True
+        await self.redis.hset("connected_users", self.user_id, self.channel_name)
+        logger.info(f"Instance {self.instance_id}: Authenticated {self.user_id}")
+        await self.send(json.dumps({"type": "authenticated", "message": "Authentication successful"}))
 
-        try:
-            friend_user = await database_sync_to_async(get_user_model().objects.get)(username=self.friend_username)
-            friend_id = friend_user.username
-
-            if friend_id in self.connected_users:
-                await self.start_friends_match(self.user_id, friend_id)
-            else:
-                await self.send(json.dumps({"type": "waiting", "message": f"Waiting for {self.friend_username} to join"}))
-                await self.redis.set(f"friend_invite:{self.friend_username}", self.user_id, ex=300)  # 5-minute expiry
-        except get_user_model().DoesNotExist:
-            await self.send(json.dumps({"type": "error", "message": f"Friend {self.friend_username} not found"}))
+    async def handle_invite_friend(self, data):
+        friend_username = data.get('friend_username')
+        if not friend_username:
+            await self.send(json.dumps({"type": "error", "message": "Friend username required"}))
             return
+
+        friend_channel = await self.redis.hget("connected_users", friend_username)
+        invite_key = f"invite:{self.user_id}:{friend_username}"
+        await self.redis.set(invite_key, self.user_id, ex=600)
+        logger.info(f"Instance {self.instance_id}: Stored invite {invite_key} in Redis")
+
+        if not friend_channel:
+            await self.send(json.dumps({"type": "waiting", "message": f"{friend_username} is not online"}))
+            return
+
+        friend_channel = friend_channel.decode('utf-8')
+        logger.info(f"Instance {self.instance_id}: Inviting {friend_username} at {friend_channel}")
+        await self.channel_layer.send(friend_channel, {
+            "type": "invite_received",
+            "inviter": self.user_id,
+        })
+        await self.send(json.dumps({"type": "invite_sent", "message": f"Invite sent to {friend_username}"}))
+
+    async def handle_accept_invite(self, data):
+        inviter_id = data.get('inviter')
+        if not inviter_id:
+            await self.send(json.dumps({"type": "error", "message": "Inviter required"}))
+            return
+
+        inviter_channel = await self.redis.hget("connected_users", inviter_id)
+        if not inviter_channel:
+            await self.send(json.dumps({"type": "error", "message": "Inviter is no longer online"}))
+            return
+
+        invite_key = f"invite:{inviter_id}:{self.user_id}"
+        for _ in range(3):
+            stored_inviter = await self.redis.get(invite_key)
+            if stored_inviter:
+                break
+            await asyncio.sleep(0.1)
+        if not stored_inviter or stored_inviter.decode('utf-8') != inviter_id:
+            await self.send(json.dumps({"type": "error", "message": "No valid invite found"}))
+            return
+
+        await self.redis.delete(invite_key)
+        await self.start_friends_match(inviter_id, self.user_id)
+
+        inviter_channel = await self.redis.hget("connected_users", inviter_id)
+        if not inviter_channel:
+            await self.send(json.dumps({"type": "error", "message": "Inviter is no longer online"}))
+            return
+
+        invite_key = f"invite:{inviter_id}:{self.user_id}"
+        if not await self.redis.get(invite_key):
+            await self.send(json.dumps({"type": "error", "message": "No valid invite found"}))
+            return
+        await self.redis.delete(invite_key)
+        await self.start_friends_match(inviter_id, self.user_id)
 
     async def start_friends_match(self, player1_id, player2_id):
-        game_group_name = f"game_{player1_id}_{player2_id}_{int(asyncio.get_event_loop().time())}"
-        
-        await self.channel_layer.send(self.connected_users[player1_id], {
+        game_group_name = f"game_{player1_id}_{player2_id}_{int(time.time())}"
+        match_data = {
             "type": "match_found",
-            "data": {
-                "type": "match_found",
-                "player1_id": player1_id,
-                "player2_id": player2_id,
-                "game_group_name": game_group_name
-            }
-        })
+            "player1_id": player1_id,
+            "player2_id": player2_id,
+            "game_group_name": game_group_name,
+        }
 
-        await self.channel_layer.send(self.connected_users[player2_id], {
-            "type": "match_found",
-            "data": {
-                "type": "match_found",
-                "player1_id": player1_id,
-                "player2_id": player2_id,
-                "game_group_name": game_group_name
-            }
-        })
+        inviter_channel = (await self.redis.hget("connected_users", player1_id)).decode('utf-8')
+        invitee_channel = (await self.redis.hget("connected_users", player2_id)).decode('utf-8')
 
-        logger.info(f"Started friends match: {player1_id} vs {player2_id}")
+        await self.channel_layer.send(inviter_channel, {"type": "match_found", "data": match_data})
+        await self.channel_layer.send(invitee_channel, {"type": "match_found", "data": match_data})
+        logger.info(f"Instance {self.instance_id}: Started match {game_group_name}")
+
+    async def invite_received(self, event):
+        logger.info(f"Instance {self.instance_id}: Invite received for {self.user_id} from {event['inviter']}")
+        await self.send(json.dumps({
+            "type": "invite_received",
+            "inviter": event["inviter"],
+        }))
 
     async def match_found(self, event):
-        data = event["data"]
-        logger.info(f"Sending match_found to {self.user_id}: {data}")
-        await self.send(json.dumps(data))
+        logger.info(f"Instance {self.instance_id}: Match found for {self.user_id}")
+        await self.send(json.dumps(event["data"]))

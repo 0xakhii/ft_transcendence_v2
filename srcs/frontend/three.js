@@ -174,34 +174,24 @@ export class PongGame {
     }
 
     async setupFriendsMatchWebSocket() {
-        this.socket = new WebSocket('ws://localhost:8000/ws/friends/');
-        this.socket.onopen = () => {
-            this.socket.send(JSON.stringify({
-                action: 'invite_friend',
-                authToken: localStorage.getItem('authToken'),
-                friend_username: this.friendUsername
-            }));
-        };
-        this.socket.onmessage = async (event) => this.handleFriendsMatchMessage(event);
-        this.socket.onerror = (error) => console.error('Friends match WebSocket error:', error);
-    }
+        this.initObjects();
+        this.createScoreUI();
+        this.updateCameraPosition();
+        this.animate();
     
-    async handleFriendsMatchMessage(event) {
-        const data = JSON.parse(event.data);
-        if (data.type === 'match_found') {
-            this.player1Id = data.player1_id;
-            this.player2Id = data.player2_id;
-            this.gameGroupName = data.game_group_name;
-            this.socket.close();
-            await this.fetchUserData();
-            this.setupGameWebSocket();
-        } else if (data.type === 'waiting') {
-            console.log('Waiting for friend to accept:', data.message);
-        } else if (data.type === 'error') {
-            console.error('Friends match error:', data.message);
-            alert(data.message);
-            this.endGame();
-        }
+        this.socket = new WebSocket(`ws://localhost:8000/ws/game/${this.gameGroupName}/`);
+        this.socket.onopen = () => {
+            console.log(`Connected to game room: ${this.gameGroupName}`);
+            this.initObjects();
+            this.determinePlayerRole();
+            this.createScoreUI();
+            this.isRunning = true;
+            this.isGameActive = true;
+            this.updateCameraPosition();
+            this.animate();
+        };
+        this.socket.onmessage = (event) => this.handleGameMessage(event);
+        this.socket.onclose = () => this.handleGameClose();
     }
 
     async setupMatchmakingWebSocket() {
