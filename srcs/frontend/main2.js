@@ -129,8 +129,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     <button class="edit_p" id="edit-p-btn" type="button">Edit Profile</button>
                 </div>
                 <div class="profile-stats">
-                    <img class="stats-border wins" src="profile imgs/level_and_wins_window.png" alt="Wins">
-                    <img class="stats-border level" src="profile imgs/level_and_wins_window.png" alt="Level">
+                    <div class="stats-item">
+                        <img class="stats-border wins" src="profile imgs/level_and_wins_window.png" alt="Wins">
+                        <div id="wins-count" class="stats-text">Wins: 0</div>
+                    </div>
+                    <div class="stats-item">
+                        <img class="stats-border losses" src="profile imgs/level_and_wins_window.png" alt="Losses">
+                        <div id="losses-count" class="stats-text">Losses: 0</div>
+                    </div>
                 </div>
                 <div class="match-history">
                     <img class="match-history-border" src="profile imgs/match_history_window.png" alt="Match History">
@@ -595,6 +601,29 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("Token set in localStorage:", localStorage.getItem("authToken"));
     
 
+    function calculateWinsAndLosses(matches) {
+        let wins = 0;
+        let losses = 0;
+        const username = document.getElementById('profile-username').innerText;
+    
+        matches.forEach(match => {
+            // Determine if the user is player1 or player2
+            const isPlayer1 = match.player1_username === username;
+            const userScore = isPlayer1 ? match.score1 : match.score2;
+            const opponentScore = isPlayer1 ? match.score2 : match.score1;
+    
+            // A win occurs if the user's score is higher than the opponent's
+            if (userScore > opponentScore) {
+                wins++;
+            } else if (userScore < opponentScore) {
+                losses++;
+            }
+            // If scores are equal (draw), no change to wins or losses
+        });
+    
+        return { wins, losses };
+    }
+
     async function displayMatchHistory() {
         try {
             const access_token = localStorage.getItem('authToken');
@@ -604,7 +633,8 @@ document.addEventListener("DOMContentLoaded", () => {
             //     return;
             // }
     
-            const response = await fetch('http://127.0.0.1:8000/match-history/', {
+            // Fetch local match history
+            const localResponse = await fetch('http://127.0.0.1:8000/match-history/', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -612,46 +642,73 @@ document.addEventListener("DOMContentLoaded", () => {
                 },
             });
     
-            if (response.ok) {
-                const data = await response.json();
-                console.log("Match History Data:", data);
+            // Fetch online match history
+            const onlineResponse = await fetch('http://127.0.0.1:8000/online-match-history/', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${access_token}`,
+                },
+            });
     
-                const matchHistoryList = document.getElementById('match-history-list');
-                if (matchHistoryList) {
-                    matchHistoryList.innerHTML = ''; 
+            const localData = localResponse.ok ? await localResponse.json() : { match_history: [] };
+            const onlineData = onlineResponse.ok ? await onlineResponse.json() : { match_history: [] };
     
-                    if (data.match_history && data.match_history.length > 0) {
-                        const sortedMatches = data.match_history.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            console.log("Local Match History Data:", localData);
+            console.log("Online Match History Data:", onlineData);
     
-                        sortedMatches.forEach(match => {
-                            const matchDiv = document.createElement('div');
-                            matchDiv.classList.add('match-history-item');
-                            matchDiv.innerHTML = `
-                                <p>${match.player1_username} vs ${match.player2_username} (${match.score1}-${match.score2})</p>
-                                <p>WINNER: ${match.result}</p>
-                                <p>Date: ${new Date(match.created_at).toLocaleString()}</p>
-                            `;
-                            matchHistoryList.appendChild(matchDiv);
-                        });
-                    } else {
-                        matchHistoryList.innerHTML = '<p>No match history found.</p>';
-                    }
-                }
-            } else {
-                console.error("Failed to fetch match history:", await response.json());
-                const matchHistoryList = document.getElementById('match-history-list');
-                if (matchHistoryList) {
-                    matchHistoryList.innerHTML = '<p>Failed to load match history. Please try again later.</p>';
+            const matchHistoryList = document.getElementById('match-history-list');
+            const winsCount = document.getElementById('wins-count');
+            const lossesCount = document.getElementById('losses-count');
+    
+            if (matchHistoryList && winsCount && lossesCount) {
+                matchHistoryList.innerHTML = ''; // Clear previous content
+    
+                // Combine all matches (local and online)
+                const allMatches = [
+                    ...(localData.match_history || []).map(match => ({ ...match, type: 'local' })),
+                    ...(onlineData.match_history || []).map(match => ({ ...match, type: 'online' }))
+                ];
+    
+                if (allMatches.length > 0) {
+                    // Calculate wins and losses
+                    const { wins, losses } = calculateWinsAndLosses(allMatches);
+    
+                    // Update wins and losses display
+                    winsCount.innerText = `Wins: ${wins}`;
+                    lossesCount.innerText = `Losses: ${losses}`;
+    
+                    // Display all matches
+                    allMatches.forEach(match => {
+                        const matchDiv = document.createElement('div');
+                        matchDiv.classList.add('match-history-item');
+                        const matchType = match.type === 'online' ? ' (Online)' : ' (Local)';
+                        matchDiv.innerHTML = `
+                            <p>${match.player1_username} vs ${match.player2_username} (${match.score1}-${match.score2})${matchType}</p>
+                            <p>WINNER: ${match.result}</p>
+                            <p>Date: ${new Date(match.created_at).toLocaleString()}</p>
+                        `;
+                        matchHistoryList.appendChild(matchDiv);
+                    });
+                } else {
+                    matchHistoryList.innerHTML = '<p>No match history found.</p>';
+                    winsCount.innerText = 'Wins: 0';
+                    lossesCount.innerText = 'Losses: 0';
                 }
             }
         } catch (error) {
             console.error('Error displaying match history:', error);
             const matchHistoryList = document.getElementById('match-history-list');
+            const winsCount = document.getElementById('wins-count');
+            const lossesCount = document.getElementById('losses-count');
             if (matchHistoryList) {
                 matchHistoryList.innerHTML = '<p>An error occurred. Please try again later.</p>';
             }
+            if (winsCount) winsCount.innerText = 'Wins: 0';
+            if (lossesCount) lossesCount.innerText = 'Losses: 0';
         }
     }
+
 
     async function loadProfileInfo() {
         try {
@@ -1809,45 +1866,45 @@ async function acceptFriendRequest(requestId) {
                             toggleBlockUser(friend.username);
                         });
         
-                        const inviteGameButton = document.createElement("button");
-                        inviteGameButton.textContent = "Invite to Game";
-                        inviteGameButton.classList.add("invite-game-btn");
-                        inviteGameButton.addEventListener("click", async (e) => {
-                            e.stopPropagation();
-                            const token = localStorage.getItem('authToken');
-                            const sender = await getCurrentUsername(token);
-                            if (!sender) {
-                                console.error("Unable to identify current user.");
-                                return;
-                            }
+                        // const inviteGameButton = document.createElement("button");
+                        // inviteGameButton.textContent = "Invite to Game";
+                        // inviteGameButton.classList.add("invite-game-btn");
+                        // inviteGameButton.addEventListener("click", async (e) => {
+                        //     e.stopPropagation();
+                        //     const token = localStorage.getItem('authToken');
+                        //     const sender = await getCurrentUsername(token);
+                        //     if (!sender) {
+                        //         console.error("Unable to identify current user.");
+                        //         return;
+                        //     }
         
-                            // Start the game immediately for the sender
-                            console.log(`Starting game for ${sender} with ${friend.username}`);
-                            setCurrentGame(new PongGame('friends', friend.username)); // Your friend's suggested line
-                            const game = currentGame; // Access the current game instance
-                            game.startGame(); // Start playing immediately
+                        //     // Start the game immediately for the sender
+                        //     console.log(`Starting game for ${sender} with ${friend.username}`);
+                        //     setCurrentGame(new PongGame('friends', friend.username)); // Your friend's suggested line
+                        //     const game = currentGame; // Access the current game instance
+                        //     game.startGame(); // Start playing immediately
         
-                            // Display a message in the sender's chat
-                            const chatMessages = document.getElementById('chat-messages');
-                            if (chatMessages) {
-                                displayMessage(`Started game with ${friend.username}! Waiting for them to join...`, 'sender', new Date().toLocaleTimeString(), sender, chatMessages);
-                            } else {
-                                console.warn("chatMessages not found for sender, creating placeholder");
-                                const placeholder = document.createElement('div');
-                                placeholder.id = 'chat-messages';
-                                document.querySelector('.chat-panel').appendChild(placeholder); // Adjust selector if needed
-                                displayMessage(`Started game with ${friend.username}! Waiting for them to join...`, 'sender', new Date().toLocaleTimeString(), sender, placeholder);
-                            }
+                        //     // Display a message in the sender's chat
+                        //     const chatMessages = document.getElementById('chat-messages');
+                        //     if (chatMessages) {
+                        //         displayMessage(`Started game with ${friend.username}! Waiting for them to join...`, 'sender', new Date().toLocaleTimeString(), sender, chatMessages);
+                        //     } else {
+                        //         console.warn("chatMessages not found for sender, creating placeholder");
+                        //         const placeholder = document.createElement('div');
+                        //         placeholder.id = 'chat-messages';
+                        //         document.querySelector('.chat-panel').appendChild(placeholder); // Adjust selector if needed
+                        //         displayMessage(`Started game with ${friend.username}! Waiting for them to join...`, 'sender', new Date().toLocaleTimeString(), sender, placeholder);
+                        //     }
         
-                            // Display an invitation message in the receiver's chat (simulated client-side)
-                            // displayInviteMessage(sender, friend.username);
-                        });
+                        //     // Display an invitation message in the receiver's chat (simulated client-side)
+                        //     // displayInviteMessage(sender, friend.username);
+                        // });
         
                         friendDiv.appendChild(iconDiv);
                         friendDiv.appendChild(nameDiv);
                         friendDiv.appendChild(viewProfileButton);
                         friendDiv.appendChild(blockButton);
-                        friendDiv.appendChild(inviteGameButton);
+                        // friendDiv.appendChild(inviteGameButton);
                         friendListContainer.appendChild(friendDiv);
                     });
                 }

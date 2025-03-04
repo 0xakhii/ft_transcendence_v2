@@ -179,15 +179,42 @@ body
     height: 530px;
   }
   
-  .stats-border
-  {
-    /* max-width: 45%; */
-      /* height: 300px; */
-      width: 500px;
-      padding: 20px;
+  .stats-item {
+    position: relative; /* For absolute positioning of text */
+    width: 100%; /* Ensure the item fills the container */
+    max-width: 300px; /* Match the image width or adjust as needed */
+}
 
-  }
-  
+.stats-border {
+    width: 100%; /* Ensure the image fills the container */
+    height: auto; /* Maintain aspect ratio */
+    display: block;
+    border-radius: 15px; /* Rounded corners to match your design */
+    opacity: 0.9; /* Slight transparency for a modern look */
+}
+
+.stats-text {
+    position: absolute;
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Perfect centering */
+    font-family: 'Poppins', sans-serif;
+    color: #fff; /* White text for visibility against dark background */
+    font-size: 24px; /* Larger, bold text for impact */
+    font-weight: bold;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Shadow for readability */
+    background: rgba(255, 255, 255, 0.1); /* Semi-transparent white background */
+    padding: 8px 16px; /* Padding for better appearance */
+    border-radius: 10px; /* Rounded corners for text background */
+    backdrop-filter: blur(5px); /* Optional modern blur effect */
+    z-index: 1; /* Ensure text is above the image */
+}
+
+/* Hover effect for interactivity (optional) */
+.stats-text:hover {
+    background: rgba(255, 255, 255, 0.2); /* Slightly more opaque on hover */
+    /* transition: background 0.3s ease; */
+}
   .match-history 
   {
     /* margin-top: 450px;
