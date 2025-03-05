@@ -359,6 +359,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .then((data) => console.log('Local match history stored:', data))
         .catch((error) => console.error('Error storing local match history:', error));
     }
+    
     function renderPage(route) {
         const app = document.getElementById('app');
         // const contentArea = document.getElementById('content-area');
@@ -1978,39 +1979,61 @@ async function acceptFriendRequest(requestId) {
         async function showFriendProfile(username, userId, avatarUrl) {
             try {
                 const token = localStorage.getItem('authToken');
-                // Use FriendListView to fetch the friend's profile
-                const response = await fetch(`http://127.0.0.1:8000/friends/list/`, {
+                // Fetch friend's basic profile from FriendListView
+                const friendResponse = await fetch(`http://127.0.0.1:8000/friends/list/`, {
                     method: 'GET',
                     headers: {
                         "Authorization": `Bearer ${token}`,
                         "Content-Type": "application/json",
                     },
                 });
-    
-                if (!response.ok) {
-                    console.error("Failed to fetch friend list for profile. Status:", response.status);
+        
+                if (!friendResponse.ok) {
+                    console.error("Failed to fetch friend list for profile. Status:", friendResponse.status);
                     alert("Failed to load profile. Please try again.");
                     return;
                 }
-    
-                const data = await response.json();
-                console.log("Friend list for profile API response:", data);
-    
-                let friendData = null;
-                if (data.data && Array.isArray(data.data)) {
-                    friendData = data.data.find(item => 
-                        item.attributes.username === username || item.id === userId
-                    );
-                }
-    
-                if (!friendData) {
+        
+                const friendData = await friendResponse.json();
+                const friend = friendData.data.find(item => item.attributes.username === username || item.id === userId);
+                if (!friend) {
                     console.error("Friend not found in list:", username, userId);
                     alert("Friend profile not found. Please try again.");
                     return;
                 }
-    
-                const profile = friendData.attributes || {};
-    
+        
+                const profile = friend.attributes || {};
+        
+                // Fetch the authenticated user's match history
+                const matchResponse = await fetch('http://127.0.0.1:8000/match-history/', {
+                    method: 'GET',
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                });
+        
+                let wins = 0;
+                let losses = 0;
+        
+                if (matchResponse.ok) {
+                    const matchData = await matchResponse.json();
+                    // Filter matches where the friend is a participant
+                    const friendMatches = matchData.match_history.filter(match => 
+                        match.player1_username === username || match.player2_username === username
+                    );
+        
+                    if (friendMatches.length > 0) {
+                        const stats = calculateWinsAndLosses(friendMatches, username);
+                        wins = stats.wins;
+                        losses = stats.losses;
+                    } else {
+                        console.warn(`No matches found involving ${username} in your match history.`);
+                    }
+                } else {
+                    console.warn("Failed to fetch match history. Displaying default values.");
+                }
+        
                 // Create overlay for the profile modal
                 const overlay = document.createElement('div');
                 overlay.id = 'profile-overlay';
@@ -2026,7 +2049,7 @@ async function acceptFriendRequest(requestId) {
                 overlay.style.zIndex = '1001';
                 overlay.style.opacity = '0';
                 overlay.style.transition = 'opacity 0.3s ease';
-    
+        
                 // Create modal container
                 const modal = document.createElement('div');
                 modal.id = 'friend-profile-modal';
@@ -2040,20 +2063,21 @@ async function acceptFriendRequest(requestId) {
                 modal.style.transform = 'scale(0.9)';
                 modal.style.opacity = '0';
                 modal.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
-    
-                // Profile content with placeholders for wins and losses
+        
+                // Profile content with wins and losses
                 const profileContent = `
                     <h3 style="margin: 0 0 15px; font-size: 20px; color: #333; text-align: center;">${profile.username || username}'s Profile</h3>
                     <div style="text-align: center;">
                         <img src="${avatarUrl || profile.avatar || 'images/default-avatar.png'}" alt="${profile.username || username}'s Avatar" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 15px;">
                         <p style="font-size: 16px; color: #555; margin: 0;">Username: ${profile.username || username}</p>
-                        <p style="font-size: 16px; color: #888; margin: 5px 0;">Wins: <span id="profile-wins">Not available yet</span></p>
-                        <p style="font-size: 16px; color: #888; margin: 5px 0;">Losses: <span id="profile-losses">Not available yet</span></p>
+                        <p style="font-size: 16px; color: #888; margin: 5px 0;">Wins: <span id="profile-wins">${wins}</span></p>
+                        <p style="font-size: 16px; color: #888; margin: 5px 0;">Losses: <span id="profile-losses">${losses}</span></p>
+                        <p style="font-size: 12px; color: #aaa; margin: 5px 0;">(Based on matches against you)</p>
                     </div>
                 `;
-    
+        
                 modal.innerHTML = profileContent;
-    
+        
                 // Close button
                 const closeButton = document.createElement('button');
                 closeButton.innerText = 'Close';
@@ -2074,18 +2098,18 @@ async function acceptFriendRequest(requestId) {
                     modal.style.transform = 'scale(0.9)';
                     setTimeout(() => document.body.removeChild(overlay), 300);
                 });
-    
+        
                 modal.appendChild(closeButton);
                 overlay.appendChild(modal);
                 document.body.appendChild(overlay);
-    
+        
                 // Animation trigger
                 setTimeout(() => {
                     overlay.style.opacity = '1';
                     modal.style.opacity = '1';
                     modal.style.transform = 'scale(1)';
                 }, 10);
-    
+        
                 // Close on overlay click (outside modal)
                 overlay.addEventListener('click', (e) => {
                     if (e.target === overlay) {
@@ -2100,41 +2124,25 @@ async function acceptFriendRequest(requestId) {
                 alert("Error loading profile. Please try again.");
             }
         }
-    
-        async function toggleBlockUser(username) {
-            try {
-                const normalizedUsername = username.toLowerCase();
-                const isBlocked = blockedUsers.includes(normalizedUsername);
-    
-                if (isBlocked) {
-                    // Unblock the user
-                    blockedUsers = blockedUsers.filter(user => user !== normalizedUsername);
-                    console.log(`Unblocked user: ${username}`);
-                    alert(`You have unblocked ${username}.`);
-                } else {
-                    // Block the user
-                    blockedUsers.push(normalizedUsername);
-                    console.log(`Blocked user: ${username}`);
-                    alert(`You have blocked ${username}. They will no longer be able to send or receive messages from you.`);
+        
+        // Ensure this function is available globally or within scope
+        function calculateWinsAndLosses(matches, username) {
+            let wins = 0;
+            let losses = 0;
+        
+            matches.forEach(match => {
+                const isPlayer1 = match.player1_username === username;
+                const userScore = isPlayer1 ? match.score1 : match.score2;
+                const opponentScore = isPlayer1 ? match.score2 : match.score1;
+        
+                if (userScore > opponentScore) {
+                    wins++;
+                } else if (userScore < opponentScore) {
+                    losses++;
                 }
-    
-                localStorage.setItem('blockedUsers', JSON.stringify(blockedUsers));
-                // Refresh the friend list to update the block button text
-                await fetchAndDisplayFriendschat();
-                // If the blocked user is the current receiver, reset the chat
-                if (receiver === username) {
-                    receiver = null;
-                    chatHeader.textContent = "Select a friend to start chatting";
-                    chatMessages.innerHTML = "";
-                    if (chatSocket) {
-                        chatSocket.close(1000, "Blocked user, closing chat");
-                        chatSocket = null;
-                    }
-                }
-            } catch (error) {
-                console.error("Error toggling block status:", error);
-                alert("Error updating block status. Please try again.");
-            }
+            });
+        
+            return { wins, losses };
         }
     
         emojiToggleButton.addEventListener('click', () => {
