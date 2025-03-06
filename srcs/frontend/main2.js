@@ -2,6 +2,7 @@
 let lastRequestTime = 0;
 let flag = 0
 import { PongGame, setCurrentGame, TournamentPongGame, currentGame } from "./three";
+import { NumberTapGame } from "./colorClash.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     const pages = {
@@ -141,8 +142,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="match-history">
                     <img class="match-history-border" src="profile imgs/match_history_window.png" alt="Match History">
                     <div class="match-history-content">
+                        <h3>Pong Match History</h3>
                         <div id="match-history-list" class="match-history-list"></div>
-                    </div>
+                        </div>
+                        <div class="match-history-number-tap">
+                            <h3>Number Tap Stats</h3>
+                            <div id="number-tap-stats" class="number-tap-stats"></div>
+                        </div>
                 </div>
             </div>
         </div>
@@ -172,6 +178,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     <button type="button" class="tournament-btn">Tournament</button>
                     <img class="f_img" src="dashboard img/full_buton_2.png">
                 </div>
+            </div>
+            <div class="btn4">
+                <button type="button" class="number-tap-btn">Play Number Tap</button>
             </div>
         </div>
         `,
@@ -407,6 +416,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     const multiplayerBtn = document.querySelector('.multiplayer-mode-btn');
                     const localBtn = document.querySelector('.local-mode-btn');
                     const tournamentBtn = document.querySelector('.tournament-btn');
+                    const numberTapBtn = document.querySelector('.number-tap-btn');
+                    
                     if (multiplayerBtn) {
                         multiplayerBtn.addEventListener('click', () => {
                             app.innerHTML = pages.game_v2;
@@ -423,6 +434,21 @@ document.addEventListener("DOMContentLoaded", () => {
                         tournamentBtn.addEventListener('click', () => {
                             app.innerHTML = pages.game_v2;
                             setCurrentGame(new TournamentPongGame());
+                        });
+                    }
+                    if (numberTapBtn) {
+                        numberTapBtn.addEventListener('click', async () => {
+                            const access_token = localStorage.getItem('authToken');
+                            if (!access_token) {
+                                console.error('No authentication token found. Please log in.');
+                                alert('You must be logged in to play. Redirecting to sign-in.');
+                                // navigateTo('#/sign-in');
+                                return;
+                            }
+                
+                            const mode = confirm('Play Number Tap in Single-Player or Multiplayer? (Yes for Multiplayer, No for Single-Player)') ? 'multiplayer' : 'single';
+                            app.innerHTML = pages.game_v2;
+                            setCurrentGame(new NumberTapGame(mode));
                         });
                     }
                     setupSignOut();
@@ -624,18 +650,11 @@ document.addEventListener("DOMContentLoaded", () => {
     
         return { wins, losses };
     }
-
     async function displayMatchHistory() {
         try {
             const access_token = localStorage.getItem('authToken');
-            // if (!access_token || !isJwtValid(access_token)) {
-            //     console.log("No valid access token found in localStorage.");
-            //     navigateTo('#/sign-in');
-            //     return;
-            // }
-    
-            // Fetch local match history
-            const localResponse = await fetch('https://127.0.0.1:8000/match-history/', {
+
+            const pongResponse = await fetch('https://127.0.0.1:8000/match-history/', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -643,59 +662,69 @@ document.addEventListener("DOMContentLoaded", () => {
                 },
             });
     
-            // Fetch online match history
-            const onlineResponse = await fetch('https://127.0.0.1:8000/online-match-history/', {
+            const numberTapResponse = await fetch('https://127.0.0.1:8000/number-tap-history/', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${access_token}`,
                 },
             });
+
+            const pongData = pongResponse.ok ? await pongResponse.json() : { match_history: [] };
     
-            const localData = localResponse.ok ? await localResponse.json() : { match_history: [] };
-            const onlineData = onlineResponse.ok ? await onlineResponse.json() : { match_history: [] };
+            // Handle Number Tap data with a robust fallback
+            let numberTapData;
+            try {
+                numberTapData = numberTapResponse.ok ? await numberTapResponse.json() : { data: { match_history: [], stats: { total_games: 0, total_score: 0, average_score: 0, wins: 0, losses: 0 } } };
+            } catch (jsonError) {
+                console.error('Error parsing Number Tap response:', jsonError);
+                numberTapData = { data: { match_history: [], stats: { total_games: 0, total_score: 0, average_score: 0, wins: 0, losses: 0 } } };
+            }
     
-            console.log("Local Match History Data:", localData);
-            console.log("Online Match History Data:", onlineData);
+            console.log("Pong Match History Data:", pongData);
+            console.log("Number Tap Match History Data:", numberTapData);
     
             const matchHistoryList = document.getElementById('match-history-list');
             const winsCount = document.getElementById('wins-count');
             const lossesCount = document.getElementById('losses-count');
+            const numberTapStats = document.getElementById('number-tap-stats');
     
-            if (matchHistoryList && winsCount && lossesCount) {
-                matchHistoryList.innerHTML = ''; // Clear previous content
+            if (matchHistoryList && winsCount && lossesCount && numberTapStats) {
+                matchHistoryList.innerHTML = ''; // Clear Pong history
+                numberTapStats.innerHTML = '';   // Clear Number Tap stats
     
-                // Combine all matches (local and online)
-                const allMatches = [
-                    ...(localData.match_history || []).map(match => ({ ...match, type: 'local' })),
-                    ...(onlineData.match_history || []).map(match => ({ ...match, type: 'online' }))
-                ];
-    
-                if (allMatches.length > 0) {
-                    // Calculate wins and losses
-                    const { wins, losses } = calculateWinsAndLosses(allMatches);
-    
-                    // Update wins and losses display
+                // Display Pong Match History
+                const pongMatches = (pongData.match_history || []).map(match => ({ ...match, type: 'online' }));
+                if (pongMatches.length > 0) {
+                    const { wins, losses } = calculateWinsAndLosses(pongMatches);
                     winsCount.innerText = `Wins: ${wins}`;
                     lossesCount.innerText = `Losses: ${losses}`;
     
-                    // Display all matches
-                    allMatches.forEach(match => {
+                    pongMatches.forEach(match => {
                         const matchDiv = document.createElement('div');
                         matchDiv.classList.add('match-history-item');
-                        const matchType = match.type === 'online' ? ' (Online)' : ' (Local)';
                         matchDiv.innerHTML = `
-                            <p>${match.player1_username} vs ${match.player2_username} (${match.score1}-${match.score2})${matchType}</p>
+                            <p>${match.player1_username} vs ${match.player2_username} (${match.score1}-${match.score2}) (Online)</p>
                             <p>WINNER: ${match.result}</p>
                             <p>Date: ${new Date(match.created_at).toLocaleString()}</p>
                         `;
                         matchHistoryList.appendChild(matchDiv);
                     });
                 } else {
-                    matchHistoryList.innerHTML = '<p>No match history found.</p>';
+                    matchHistoryList.innerHTML = '<p>No Pong match history found.</p>';
                     winsCount.innerText = 'Wins: 0';
                     lossesCount.innerText = 'Losses: 0';
                 }
+    
+                // Display Number Tap Stats
+                const ntStats = numberTapData.data.stats || { total_games: 0, total_score: 0, average_score: 0, wins: 0, losses: 0 };
+                numberTapStats.innerHTML = `
+                    <p>Total Games: ${ntStats.total_games}</p>
+                    <p>Total Score: ${ntStats.total_score}</p>
+                    <p>Average Score: ${ntStats.average_score}</p>
+                    <p>Wins: ${ntStats.wins}</p>
+                    <p>Losses: ${ntStats.losses}</p>
+                `;
             }
         } catch (error) {
             console.error('Error displaying match history:', error);
