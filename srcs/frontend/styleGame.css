@@ -251,7 +251,7 @@ body
 
 .tournament-ui {
     position: absolute;
-    top: 50%;
+    top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
     color: white;
@@ -260,8 +260,8 @@ body
     text-align: center;
     background-color: transparent;
     font-family: Arial, sans-serif;
-    font-size: 25px;
-    width: 500px;
+    font-size: 2rem;
+    width: 800px;
     max-width: 90%;
 }
 
@@ -302,4 +302,18 @@ body
     border-radius: 5px;
     border: 1px solid #ccc;
     font-size: 16px; 
+}
+
+@media (min-width: 1200px)
+{
+    .h2, h2 {
+        font-size: 4rem;
+        margin: -120px 0 40px 0;
+        text-align: center;
+    }
+}
+p {
+    font-size: 3rem;
+    margin: 20px 0 20px 0;
+    text-align: center;
 }

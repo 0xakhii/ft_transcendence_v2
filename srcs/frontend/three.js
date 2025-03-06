@@ -68,12 +68,13 @@ export class PongGame {
     createScoreUI() {
         this.scoreDiv = document.createElement('div');
         this.scoreDiv.id = 'score-ui';
+        // this.scoreDiv.className = 'scoreeee-ui';
         Object.assign(this.scoreDiv.style, {
             position: 'absolute',
-            top: '10px',
+            top: '20px',
             left: '50%',
             transform: 'translateX(-50%)',
-            background: 'rgba(0, 0, 0, 0.7)',
+            // background: 'rgba(0, 0, 0, 0.7)',
             color: 'white',
             padding: '10px',
             borderRadius: '5px'
@@ -84,7 +85,7 @@ export class PongGame {
 
     updateScoreUI() {
         if (this.scoreDiv) {
-            this.scoreDiv.innerHTML = `<h2>Score</h2><p>${this.player1Id || 'Player 1'}: ${this.score.player1} | ${this.player2Id || 'Player 2'}: ${this.score.player2}</p>`;
+            this.scoreDiv.innerHTML = `<h2>Score</h2><p>${this.player1Id || 'Player 1'}: ${this.score.player1} vs ${this.player2Id || 'Player 2'}: ${this.score.player2}</p>`;
         }
     }
 
@@ -506,7 +507,7 @@ export class TournamentPongGame extends PongGame {
                 break;
             case 'semifinals':
             case 'final':
-                this.tournamentUI.innerHTML = `<h2>${this.tournament.stage === 'semifinals' ? 'Semifinals' : 'Final'}</h2>`;
+                this.tournamentUI.innerHTML = `<h2>${this.tournament.stage === 'semifinals' ? 'Semifinals' : 'Final'}</h2>`;                
                 this.tournamentUI.innerHTML += `<p>${this.tournament.currentMatch.player1} vs ${this.tournament.currentMatch.player2}</p>`;
                 this.tournamentUI.innerHTML += `<p>Score: ${this.score.player1} - ${this.score.player2}</p>`;
                 break;
