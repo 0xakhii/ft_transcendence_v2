@@ -153,7 +153,7 @@ import { PongGame, setCurrentGame } from "./three";
 //             // }
 
 //             // try {
-//             //     const response = await fetch('http://127.0.0.1:8000/login/', {
+//             //     const response = await fetch('https://127.0.0.1:8000/login/', {
 //             //         method: 'POST',
 //             //         headers: { 'Content-Type': 'application/json' },
 //             //         body: JSON.stringify({ username, password }),
@@ -173,7 +173,7 @@ import { PongGame, setCurrentGame } from "./three";
 //             }
 
 //             try {
-//                 const response = await fetch('http://127.0.0.1:8000/login/', {
+//                 const response = await fetch('https://127.0.0.1:8000/login/', {
 //                     method: 'POST',
 //                     headers: {
 //                         'Content-Type': 'application/json',
@@ -210,7 +210,7 @@ import { PongGame, setCurrentGame } from "./three";
 //             const lastName = document.getElementById('last_name').value.trim();
 
 //             try {
-//                 const response = await fetch('http://127.0.0.1:8000/register/', {
+//                 const response = await fetch('https://127.0.0.1:8000/register/', {
 //                     method: 'POST',
 //                     headers: { 'Content-Type': 'application/json' },
 //                     body: JSON.stringify({ username, email, password, first_name: firstName, last_name: lastName }),
@@ -234,7 +234,7 @@ import { PongGame, setCurrentGame } from "./three";
 //             const token = localStorage.getItem('authToken');
 //             if (!token) return;
 
-//             const response = await fetch('http://127.0.0.1:8000/profile/update/', {
+//             const response = await fetch('https://127.0.0.1:8000/profile/update/', {
 //                 method: 'GET',
 //                 headers: {
 //                     'Content-Type': 'application/json',
@@ -413,7 +413,7 @@ import { PongGame, setCurrentGame } from "./three";
 //             }
 
 //             try {
-//                 const response = await fetch('http://127.0.0.1:8000/login/', {
+//                 const response = await fetch('https://127.0.0.1:8000/login/', {
 //                     method: 'POST',
 //                     headers: {
 //                         'Content-Type': 'application/json',
@@ -448,7 +448,7 @@ import { PongGame, setCurrentGame } from "./three";
 //             const lastName = document.getElementById('last_name').value.trim();
 
 //             try {
-//                 const response = await fetch('http://127.0.0.1:8000/register/', {
+//                 const response = await fetch('https://127.0.0.1:8000/register/', {
 //                     method: 'POST',
 //                     headers: { 'Content-Type': 'application/json' },
 //                     body: JSON.stringify({ username, email, password, first_name: firstName, last_name: lastName }),
@@ -472,7 +472,7 @@ import { PongGame, setCurrentGame } from "./three";
 //             const token = localStorage.getItem('authToken');
 //             if (!token) return;
 
-//             const response = await fetch('http://127.0.0.1:8000/profile/update/', {
+//             const response = await fetch('https://127.0.0.1:8000/profile/update/', {
 //                 method: 'GET',
 //                 headers: {
 //                     'Content-Type': 'application/json',
@@ -676,7 +676,7 @@ import { PongGame, setCurrentGame } from "./three";
 //             }
 
 //             try {
-//                 const response = await fetch('http://127.0.0.1:8000/login/', {
+//                 const response = await fetch('https://127.0.0.1:8000/login/', {
 //                     method: 'POST',
 //                     headers: {
 //                         'Content-Type': 'application/json',
@@ -711,7 +711,7 @@ import { PongGame, setCurrentGame } from "./three";
 //             const lastName = document.getElementById('last_name').value.trim();
 
 //             try {
-//                 const response = await fetch('http://127.0.0.1:8000/register/', {
+//                 const response = await fetch('https://127.0.0.1:8000/register/', {
 //                     method: 'POST',
 //                     headers: { 'Content-Type': 'application/json' },
 //                     body: JSON.stringify({ username, email, password, first_name: firstName, last_name: lastName }),
@@ -735,7 +735,7 @@ import { PongGame, setCurrentGame } from "./three";
 //             const token = localStorage.getItem('authToken');
 //             if (!token) return;
 
-//             const response = await fetch('http://127.0.0.1:8000/profile/update/', {
+//             const response = await fetch('https://127.0.0.1:8000/profile/update/', {
 //                 method: 'GET',
 //                 headers: {
 //                     'Content-Type': 'application/json',
@@ -1224,7 +1224,7 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log(token);
             btn2.addEventListener('click', async () => {
                 try {
-                    window.location.href = 'http://127.0.0.1:8000/42_login/';
+                    window.location.href = 'https://127.0.0.1:8000/42_login/';
                     const params = new URLSearchParams(window.location.search);
                     const token = params.get('access_token');
                     if (token) {
@@ -1259,7 +1259,7 @@ document.addEventListener("DOMContentLoaded", () => {
             
             try {
                 console.log('Sending payload:', { username, password });
-                const response = await fetch('http://127.0.0.1:8000/login/', {
+                const response = await fetch('https://127.0.0.1:8000/login/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1299,7 +1299,7 @@ document.addEventListener("DOMContentLoaded", () => {
             btn2.addEventListener('click', async () => {
                 try {
                     // Redirect the user to the 42 login endpoint
-                    window.location.href = 'http://127.0.0.1:8000/42_login/';
+                    window.location.href = 'https://127.0.0.1:8000/42_login/';
             
                     // Check for the access token in the URL after redirect
                     const urlParams = new URLSearchParams(window.location.hash.split('?')[1]);
@@ -1348,7 +1348,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // console.log('Sending payload:', { username, email, password, first_name, last_name });
             try {
-                const response = await fetch('http://127.0.0.1:8000/register/', {
+                const response = await fetch('https://127.0.0.1:8000/register/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData)
@@ -1377,7 +1377,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.log("No access token found in localStorage.", {access_token});
                 return;
             }
-            const response = await fetch('http://127.0.0.1:8000/profile/', {
+            const response = await fetch('https://127.0.0.1:8000/profile/', {
                 method: 'GET',
                 headers: {
                     "Authorization": `Bearer ${access_token}`,
@@ -1406,7 +1406,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 else
                 {
-                    profileImg.src = `http://127.0.0.1:8000${avatarUrl}?t=${new Date().getTime()}`; // Use absolute URL
+                    profileImg.src = `https://127.0.0.1:8000${avatarUrl}?t=${new Date().getTime()}`; // Use absolute URL
                     profileImg.onload = () => console.log("Image loaded successfully");
                     profileImg.onerror = () => console.error("Image failed to load:", avatarUrl);
                     document.getElementById('profile-username').innerText = username;
@@ -1433,7 +1433,7 @@ document.addEventListener("DOMContentLoaded", () => {
     //             console.log("No access token found in localStorage." , {access_token});
     //             return;
     //         }
-    //         const response = await fetch('http://127.0.0.1:8000/profile/', {
+    //         const response = await fetch('https://127.0.0.1:8000/profile/', {
     //             method: 'GET',
     //             headers: {
     //                 "Authorization": `Bearer ${access_token}`,
@@ -1505,7 +1505,7 @@ document.addEventListener("DOMContentLoaded", () => {
     //       inviteButton.addEventListener("click", async () => {
     //         try {
     //           // Send a friend request using the backend endpoint
-    //           const response = await fetch(`http://127.0.0.1:8000/friends/send/${user.id}/`, {
+    //           const response = await fetch(`https://127.0.0.1:8000/friends/send/${user.id}/`, {
         //             method: "POST",
         //             headers: {
     //               "Content-Type": "application/json",
@@ -1577,7 +1577,7 @@ document.addEventListener("DOMContentLoaded", () => {
     //         }
     //         try {
     //           // Assuming your UserListView endpoint supports search via query parameter "search"
-    //           const response = await fetch(`http://127.0.0.1:8000/users/`, {
+    //           const response = await fetch(`https://127.0.0.1:8000/users/`, {
     //             method: "GET",
     //             headers: {
     //               "Content-Type": "application/json",
@@ -1608,7 +1608,7 @@ document.addEventListener("DOMContentLoaded", () => {
     //           return;
     //         }
     //         try {
-    //           const response = await fetch(`http://127.0.0.1:8000/friends/list/`, {
+    //           const response = await fetch(`https://127.0.0.1:8000/friends/list/`, {
     //             method: "POST",
     //             headers: {
     //               "Content-Type": "application/json",
@@ -1670,7 +1670,7 @@ document.addEventListener("DOMContentLoaded", () => {
     //           return;
     //         }
     //         try {
-    //           const response = await fetch(`http://127.0.0.1:8000/friends/list/`, {
+    //           const response = await fetch(`https://127.0.0.1:8000/friends/list/`, {
     //             method: "GET",
     //             headers: {
     //               "Content-Type": "application/json",
@@ -1692,7 +1692,7 @@ document.addEventListener("DOMContentLoaded", () => {
       
     //   async function fetchAndDisplayUsers() {
     //     try {
-    //         const response = await fetch("http://127.0.0.1:8000/users/", {
+    //         const response = await fetch("https://127.0.0.1:8000/users/", {
     //             method: "GET",
     //             headers: {
     //                 "Content-Type": "application/json",
@@ -1722,7 +1722,7 @@ document.addEventListener("DOMContentLoaded", () => {
       
     //   async function searchAndDisplayUsers(query) {
     //     try {
-    //       const response = await fetch(`http://127.0.0.1:8000/users/?search=${query}`, {
+    //       const response = await fetch(`https://127.0.0.1:8000/users/?search=${query}`, {
     //         method: "GET",
     //         headers: {
     //           "Content-Type": "application/json",
@@ -1758,7 +1758,7 @@ document.addEventListener("DOMContentLoaded", () => {
     //       inviteButton.textContent = "Invite";
     //       inviteButton.addEventListener("click", async () => {
     //         try {
-    //           const response = await fetch(`http://127.0.0.1:8000/friends/send/${user.id}/`, {
+    //           const response = await fetch(`https://127.0.0.1:8000/friends/send/${user.id}/`, {
     //             method: "POST",
     //             headers: {
     //               "Content-Type": "application/json",
@@ -1990,7 +1990,7 @@ document.addEventListener("DOMContentLoaded", () => {
         //       return;
         //     }
         //     try {
-        //       const response = await fetch(`http://127.0.0.1:8000/friends/list/`, {
+        //       const response = await fetch(`https://127.0.0.1:8000/friends/list/`, {
         //         method: "GET",
         //         headers: {
         //           "Content-Type": "application/json",
@@ -2042,7 +2042,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Fetch and display ALL users
     //   async function fetchAndDisplayUsers() {
     //     try {
-    //       const response = await fetch("http://127.0.0.1:8000/users/", {
+    //       const response = await fetch("https://127.0.0.1:8000/users/", {
     //         method: "GET",
     //         headers: {
     //           "Content-Type": "application/json",
@@ -2124,7 +2124,7 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             console.log("Sending friend request to user ID:", receiverId);
             console.log("Token:", localStorage.getItem("authToken"));
-            const response = await fetch(`http://127.0.0.1:8000/friends/send/${receiverId}/`, {
+            const response = await fetch(`https://127.0.0.1:8000/friends/send/${receiverId}/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -2151,7 +2151,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function acceptFriendRequest(requestId) {
     try {
       const token = localStorage.getItem("authToken");
-      const response = await fetch(`http://127.0.0.1:8000/friends/accept/${requestId}/`, {
+      const response = await fetch(`https://127.0.0.1:8000/friends/accept/${requestId}/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -2176,7 +2176,7 @@ async function acceptFriendRequest(requestId) {
   async function rejectFriendRequest(requestId) {
     try {
       const token = localStorage.getItem("authToken");
-      const response = await fetch(`http://127.0.0.1:8000/friends/reject/${requestId}/`, {
+      const response = await fetch(`https://127.0.0.1:8000/friends/reject/${requestId}/`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -2201,7 +2201,7 @@ async function acceptFriendRequest(requestId) {
   // Replace your existing `loadPendingFriendRequests` function with this:
     async function loadPendingFriendRequests() {
       try {
-        const response = await fetch("http://127.0.0.1:8000/friends/pending/", {
+        const response = await fetch("https://127.0.0.1:8000/friends/pending/", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -2250,7 +2250,7 @@ async function acceptFriendRequest(requestId) {
             }
             else
             {
-                avatarImg.src = `http://127.0.0.1:8000${request.sender_avatar}` || "images/default-avatar.png";
+                avatarImg.src = `https://127.0.0.1:8000${request.sender_avatar}` || "images/default-avatar.png";
                 console.log("avatar 1: " ,avatarImg.src);
                 avatarImg.alt = request.sender_username || "User Avatar";
                 avatarImg.classList.add("user-avatar");
@@ -2290,7 +2290,7 @@ async function acceptFriendRequest(requestId) {
     async function fetchAndDisplayFriends(buttonElement) {
         try {
             console.log("authToken: ", localStorage.getItem("authToken"));
-            const response = await fetch("http://127.0.0.1:8000/friends/list/", {
+            const response = await fetch("https://127.0.0.1:8000/friends/list/", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -2343,7 +2343,7 @@ async function acceptFriendRequest(requestId) {
                         avatarImg.alt = friend.username || "Friend Avatar";
                         avatarImg.classList.add("friend-avatar");
                     } else {
-                        avatarImg.src = `http://127.0.0.1:8000${friend.avatar}` || "images/default-avatar.png";
+                        avatarImg.src = `https://127.0.0.1:8000${friend.avatar}` || "images/default-avatar.png";
                         avatarImg.alt = friend.username || "Friend Avatar";
                         avatarImg.classList.add("friend-avatar");
                     }
@@ -2375,7 +2375,7 @@ async function acceptFriendRequest(requestId) {
 
         // async function fetchAndDisplayFriends(buttonElement) {
         //     try {
-        //         const response = await fetch("http://127.0.0.1:8000/friends/list/", {
+        //         const response = await fetch("https://127.0.0.1:8000/friends/list/", {
         //             method: "GET",
         //             headers: {
         //                 "Content-Type": "application/json",
@@ -2402,7 +2402,7 @@ async function acceptFriendRequest(requestId) {
         //             const avatarImg = document.createElement("img");
         //             avatarImg.src = friend.avatar.startsWith("https://") 
         //                 ? friend.avatar 
-        //                 : `http://127.0.0.1:8000${friend.avatar}`;
+        //                 : `https://127.0.0.1:8000${friend.avatar}`;
         //             avatarImg.alt = friend.username || "Friend Avatar";
         //             avatarImg.classList.add("user-avatar");
 
@@ -2430,7 +2430,7 @@ async function acceptFriendRequest(requestId) {
 
         async function removeFriend(username, friendListDiv, buttonElement) {
             try {
-                const response = await fetch(`http://127.0.0.1:8000/friends/remove/${username}/`, {
+                const response = await fetch(`https://127.0.0.1:8000/friends/remove/${username}/`, {
                     method: "DELETE",
                     headers: {
                         "Content-Type": "application/json",
@@ -2457,7 +2457,7 @@ async function acceptFriendRequest(requestId) {
 
       async function  fetchAndDisplayFriendschat() {
         try {
-            const response = await fetch("http://127.0.0.1:8000/friends/list/", {
+            const response = await fetch("https://127.0.0.1:8000/friends/list/", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -2508,7 +2508,7 @@ async function acceptFriendRequest(requestId) {
                     if (friend.avatar.startsWith("https://")) {
                         avatarImg.src = friend.avatar || "images/default-avatar.png";
                     } else {
-                        avatarImg.src = `http://127.0.0.1:8000${friend.avatar}` || "images/default-avatar.png";
+                        avatarImg.src = `https://127.0.0.1:8000${friend.avatar}` || "images/default-avatar.png";
                     }
                     avatarImg.alt = friend.username || "Friend Avatar";
                     iconDiv.appendChild(avatarImg);
@@ -2527,7 +2527,7 @@ async function acceptFriendRequest(requestId) {
     }
     // async function loadPendingFriendRequests() {
     //     try {
-    //       const response = await fetch("http://127.0.0.1:8000/friends/pending/", {
+    //       const response = await fetch("https://127.0.0.1:8000/friends/pending/", {
     //         method: "GET",
     //         headers: {
     //           "Content-Type": "application/json",
@@ -2597,7 +2597,7 @@ async function acceptFriendRequest(requestId) {
       
     // async function loadPendingFriendRequests() {
     //     try {
-    //         const response = await fetch("http://127.0.0.1:8000/friends/pending/", {
+    //         const response = await fetch("https://127.0.0.1:8000/friends/pending/", {
     //             method: "GET",
     //             headers: {
     //                 "Content-Type": "application/json",
@@ -2665,7 +2665,7 @@ async function acceptFriendRequest(requestId) {
         }
         else
         {
-            avatarImg.src = `http://127.0.0.1:8000${user.avatar}` || "images/default-avatar.png";
+            avatarImg.src = `https://127.0.0.1:8000${user.avatar}` || "images/default-avatar.png";
             console.log("avatar 1: " ,avatarImg.src);
             avatarImg.alt = user.username || "User Avatar";
         //   avatarImg.classList.add("user-avatar");
@@ -2694,7 +2694,7 @@ async function acceptFriendRequest(requestId) {
 
     async function fetchAndDisplayUsers() {
         try {
-            const response = await fetch("http://127.0.0.1:8000/users/", {
+            const response = await fetch("https://127.0.0.1:8000/users/", {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
@@ -2753,7 +2753,7 @@ async function acceptFriendRequest(requestId) {
       // Fetch and display users matching a search query
     //   async function searchAndDisplayUsers(query) {
     //     try {
-    //       const response = await fetch(`http://127.0.0.1:8000/users/?search=${query}`, {
+    //       const response = await fetch(`https://127.0.0.1:8000/users/?search=${query}`, {
     //         method: "GET",
     //         headers: {
     //           "Content-Type": "application/json",
@@ -2797,7 +2797,7 @@ async function acceptFriendRequest(requestId) {
     //       inviteButton.textContent = "Invite";
     //       inviteButton.addEventListener("click", async () => {
     //         try {
-    //           const response = await fetch(`http://127.0.0.1:8000/friends/send/${user.id}/`, {
+    //           const response = await fetch(`https://127.0.0.1:8000/friends/send/${user.id}/`, {
     //             method: "POST",
     //             headers: {
     //               "Content-Type": "application/json",
@@ -3048,7 +3048,7 @@ async function acceptFriendRequest(requestId) {
                     formData.append('avatar', file);
                 }
         
-                const response = await fetch('http://127.0.0.1:8000/profile/update/', {
+                const response = await fetch('https://127.0.0.1:8000/profile/update/', {
                     method: 'PUT',
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -3069,7 +3069,7 @@ async function acceptFriendRequest(requestId) {
                     //     const newAvatarUrl = result.profile?.avatar || 'images/default-avatar.png';
                     //     console.log("New avatar URL from backend:", newAvatarUrl);
                     //     const profileImg = document.getElementById('profile-img');
-                    //     profileImg.src = `http://127.0.0.1:8000${newAvatarUrl}?t=${new Date().getTime()}`; // Force reload with base URL
+                    //     profileImg.src = `https://127.0.0.1:8000${newAvatarUrl}?t=${new Date().getTime()}`; // Force reload with base URL
                     //     profileImg.onload = () => console.log("Image loaded successfully");
                     //     profileImg.onerror = () => console.error("Image failed to load:", newAvatarUrl);
                     // }
@@ -3116,7 +3116,7 @@ async function acceptFriendRequest(requestId) {
         //         }
         
         //         // Make the PUT request to the backend with the FormData in the body
-        //         const response = await fetch('http://127.0.0.1:8000/profile/update/', {
+        //         const response = await fetch('https://127.0.0.1:8000/profile/update/', {
         //             method: 'PUT',
         //             headers: {
         //                 'Authorization': `Bearer ${token}`,  // Include the Bearer token
@@ -3353,7 +3353,7 @@ async function acceptFriendRequest(requestId) {
     
     //         try {
     //             const token = localStorage.getItem('authToken');
-    //             const response = await fetch('http://127.0.0.1:8000/profile/update/', {
+    //             const response = await fetch('https://127.0.0.1:8000/profile/update/', {
     //                 method: 'PUT',
     //                 headers: {
     //                     'Content-Type': 'application/json',
@@ -3493,7 +3493,7 @@ async function acceptFriendRequest(requestId) {
       
     //       try {
     //         const token = localStorage.getItem('authToken');
-    //         const response = await fetch('http://127.0.0.1:8000/profile/update/', {
+    //         const response = await fetch('https://127.0.0.1:8000/profile/update/', {
     //             method: 'PUT',
     //             headers: {
     //                 'Content-Type': 'application/json',
@@ -3545,7 +3545,7 @@ async function acceptFriendRequest(requestId) {
         try {
             const token = localStorage.getItem('authToken');
             if (!token) throw new Error("No auth token found");
-            const response = await fetch('http://127.0.0.1:8000/profile/', {
+            const response = await fetch('https://127.0.0.1:8000/profile/', {
                 method: 'GET',
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -3721,7 +3721,7 @@ async function acceptFriendRequest(requestId) {
     
         async function fetchAndDisplayFriendschat() {
             try {
-                const response = await fetch("http://127.0.0.1:8000/friends/list/", {
+                const response = await fetch("https://127.0.0.1:8000/friends/list/", {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -3772,7 +3772,7 @@ async function acceptFriendRequest(requestId) {
                         if (friend.avatar.startsWith("https://")) {
                             avatarImg.src = friend.avatar || "images/default-avatar.png";
                         } else {
-                            avatarImg.src = `http://127.0.0.1:8000${friend.avatar}` || "images/default-avatar.png";
+                            avatarImg.src = `https://127.0.0.1:8000${friend.avatar}` || "images/default-avatar.png";
                         }
                         avatarImg.alt = friend.username || "Friend Avatar";
     
@@ -3814,7 +3814,7 @@ async function acceptFriendRequest(requestId) {
             try {
                 const token = localStorage.getItem('authToken');
                 // Use FriendListView to fetch the friend's profile
-                const response = await fetch(`http://127.0.0.1:8000/friends/list/`, {
+                const response = await fetch(`https://127.0.0.1:8000/friends/list/`, {
                     method: 'GET',
                     headers: {
                         "Authorization": `Bearer ${token}`,
@@ -4009,7 +4009,7 @@ async function acceptFriendRequest(requestId) {
     //     try {
     //         const token = localStorage.getItem('authToken');
     //         if (!token) throw new Error("No auth token found");
-    //         const response = await fetch('http://127.0.0.1:8000/profile/', {
+    //         const response = await fetch('https://127.0.0.1:8000/profile/', {
     //             method: 'GET',
     //             headers: {
     //                 "Authorization": `Bearer ${token}`,
@@ -4166,7 +4166,7 @@ async function acceptFriendRequest(requestId) {
     
     //     async function fetchAndDisplayFriendschat() {
     //         try {
-    //             const response = await fetch("http://127.0.0.1:8000/friends/list/", {
+    //             const response = await fetch("https://127.0.0.1:8000/friends/list/", {
     //                 method: "GET",
     //                 headers: {
     //                     "Content-Type": "application/json",
@@ -4217,7 +4217,7 @@ async function acceptFriendRequest(requestId) {
     //                     if (friend.avatar.startsWith("https://")) {
     //                         avatarImg.src = friend.avatar || "images/default-avatar.png";
     //                     } else {
-    //                         avatarImg.src = `http://127.0.0.1:8000${friend.avatar}` || "images/default-avatar.png";
+    //                         avatarImg.src = `https://127.0.0.1:8000${friend.avatar}` || "images/default-avatar.png";
     //                     }
     //                     avatarImg.alt = friend.username || "Friend Avatar";
     
@@ -4249,7 +4249,7 @@ async function acceptFriendRequest(requestId) {
     //         try {
     //             const token = localStorage.getItem('authToken');
     //             // Use FriendListView to fetch the friend's profile
-    //             const response = await fetch(`http://127.0.0.1:8000/friends/list/`, {
+    //             const response = await fetch(`https://127.0.0.1:8000/friends/list/`, {
     //                 method: 'GET',
     //                 headers: {
     //                     "Authorization": `Bearer ${token}`,
@@ -4409,7 +4409,7 @@ async function acceptFriendRequest(requestId) {
     //     try {
     //         const token = localStorage.getItem('authToken');
     //         if (!token) throw new Error("No auth token found");
-    //         const response = await fetch('http://127.0.0.1:8000/profile/', {
+    //         const response = await fetch('https://127.0.0.1:8000/profile/', {
     //             method: 'GET',
     //             headers: {
     //                 "Authorization": `Bearer ${token}`,
@@ -4686,7 +4686,7 @@ async function acceptFriendRequest(requestId) {
     //           formData.append('avatar', file);
     //         }
       
-    //         const response = await fetch('http://127.0.0.1:8000/profile/update/', {
+    //         const response = await fetch('https://127.0.0.1:8000/profile/update/', {
     //           method: 'PUT',
     //           headers: {
     //             'Authorization': `Bearer ${token}`

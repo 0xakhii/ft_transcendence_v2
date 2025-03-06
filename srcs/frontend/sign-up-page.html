@@ -184,7 +184,7 @@
 //     });
 
 //     try {
-//         const response = await fetch('http://127.0.0.1:8000/register/', {  // Updated URL to backend
+//         const response = await fetch('https://127.0.0.1:8000/register/', {  // Updated URL to backend
 //             method: 'POST',
 //             headers: {
 //                 'Content-Type': 'application/json',  // Use JSON content type
@@ -226,7 +226,7 @@
 //     formData.append('password', password);
 
 //     try {
-//         const response = await fetch('http://127.0.0.1:8000/register/', {
+//         const response = await fetch('https://127.0.0.1:8000/register/', {
 //             method: 'POST',
 //             headers: {
 //                 'Content-Type': 'application/x-www-form-urlencoded',  // Use form URL encoded
@@ -269,7 +269,7 @@
             formData.append('password', password);
         
             try {
-                const response = await fetch('http://127.0.0.1:8000/register/', {
+                const response = await fetch('https://127.0.0.1:8000/register/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',  // Use form URL encoded
@@ -323,7 +323,7 @@
             try 
             {
                 // Redirect the user to the 42 login endpoint
-                window.location.href = 'http://127.0.0.1:8000/42_login/';
+                window.location.href = 'https://127.0.0.1:8000/42_login/';
                 const params = new URLSearchParams(window.location.search);
                 const token = urlParams.get('access_token');
     
@@ -353,7 +353,7 @@
 // document.querySelector('.btn2').addEventListener('click', async () => {
 //     try {
 //         // Redirect the user to the 42 login endpoint
-//         window.location.href = 'http://127.0.0.1:5173/sign-in-page.html';
+//         window.location.href = 'https://127.0.0.1:5173/sign-in-page.html';
 //     } catch (error) {
 //         console.error('Error during 42 Network login:', error);
 //         alert('An error occurred. Please try again.');

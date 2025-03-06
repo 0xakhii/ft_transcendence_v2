@@ -393,7 +393,7 @@ export class PongGame {
 
     async fetchUserData() {
         try {
-            const response = await fetch('http://localhost:8000/profile/', {
+            const response = await fetch('https://localhost:8000/profile/', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -411,7 +411,7 @@ export class PongGame {
 
     storeMatchHistory() {
         if (this.mode === 'local') return;
-        fetch('http://localhost:8000/match-history/', {
+        fetch('https://localhost:8000/match-history/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -20,7 +20,7 @@ DEFAULT_AVATAR_URL = "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profil
 class login_42(APIView):
     permission_classes = [AllowAny]
     def get(self, request):
-        return redirect("https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-b292b631faa175f40c72f3c46c0648df398518e1cd514dc73a6a8014d4600584&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Foauth%2Fcallback%2F&response_type=code")
+        return redirect("https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-b292b631faa175f40c72f3c46c0648df398518e1cd514dc73a6a8014d4600584&redirect_uri=https%3A%2F%2Flocalhost%3A8000%2Foauth%2Fcallback%2F&response_type=code")
 
 # def save_to_json(data, file_path="data.json"):
 #     try:
@@ -40,7 +40,7 @@ class callback_42(APIView):
             'client_id': "u-s4t2ud-b292b631faa175f40c72f3c46c0648df398518e1cd514dc73a6a8014d4600584",
             'client_secret': "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",
             'code': code,
-            'redirect_uri': "http://localhost:8000/oauth/callback/",
+            'redirect_uri': "https://localhost:8000/oauth/callback/",
         }
         response = requests.post(token_url, data=data)
         token_info = response.json()
@@ -54,7 +54,7 @@ class callback_42(APIView):
         user_data = response.json()
         email = user_data.get('email')
         if response.status_code != 200:
-            return redirect("http://127.0.0.1:8000/?error")
+            return redirect("https://127.0.0.1:8000/?error")
         elif response.status_code == 200:
             if User.objects.filter(email=email).exists():
                 exist = User.objects.get(email=email)

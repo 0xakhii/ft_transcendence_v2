@@ -339,7 +339,7 @@ document.addEventListener('keyup', keyUpHandler);
 
 function keyDownHandler(event) {
     if (event.key === 'ArrowUp') {
-        fetch('http://localhost:8000/direction/', {
+        fetch('https://localhost:8000/direction/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -362,7 +362,7 @@ function keyDownHandler(event) {
         //     rightPaddle.y = canvas.height - rightPaddle.height;
         //     rightPaddle.dy = 0;
         // }
-        fetch('http://localhost:8000/direction/', {
+        fetch('https://localhost:8000/direction/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -398,7 +398,7 @@ function keyDownHandler(event) {
 
 function keyUpHandler(event) {
     if (event.key === 'ArrowUp' || event.key === 'ArrowDown'){
-        fetch('http://localhost:8000/direction/', {
+        fetch('https://localhost:8000/direction/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -419,7 +419,7 @@ function keyUpHandler(event) {
 gameLoop();
 
 // function sendWinSize(){
-//     fetch('http://localhost:8000/win/', {
+//     fetch('https://localhost:8000/win/', {
 //         method: 'POST',
 //         headers: {
 //             'Content-Type': 'application/json'
@@ -432,7 +432,7 @@ gameLoop();
 
 function fetchGameState() {
     try{
-        // fetch("http://localhost:8000/game/")
+        // fetch("https://localhost:8000/game/")
         // .then(response => {
         //     if (!response.ok) {
         //         throw new Error('Network response was not ok');
@@ -479,7 +479,7 @@ function fetchGameState() {
     //             throw new Error('No data received');
     //         }
     //     });
-        fetch('http://localhost:8000/game/', {
+        fetch('https://localhost:8000/game/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/vnd.api+json'
