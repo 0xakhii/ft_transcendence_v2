@@ -180,7 +180,7 @@ export class PongGame {
         console.log("Setting up friends match WebSocket with gameGroupName:", this.gameGroupName);
         this.initObjects();
         this.createScoreUI();
-        this.socket = new WebSocket(`ws://localhost:8000/ws/game/${this.gameGroupName}/`);
+        this.socket = new WebSocket(`wss://localhost:8000/ws/game/${this.gameGroupName}/`);
         this.socket.onopen = () => {
             console.log(`WebSocket opened for ${this.gameGroupName}`);
             this.determinePlayerRole();
@@ -200,7 +200,7 @@ export class PongGame {
     }
 
     async setupMatchmakingWebSocket() {
-        this.socket = new WebSocket('ws://localhost:8000/ws/matchmaking/');
+        this.socket = new WebSocket('wss://localhost:8000/ws/matchmaking/');
         this.socket.onopen = () => {
             this.socket.send(JSON.stringify({
                 action: 'join_queue',
@@ -224,7 +224,7 @@ export class PongGame {
     }
 
     setupGameWebSocket() {
-        this.socket = new WebSocket(`ws://localhost:8000/ws/game/${this.gameGroupName}/`);
+        this.socket = new WebSocket(`wss://localhost:8000/ws/game/${this.gameGroupName}/`);
         this.socket.onopen = () => {
             this.initObjects();
             this.determinePlayerRole();

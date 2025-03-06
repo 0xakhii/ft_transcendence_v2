@@ -3577,7 +3577,7 @@ async function acceptFriendRequest(requestId) {
                 return;
             }
             const users = [sender, receiver];
-            const url = `ws://127.0.0.1:8000/ws/chat/${users[0]}/${users[1]}/`;
+            const url = `wss://127.0.0.1:8000/ws/chat/${users[0]}/${users[1]}/`;
             console.log("Attempting to connect to WebSocket:", url);
     
             if (chatSocket && chatSocket.url === url && chatSocket.readyState === WebSocket.OPEN) {
@@ -4039,7 +4039,7 @@ async function acceptFriendRequest(requestId) {
     //             return;
     //         }
     //         const users = [sender, receiver];
-    //         const url = `ws://127.0.0.1:8000/ws/chat/${users[0]}/${users[1]}/`;
+    //         const url = `wss://127.0.0.1:8000/ws/chat/${users[0]}/${users[1]}/`;
     //         console.log("Attempting to connect to WebSocket:", url);
     
     //         if (chatSocket && chatSocket.url === url && chatSocket.readyState === WebSocket.OPEN) {
@@ -4439,7 +4439,7 @@ async function acceptFriendRequest(requestId) {
     //             return;
     //         }
     //         const users = [sender, receiver];
-    //         const url = `ws://127.0.0.1:8000/ws/chat/${users[0]}/${users[1]}/`;
+    //         const url = `wss://127.0.0.1:8000/ws/chat/${users[0]}/${users[1]}/`;
     //         console.log("Attempting to connect to WebSocket:", url);
     
     //         if (chatSocket && chatSocket.url === url && chatSocket.readyState === WebSocket.OPEN) {

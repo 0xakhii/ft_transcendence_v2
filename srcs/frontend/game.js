@@ -510,7 +510,7 @@ function fetchGameState() {
 }
 
 function sendMessageToSocket(message) {
-    const socket = new WebSocket('ws://localhost:8000/ws/pong/');
+    const socket = new WebSocket('wss://localhost:8000/ws/pong/');
     console.log(socket)
     socket.onopen = () => {
         console.log("WebSocket connected");

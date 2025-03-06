@@ -1628,7 +1628,7 @@ async function acceptFriendRequest(requestId) {
                 return;
             }
             const users = [sender, receiver];
-            const url = `ws://127.0.0.1:8000/ws/chat/${users[0]}/${users[1]}/`;
+            const url = `wss://127.0.0.1:8000/ws/chat/${users[0]}/${users[1]}/`;
             console.log("Attempting to connect to WebSocket:", url);
     
             if (chatSocket && chatSocket.url === url && chatSocket.readyState === WebSocket.OPEN) {
@@ -1832,7 +1832,7 @@ async function acceptFriendRequest(requestId) {
                         return;
                     }
 
-                    friendsSocket = new WebSocket('ws://127.0.0.1:8000/ws/friends/');
+                    friendsSocket = new WebSocket('wss://127.0.0.1:8000/ws/friends/');
                     friendsSocket.onopen = () => {
                         console.log("Friends WebSocket connected");
                         friendsSocket.send(JSON.stringify({
@@ -1979,13 +1979,8 @@ async function acceptFriendRequest(requestId) {
         async function showFriendProfile(username, userId, avatarUrl) {
             try {
                 const token = localStorage.getItem('authToken');
-<<<<<<< HEAD
-                // Use FriendListView to fetch the friend's profile
-                const response = await fetch(`https://127.0.0.1:8000/friends/list/`, {
-=======
                 // Fetch friend's basic profile from FriendListView
                 const friendResponse = await fetch(`http://127.0.0.1:8000/friends/list/`, {
->>>>>>> refs/remotes/origin/main
                     method: 'GET',
                     headers: {
                         "Authorization": `Bearer ${token}`,
