@@ -20,7 +20,7 @@ DEFAULT_AVATAR_URL = "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profil
 class login_42(APIView):
     permission_classes = [AllowAny]
     def get(self, request):
-        return redirect("https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-b292b631faa175f40c72f3c46c0648df398518e1cd514dc73a6a8014d4600584&redirect_uri=https%3A%2F%2Flocalhost%3A8000%2Foauth%2Fcallback%2F&response_type=code")
+        return redirect("https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-aeae34338eb2b61bbead013fba955aaefb9923825c0ad7e439f156a270a0ba29&redirect_uri=https%3A%2F%2Flocalhost%3A8000%2Foauth%2Fcallback%2F&response_type=code")
 
 # def save_to_json(data, file_path="data.json"):
 #     try:
@@ -37,8 +37,8 @@ class callback_42(APIView):
         token_url = 'https://api.intra.42.fr/oauth/token'
         data = {
             'grant_type': 'authorization_code',
-            'client_id': "u-s4t2ud-b292b631faa175f40c72f3c46c0648df398518e1cd514dc73a6a8014d4600584",
-            'client_secret': "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",
+            'client_id': "u-s4t2ud-aeae34338eb2b61bbead013fba955aaefb9923825c0ad7e439f156a270a0ba29",
+            'client_secret': "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",
             'code': code,
             'redirect_uri': "https://localhost:8000/oauth/callback/",
         }
