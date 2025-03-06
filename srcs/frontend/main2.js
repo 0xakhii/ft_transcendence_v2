@@ -1980,7 +1980,7 @@ async function acceptFriendRequest(requestId) {
             try {
                 const token = localStorage.getItem('authToken');
                 // Fetch friend's basic profile from FriendListView
-                const friendResponse = await fetch(`http://127.0.0.1:8000/friends/list/`, {
+                const friendResponse = await fetch(`https://127.0.0.1:8000/friends/list/`, {
                     method: 'GET',
                     headers: {
                         "Authorization": `Bearer ${token}`,
@@ -2005,7 +2005,7 @@ async function acceptFriendRequest(requestId) {
                 const profile = friend.attributes || {};
         
                 // Fetch the authenticated user's match history
-                const matchResponse = await fetch('http://127.0.0.1:8000/match-history/', {
+                const matchResponse = await fetch('https://127.0.0.1:8000/match-history/', {
                     method: 'GET',
                     headers: {
                         "Authorization": `Bearer ${token}`,

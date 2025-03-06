@@ -61,7 +61,7 @@ class callback_42(APIView):
                 refresh = RefreshToken.for_user(exist)
                 access_token = str(refresh.access_token)
                 user_id = exist.id
-                redirect_url = f"http://127.0.0.1:5173/#/dashboard?success&access_token={access_token}&user_id={user_id}"
+                redirect_url = f"https://127.0.0.1:5173/#/dashboard?success&access_token={access_token}&user_id={user_id}"
                 # return redirect(redirect_url)
             else:
                 user_data = response.json()
@@ -85,7 +85,7 @@ class callback_42(APIView):
                 #     user = User.objects.get(username=user_data.get('login'))
                 #     refresh = RefreshToken.for_user(user)
                 #     access_token = str(refresh.access_token)
-                redirect_url = f"http://127.0.0.1:5173/#/dashboard?success&access_token={access_token}&user_id={user_id}"
+                redirect_url = f"https://127.0.0.1:5173/#/dashboard?success&access_token={access_token}&user_id={user_id}"
             return redirect(redirect_url)
 
 class RegistrationView(APIView):
