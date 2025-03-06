@@ -13,6 +13,19 @@ import jwt
 from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import AccessToken, TokenError
+from django.contrib.auth.models import User
+from rest_framework_simplejwt.backends import TokenBackend
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+from .models import NumberTapMatch
+from django.conf import settings
+import json
+import logging
+from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.db import database_sync_to_async
+from django.contrib.auth.models import AnonymousUser
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+from .models import NumberTapMatch
 
 logger = logging.getLogger(__name__)
 
@@ -582,3 +595,175 @@ class FriendsMatchConsumer(AsyncWebsocketConsumer):
 
     async def match_found(self, event):
         await self.send(json.dumps(event["data"]))
+
+
+#############################################
+
+class NumberTapConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        logger.debug(f"NumberTapConsumer.connect() scope: {self.scope}")
+        self.user = self.scope['user']
+        logger.info(f"User from scope: {self.user}, is_authenticated: {self.user.is_authenticated}")
+
+        # Accept the connection immediately
+        await self.accept()
+
+        # If user is not authenticated via scope, wait for token in the first message
+        if not self.user.is_authenticated:
+            logger.warning("User not authenticated via scope, waiting for token")
+        else:
+            self.username = self.user.username
+            self.room_group_name = f'number_tap_{self.username}'
+            await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+            await self.channel_layer.group_add('number_tap_lobby', self.channel_name)  # Add to lobby for matchmaking
+            await self.matchmake()
+
+    async def disconnect(self, close_code):
+        username = getattr(self, 'username', 'unknown_user')  # Safely handle missing username
+        logger.info(f"Disconnecting NumberTapConsumer for user: {username}, close_code: {close_code}")
+        if hasattr(self, 'room_group_name'):
+            try:
+                await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+                await self.channel_layer.group_discard('number_tap_lobby', self.channel_name)  # Remove from lobby
+            except Exception as e:
+                logger.error(f"Failed to discard group in NumberTapConsumer: {str(e)}")
+        else:
+            logger.warning("room_group_name not set in NumberTapConsumer during disconnect")
+
+    async def receive(self, text_data):
+        data = json.loads(text_data)
+        logger.info(f"Received data: {data}")
+
+        if data['type'] == 'join':
+            token = data.get('token')
+            if not token:
+                await self.close(code=4001, reason='No authentication token provided')
+                return
+            user = await self.authenticate_token(token)
+            if not user or not user.is_authenticated:
+                await self.close(code=4001, reason='Invalid authentication token')
+                return
+            self.user = user
+            self.username = user.username
+            self.room_group_name = f'number_tap_{self.username}'
+            await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+            await self.channel_layer.group_add('number_tap_lobby', self.channel_name)  # Add to lobby
+            logger.info(f"User {self.username} joined successfully")
+            await self.matchmake()
+        elif data['type'] == 'score':
+            if hasattr(self, 'opponent'):
+                await self.channel_layer.group_send(
+                    f'number_tap_{self.opponent}',
+                    {'type': 'score_update', 'score': data['score']}
+                )
+            else:
+                logger.warning(f"No opponent set for {self.username} to send score update")
+        elif data['type'] == 'endGame':
+            if hasattr(self, 'opponent'):
+                await self.channel_layer.group_send(
+                    f'number_tap_{self.opponent}',
+                    {'type': 'end_game', 'opponentScore': data['opponentScore']}
+                )
+                await self.store_match_history(data['opponentScore'])
+            else:
+                logger.warning(f"No opponent set for {self.username} to end game")
+
+    async def authenticate_token(self, token):
+        try:
+            token_backend = TokenBackend(
+                algorithm='HS256',
+                signing_key=settings.SIMPLE_JWT.get('SIGNING_KEY', settings.SECRET_KEY)
+            )
+            decoded_token = token_backend.decode(token, verify=True)
+            user_id = decoded_token.get('user_id')
+            if not user_id:
+                logger.error("Token missing user_id")
+                return None
+            user = await database_sync_to_async(User.objects.get)(id=user_id)
+            return user
+        except (InvalidToken, TokenError, User.DoesNotExist) as e:
+            logger.error(f"Token authentication error: {str(e)}")
+            return None
+
+    async def matchmake(self):
+        if not hasattr(self, 'username'):
+            logger.warning("Cannot matchmake: username not set")
+            return
+        logger.info(f"Starting matchmaking for user: {self.username}")
+        try:
+            redis = await aioredis.from_url("redis://redis:6379")  # Match Docker service name
+            waiting_player = await redis.get("number_tap_waiting")
+            if waiting_player:
+                opponent = waiting_player.decode('utf-8')
+                if opponent == self.username:  # Prevent matching with self
+                    logger.warning(f"User {self.username} cannot match with themselves")
+                    await redis.close()
+                    return
+                await redis.delete("number_tap_waiting")
+                self.opponent = opponent
+                await self.channel_layer.group_send(
+                    f'number_tap_{opponent}',
+                    {'type': 'match_found', 'opponent': self.username}
+                )
+                await self.send(text_data=json.dumps({
+                    'type': 'matchFound',
+                    'opponent': opponent,
+                }))
+            else:
+                await redis.set("number_tap_waiting", self.username)
+                await self.send(text_data=json.dumps({
+                    'type': 'waiting',
+                    'message': 'Waiting for an opponent...'
+                }))
+            await redis.close()
+        except redis.exceptions.ConnectionError as e:
+            logger.error(f"Failed to connect to Redis: {str(e)}")
+            await self.send(text_data=json.dumps({
+                'type': 'error',
+                'message': 'Matchmaking unavailable due to server issues. Please try again later.'
+            }))
+            await self.close(code=1011, reason='Redis connection failed')
+
+    async def match_found(self, event):
+        opponent = event['opponent']
+        self.opponent = opponent
+        logger.info(f"Match found for {self.username} with opponent: {opponent}")
+        await self.send(text_data=json.dumps({
+            'type': 'matchFound',
+            'opponent': opponent,
+        }))
+
+    async def score_update(self, event):
+        score = event['score']
+        self.opponentScore = score  # Store opponent's score
+        logger.info(f"Sending score update to client: {score}")
+        await self.send(text_data=json.dumps({
+            'type': 'score',
+            'score': score,
+        }))
+
+    async def end_game(self, event):
+        opponentScore = event['opponentScore']
+        logger.info(f"Sending endGame to client, opponentScore: {opponentScore}")
+        await self.send(text_data=json.dumps({
+            'type': 'endGame',
+            'opponentScore': opponentScore,
+        }))
+
+    @database_sync_to_async
+    def store_match_history(self, opponent_score):
+        try:
+            match = NumberTapMatch(
+                player1=self.user,
+                player2=User.objects.get(username=self.opponent),
+                player1_score=opponent_score,  # Player1's score is what the opponent sent
+                player2_score=self.opponentScore if hasattr(self, 'opponentScore') else 0  # Player2's score from updates
+            )
+            match.save()
+            logger.info(f"Match history stored for {self.user.username} vs {self.opponent}")
+        except User.DoesNotExist:
+            logger.error(f"Opponent {self.opponent} not found")
+        except Exception as e:
+            logger.error(f"Error storing match history: {str(e)}")
+
+##############################################

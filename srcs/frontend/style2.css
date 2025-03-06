@@ -92,16 +92,14 @@ body
 .brd
 {
     font-family: "Poppins", sans-serif;
-    border: 5px solid ;
     border-radius: 40px;
-    /* border-color: linear-gradient(90deg, #ed1c24, #93278f, #2e3192);     */
-    border-color: linear-gradient(to right , #ed1c24 30%, #93278f 30%, #2e3192 40%);
     width: 10vw;
     height: 5vh;
     margin: 1vh 0 0.3vh 0;
     padding-left: 1vw;
     color: #2e3192;
     font-size: 20px;
+    border: 2px solid #ddd;
 }
 .btn
 {
@@ -120,6 +118,12 @@ body
     font-weight: bold;
     font-size: 1vw;
     margin: 1vh 0 0 0;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+.btn:hover
+{
+    transform: scale(1.05);
 }
 .footer
 {

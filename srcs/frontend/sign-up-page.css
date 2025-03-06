@@ -90,21 +90,17 @@ body
 .brd
 {
     font-family: "Poppins", sans-serif;
-    border: 5px solid ;
-    /* border-top-color: #93278f;
-    border-left-color: #ed1c24;
-    border-right-color: #2e3192;
-    border-bottom-color: #93278f; */
-    /* border: linear-gradient(90deg, #ed1c24, #93278f, #2e3192); */
     border-radius: 40px;
-    /* border-color: linear-gradient(90deg, #ed1c24, #93278f, #2e3192);     */
-    border-color: linear-gradient(to right , #ed1c24 30%, #93278f 30%, #2e3192 40%);
     width: 10vw;
     height: 5vh;
     margin: 1vh 0 0.3vh 1vw;
     padding-left: 1vw;
     color: #2e3192;
     font-size: 20px;
+    border: 2px solid #ddd;
+
+    /* font-size: 1vw;
+    border: 2px solid #ddd; */
 }
 .btn
 {

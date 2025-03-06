@@ -304,6 +304,7 @@ body
     font-size: 16px; 
 }
 
+<<<<<<< HEAD
 @media (min-width: 1200px)
 {
     .h2, h2 {
@@ -317,3 +318,39 @@ p {
     margin: 20px 0 20px 0;
     text-align: center;
 }
+=======
+/*************************************/
+
+.number-tap-btn {
+    background-color: #4CAF50; /* Green for consistency with Pongify */
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    color: white;
+    transition: background-color 0.3s;
+}
+
+.number-tap-btn:hover {
+    background-color: #45a049;
+}
+
+#number-tap-container .number-tile {
+    transition: background-color 0.2s ease; /* Smooth color change for feedback */
+}
+
+#number-tap-container .number-tile:hover {
+    background-color: #555; /* Darker on hover for interactivity */
+}
+#number-tap-container #opponent-score {
+    position: absolute;
+    top: 110px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+    font-size: 20px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+>>>>>>> refs/remotes/origin/main
