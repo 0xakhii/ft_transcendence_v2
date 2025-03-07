@@ -596,7 +596,6 @@ class FriendsMatchConsumer(AsyncWebsocketConsumer):
     async def match_found(self, event):
         await self.send(json.dumps(event["data"]))
 
-
 #############################################
 
 class NumberTapConsumer(AsyncWebsocketConsumer):

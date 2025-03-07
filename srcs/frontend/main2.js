@@ -2320,8 +2320,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 };
                 initializeFriendsWebSocket();
                 function startPrivateMatch(data) {
-                    navigateTo('#/game');
-                    const app = document.getElementById('app');
+                    // navigateTo('#/game');
+                    // const app = document.getElementById('app');
                     app.innerHTML = pages.game_v2;
                     setCurrentGame(new PongGame('friends', data.player1_id === localStorage.getItem('user_id') ? data.player2_id : data.player1_id));
                     currentGame.gameGroupName = data.game_group_name;

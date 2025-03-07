@@ -198,17 +198,15 @@ export class PongGame {
 
     async setupFriendsMatchWebSocket() {
         console.log("Setting up friends match WebSocket with gameGroupName:", this.gameGroupName);
-        this.initObjects();
-        this.createScoreUI();
         this.socket = new WebSocket(`wss://localhost:8000/ws/game/${this.gameGroupName}/`);
         this.socket.onopen = () => {
             console.log(`WebSocket opened for ${this.gameGroupName}`);
+            this.initObjects();
+            this.createScoreUI();
             this.determinePlayerRole();
             this.updateCameraPosition();
-            this.setupMultiplayerControls();
             this.isRunning = true;
             this.isGameActive = true;
-            this.startGame();
             this.animate();
         };
         this.socket.onmessage = (event) => {
@@ -217,6 +215,7 @@ export class PongGame {
         this.socket.onclose = () => {
             this.handleGameClose();
         };
+        this.setupMultiplayerControls();
     }
 
     async setupMatchmakingWebSocket() {
@@ -639,7 +638,21 @@ export class TournamentPongGame extends PongGame {
     createTournamentUI() {
         this.tournamentUI = document.createElement('div');
         this.tournamentUI.id = 'tournament-ui';
-        this.tournamentUI.className = 'tournament-ui';
+        Object.assign(this.tournamentUI.style, {
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            color: 'white',
+            padding: '20px',
+            borderRadius: '10px',
+            textAlign: 'center',
+            backgroundColor: 'transparent',
+            fontFamily: 'Arial, sans-serif',
+            fontSize: '25px',
+            width: '300px',
+            maxWidth: '90%'
+        });
         document.body.appendChild(this.tournamentUI);
     }
 
@@ -648,7 +661,7 @@ export class TournamentPongGame extends PongGame {
         this.tournamentUI.innerHTML = '';
         switch (this.tournament.stage) {
             case 'nameInput':
-                this.tournamentUI.innerHTML = '<h2 class="tournament-heading">Enter Player Names</h2>';
+                this.tournamentUI.innerHTML = '<h2>Enter Player Names</h2>';
                 for (let i = 1; i <= 4; i++) {
                     const input = document.createElement('input');
                     input.type = 'text';
@@ -661,13 +674,12 @@ export class TournamentPongGame extends PongGame {
                 }
                 const startButton = document.createElement('button');
                 startButton.textContent = 'Start Tournament';
-                startButton.className = 'tn-start-button';
                 startButton.addEventListener('click', () => this.startTournament());
                 this.tournamentUI.appendChild(startButton);
                 break;
             case 'semifinals':
             case 'final':
-                this.tournamentUI.innerHTML = `<h2>${this.tournament.stage === 'semifinals' ? 'Semifinals' : 'Final'}</h2>`;                
+                this.tournamentUI.innerHTML = `<h2>${this.tournament.stage === 'semifinals' ? 'Semifinals' : 'Final'}</h2>`;
                 this.tournamentUI.innerHTML += `<p>${this.tournament.currentMatch.player1} vs ${this.tournament.currentMatch.player2}</p>`;
                 this.tournamentUI.innerHTML += `<p>Score: ${this.score.player1} - ${this.score.player2}</p>`;
                 break;
@@ -680,7 +692,11 @@ export class TournamentPongGame extends PongGame {
     }
 
     startTournament() {
-        this.tournament.players = Array.from({ length: 4 }, (_, i) => document.getElementById(`player-${i + 1}`).value || `Player ${i + 1}`);
+        this.tournament.players = [];
+        for (let i = 1; i <= 4; i++) {
+            const name = document.getElementById(`player-${i}`).value || `Player ${i}`;
+            this.tournament.players.push(name);
+        }
         this.tournament.semifinals = [
             { player1: this.tournament.players[0], player2: this.tournament.players[1], winner: null },
             { player1: this.tournament.players[2], player2: this.tournament.players[3], winner: null }
@@ -690,17 +706,20 @@ export class TournamentPongGame extends PongGame {
         this.initObjects();
         this.setupLocalControls();
         this.animate();
+        this.resetBall();
+        this.checkScoring();
         this.updateTournamentUI();
     }
 
     checkMatchEnd() {
-        if (this.score.player1 >= this.maxScore || this.score.player2 >= this.maxScore) {
-            const winner = this.score.player1 > this.score.player2 ? this.tournament.currentMatch.player1 : this.tournament.currentMatch.player2;
+        if (this.score1 >= this.maxScore || this.score2 >= this.maxScore) {
+            const winner = this.score1 > this.score2 ? this.tournament.currentMatch.player1 : this.tournament.currentMatch.player2;
             if (this.tournament.stage === 'semifinals') {
                 this.tournament.currentMatch.winner = winner;
                 this.tournament.winners.push(winner);
-                this.tournament.currentMatch = this.tournament.winners.length === 1 ? this.tournament.semifinals[1] : null;
-                if (!this.tournament.currentMatch) {
+                if (this.tournament.winners.length === 1) {
+                    this.tournament.currentMatch = this.tournament.semifinals[1];
+                } else {
                     this.tournament.stage = 'final';
                     this.tournament.final = [{ player1: this.tournament.winners[0], player2: this.tournament.winners[1], winner: null }];
                     this.tournament.currentMatch = this.tournament.final[0];
@@ -710,27 +729,35 @@ export class TournamentPongGame extends PongGame {
                 this.tournament.winners = [winner];
                 this.tournament.stage = 'finished';
             }
-            this.score.player1 = 0;
-            this.score.player2 = 0;
+            this.score1 = 0;
+            this.score2 = 0;
             this.resetBall();
+            this.disposeGameObjects();
             if (this.tournament.stage !== 'finished') this.initObjects();
             this.updateTournamentUI();
         }
     }
 
     animate() {
-        if (!this.isRunning) return;
+        this.updateTournamentUI();
+        if (!this.isRunning) return; // Stop animation if not running
         requestAnimationFrame(() => this.animate());
+
         if (this.isGameActive) {
-            this.handleLocalLogic();
+            this.handleLocalLogic(1 / 2);
             if (this.mode === 'tournament') this.checkMatchEnd();
         }
-        this.render();
+        if (this.renderer && this.scene && this.camera) {
+            this.renderer.render(this.scene, this.camera);
+        }
     }
 
     dispose() {
         super.dispose();
-        if (this.tournamentUI) this.tournamentUI.remove();
+        if (this.tournamentUI) {
+            this.tournamentUI.remove();
+            this.tournamentUI = null;
+        }
     }
 }
 
