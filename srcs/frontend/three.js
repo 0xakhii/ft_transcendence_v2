@@ -639,19 +639,19 @@ export class TournamentPongGame extends PongGame {
         this.tournamentUI = document.createElement('div');
         this.tournamentUI.id = 'tournament-ui';
         Object.assign(this.tournamentUI.style, {
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            color: 'white',
-            padding: '20px',
-            borderRadius: '10px',
-            textAlign: 'center',
-            backgroundColor: 'transparent',
-            fontFamily: 'Arial, sans-serif',
-            fontSize: '25px',
-            width: '300px',
-            maxWidth: '90%'
+            // position: 'absolute',
+            // top: '50%',
+            // left: '50%',
+            // transform: 'translate(-50%, -50%)',
+            // color: 'white',
+            // padding: '20px',
+            // borderRadius: '10px',
+            // textAlign: 'center',
+            // backgroundColor: 'transparent',
+            // fontFamily: 'Arial, sans-serif',
+            // fontSize: '25px',
+            // width: '300px',
+            // maxWidth: '90%'
         });
         document.body.appendChild(this.tournamentUI);
     }
