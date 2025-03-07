@@ -638,7 +638,8 @@ export class TournamentPongGame extends PongGame {
     createTournamentUI() {
         this.tournamentUI = document.createElement('div');
         this.tournamentUI.id = 'tournament-ui';
-        Object.assign(this.tournamentUI.style, {
+        this.tournamentUI.className = 'tournament-ui';
+        // Object.assign(this.tournamentUI.style, {
             // position: 'absolute',
             // top: '50%',
             // left: '50%',
@@ -652,7 +653,7 @@ export class TournamentPongGame extends PongGame {
             // fontSize: '25px',
             // width: '300px',
             // maxWidth: '90%'
-        });
+        // });
         document.body.appendChild(this.tournamentUI);
     }
 
