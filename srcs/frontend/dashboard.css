@@ -597,6 +597,80 @@ body
     background-color: #c82333; /* Darker red on hover, or #6a1b9a for purple */
 }
 
+/***********************friend request popup********************************/
+
+/* Alert Overlay */
+.alert-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6); /* Dark dimming */
+    z-index: 999; /* Below popup */
+    opacity: 0; /* Hidden by default */
+    transition: opacity 0.3s ease; /* Fade animation */
+}
+
+.alert-overlay.active {
+    opacity: 1; /* Fade in */
+}
+
+/* Alert Popup */
+.alert-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8); /* Start scaled down */
+    width: 340px; /* Slightly wider for longer messages */
+    max-width: 90%; /* Responsive */
+    padding: 25px;
+    background: rgba(24, 30, 42, 0.95); /* Matches #181e2a */
+    border-radius: 15px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5); /* Deep shadow */
+    text-align: center;
+    z-index: 1000; /* Above overlay */
+    opacity: 0; /* Hidden by default */
+    transition: transform 0.3s ease, opacity 0.3s ease; /* Pop-in animation */
+}
+
+.alert-popup.active {
+    transform: translate(-50%, -50%) scale(1); /* Full size */
+    opacity: 1; /* Fade in */
+}
+
+.alert-popup p {
+    margin: 0 0 20px; /* Space below message */
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: #fff; /* White text */
+    line-height: 1.5;
+    word-wrap: break-word; /* Handle long messages */
+}
+
+.alert-popup .alert-close {
+    padding: 8px 25px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    color: #181e2a; /* Dark text */
+    background: #bfb9ed; /* Theme accent */
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease; /* Smooth hover/click */
+}
+
+.alert-popup .alert-close:hover {
+    background: #d8d3ff; /* Lighter shade */
+    transform: scale(1.05); /* Slight grow */
+    box-shadow: 0 4px 15px rgba(191, 185, 237, 0.4); /* Glow */
+}
+
+.alert-popup .alert-close:active {
+    transform: scale(0.98); /* Pressed effect */
+}
 
 /**************************friends list********************************/
 /* .friends-list

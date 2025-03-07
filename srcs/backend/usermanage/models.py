@@ -2,6 +2,11 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils import timezone
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 DEFAULT_AVATAR_URL = "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
 
@@ -14,9 +19,21 @@ class Profile(models.Model):
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
     avatar_url = models.URLField(max_length=500, blank=True, default=DEFAULT_AVATAR_URL)
     created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.user.username}'s profile"
+    last_activity = models.DateTimeField(default=timezone.now)
+    is_online = models.BooleanField(default=False)
+    #addthis
+    def update_activity(self):
+        self.last_activity = timezone.now()
+        self.save(update_fields=['last_activity'])  # Ensure this commits
+        # Verify in DB
+        updated_profile = Profile.objects.get(id=self.id)
+    #addthis
+    @property
+    def online_status(self):
+        time_threshold = timezone.now() - timezone.timedelta(minutes=5)
+        is_online = self.last_activity >= time_threshold
+        logger.info(f"Calculating online_status for {self.user.username}: last_activity={self.last_activity}, now={timezone.now()}, threshold={time_threshold}, result={is_online}")
+        return is_online
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
@@ -53,14 +70,4 @@ class FriendRequest(models.Model):
     def __str__(self):
         return f"{self.sender.username} -> {self.receiver.username} ({self.status})"
 
-# class Friendship(models.Model):
-#     user1 = models.ForeignKey(User, related_name='friends1', on_delete=models.CASCADE)
-#     user2 = models.ForeignKey(User, related_name='friends2', on_delete=models.CASCADE)
-#     created_at = models.DateTimeField(auto_now_add=True)
-
-#     class Meta:
-#         unique_together = ('user1', 'user2')
-
-#     def __str__(self):
-#         return f"{self.user1.username} <-> {self.user2.username}"
 

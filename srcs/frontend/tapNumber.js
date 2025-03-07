@@ -1,19 +1,19 @@
 
 export class NumberTapGame {
     constructor(mode = 'single') {
-        // Initialize all properties explicitly
-        this.mode = mode; // 'single' or 'multiplayer'
-        this.score = 0; // Player's score
-        this.timeLeft = 30; // 30 seconds timer
+        
+        this.mode = mode;
+        this.score = 0; 
+        this.timeLeft = 30; 
         this.isGameActive = false;
-        this.hasStoredHistory = false; // Prevent duplicate history storage
-        this.currentNumber = this.generateRandomNumber(); // Start with a random number (1–9)
-        this.numbersPool = [1, 2, 3, 4, 5, 6, 7, 8, 9]; // Explicitly initialize numbers pool
-        this.webSocket = null; // WebSocket for multiplayer
-        this.opponentScore = 0; // Track opponent's score in multiplayer
-        this.opponentUsername = null; // Track opponent's username
+        this.hasStoredHistory = false;
+        this.currentNumber = this.generateRandomNumber();
+        this.numbersPool = [1, 2, 3, 4, 5, 6, 7, 8, 9]; 
+        this.webSocket = null; 
+        this.opponentScore = 0; 
+        this.opponentUsername = null; 
 
-        console.log('Constructor initialized - numbersPool:', this.numbersPool); // Debugging log
+        console.log('Constructor initialized - numbersPool:', this.numbersPool);
         this.initializeGame();
         this.setupUI();
         if (mode === 'multiplayer') {
@@ -86,7 +86,7 @@ export class NumberTapGame {
         this.webSocket.onclose = (event) => {
             console.log('WebSocket disconnected for Number Tap multiplayer. Event:', { code: event.code, reason: event.reason || 'No reason provided', wasClean: event.wasClean });
             this.isGameActive = false;
-            if (event.code !== 1000) { // Not a normal closure
+            if (event.code !== 1000) { 
                 console.error('WebSocket connection closed unexpectedly. Attempting to reconnect...');
                 setTimeout(() => this.setupMultiplayer(), 2000);
             }
@@ -118,12 +118,11 @@ export class NumberTapGame {
     }
 
     generateRandomNumber() {
-        console.log('Generating random number - numbersPool:', this.numbersPool); // Debugging log
         if (!this.numbersPool || this.numbersPool.length === 0) {
-            this.numbersPool = [1, 2, 3, 4, 5, 6, 7, 8, 9]; // Reset pool if undefined or empty
+            this.numbersPool = [1, 2, 3, 4, 5, 6, 7, 8, 9];
         }
         const randomIndex = Math.floor(Math.random() * this.numbersPool.length);
-        const number = this.numbersPool.splice(randomIndex, 1)[0]; // Remove and return the number
+        const number = this.numbersPool.splice(randomIndex, 1)[0];
         return number;
     }
 
@@ -337,13 +336,51 @@ export class NumberTapGame {
         if (timerDisplay) {
             timerDisplay.textContent = `Time: 0s`;
         }
-        alert(`Game Over! Your score: ${this.score}\nOpponent Score: ${this.opponentScore || 0}`);
-        this.dispose();
-    
+
+        this.showEndGameModal();
+
         if (this.mode === 'multiplayer' && this.webSocket) {
             this.sendUpdateToOpponent({ type: 'endGame', opponentScore: this.score });
             this.webSocket.close(1000, 'Game ended');
             this.webSocket = null;
+        }
+    }
+
+    showEndGameModal() {
+        const modal = document.createElement('div');
+        modal.id = 'number-tap-end-modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <h2>Game Over!</h2>
+                <p>Your Score: <span class="score-highlight">${this.score}</span></p>
+                ${this.mode === 'multiplayer' ? `<p>Opponent's Score: <span class="score-highlight">${this.opponentScore || 0}</span></p>` : ''}
+                <p class="result-text">${this.getResultText()}</p>
+                <button id="play-again-btn">Play Again</button>
+                <button id="exit-btn">Exit to Menu</button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        document.getElementById('play-again-btn').addEventListener('click', () => {
+            modal.remove();
+            this.dispose(); // Clean up current game
+            setCurrentGame(new NumberTapGame(this.mode)); // Restart in same mode
+        });
+
+        document.getElementById('exit-btn').addEventListener('click', () => {
+            modal.remove();
+            this.dispose(); // Clean up current game
+            navigateTo('#/game'); // Return to game selection
+        });
+    }
+
+    getResultText() {
+        if (this.mode === 'single') {
+            return `Great job! Can you beat ${this.score} next time?`;
+        } else {
+            const win = this.score > (this.opponentScore || 0);
+            const tie = this.score === (this.opponentScore || 0);
+            return win ? 'You Win!' : tie ? 'It\'s a Tie!' : 'You Lose!';
         }
     }
 
@@ -353,6 +390,9 @@ export class NumberTapGame {
         }
         this.isGameActive = false;
         this.hasStoredHistory = false;
+        if (this.webSocket && this.webSocket.readyState !== WebSocket.CLOSED) {
+            this.webSocket.close(1000, 'Game disposed');
+        }
     }
 
     sendUpdateToOpponent(data) {

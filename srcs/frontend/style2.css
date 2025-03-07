@@ -125,6 +125,31 @@ body
 {
     transform: scale(1.05);
 }
+.btn-404
+{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    border: none;
+    background: linear-gradient(to right , #ed1c24, #93278f, #2e3192);
+    font-family: "Poppins", sans-serif;
+    color: #ffffff;
+    border-radius: 40px;
+    width: 11.5vw;
+    height: 6vh;
+    text-align: center;
+    padding-top: 1.2vh;
+    font-weight: bold;
+    font-size: 1vw;
+    margin: 1vh 0 0 0;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+.btn-404:hover
+{
+    transform: scale(1.05);
+}
+
 .footer
 {
     display: flex;

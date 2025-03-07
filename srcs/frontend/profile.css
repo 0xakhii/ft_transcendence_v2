@@ -1,66 +1,3 @@
-/* .profile {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start; 
-    padding: 20px;
-    max-width: 1200px; 
-    margin: 0 auto; 
-}
-
-.profile_info {
-    width: 30%;
-    width: 500px;
-    border: 2px solid #000; 
-    padding: 10px;
-    text-align: center;
-}
-.profile_border
-{
-    margin-top: 50px;
-    height: 500px;
-    width: 250px;
-    
-}
-
-.profile_stats {
-    width: 20%;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-}
-
-.match_history {
-    width: 40%;
-    padding: 10px;
-    text-align: center;
-} */
-
-/* Responsive Images */
-/* img {
-    max-width: 100%;
-    height: auto;
-} */
-/* .profile_border
-{
-    height: 500px;
-    
-} */
-
-/* .wins
-{
-    height: 300px;
-    width: 300px;
-} */
-/* .level
-{
-    height: 300px;
-    width: 300px;
-} */
-/* .match_history_border
-{
-    position: absolute;
-} */
-
 body 
 {
     margin: 0;
@@ -71,18 +8,11 @@ body
 {
     height: 100vh;
     background-color: #181e2a;
-    /* overflow: hidden; */
     background-image: url(images/PO-BG.png);
-
-
     background-color: #181e2a;
     background-repeat: no-repeat;
     background-size: cover;
     color: #bfb9ed;
-    /* display: flex 
-    flex-direction: column; */
-    /* justify-content: space-between;
-    align-items: center; */
 }
 .logo
 {
@@ -99,8 +29,8 @@ body
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px; /* Add some padding inside the header */
-    box-sizing: border-box; /* Ensure padding doesn't affect layout width */
+    padding: 10px 20px; 
+    box-sizing: border-box; 
 }
 
 .header a {
@@ -109,7 +39,7 @@ body
     font-family: "Poppins", sans-serif;
     font-size: 20px;
     font-weight: bold;
-    padding: 10px 40px; /* Add padding for better spacing */
+    padding: 10px 40px;
     /* display: inline-flex;
     justify-content: center;
     align-items: center;
@@ -152,16 +82,27 @@ body
     grid-column: 1 / 2;
     grid-row: span 2;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 1050px;
+    /* height: 1050px; */
+    /* position: relative; */
   }
   
   .profile-border {
-    /* max-width: 100%; */
-    /* height: auto; */
     width: 400px;
-    /* border-radius: 15px; */
+    max-width: 400px;
+    height: auto;
+    display: block;
+    opacity: 0.9;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(191, 185, 237, 0.2);
+    transition: transform 0.3sease;
+    margin-bottom: 270px;
+  }
+  
+  .profile-border:hover {
+    transform: scale(1.02);
   }
   
   .profile-stats 
@@ -173,41 +114,39 @@ body
     justify-content: space-around;
     align-items: center;
     /* margin-right: 100px; */
-    /* margin-left: 500px;
-    margin-top: 40px; */
     width: 1300px;
-    height: 530px;
+    height: 430px;
   }
   
   .stats-item {
-    position: relative; /* For absolute positioning of text */
-    width: 100%; /* Ensure the item fills the container */
-    max-width: 300px; /* Match the image width or adjust as needed */
+    position: relative; 
+    width: 100%;
+    max-width: 300px;
 }
 
 .stats-border {
-    width: 100%; /* Ensure the image fills the container */
-    height: auto; /* Maintain aspect ratio */
+    width: 100%;
+    height: auto; 
     display: block;
-    border-radius: 15px; /* Rounded corners to match your design */
-    opacity: 0.9; /* Slight transparency for a modern look */
+    border-radius: 15px;
+    opacity: 0.9;
 }
 
 .stats-text {
     position: absolute;
-    top: 50%; /* Center vertically */
-    left: 50%; /* Center horizontally */
-    transform: translate(-50%, -50%); /* Perfect centering */
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%); 
     font-family: 'Poppins', sans-serif;
-    color: #fff; /* White text for visibility against dark background */
-    font-size: 24px; /* Larger, bold text for impact */
+    color: #fff; 
+    font-size: 24px; 
     font-weight: bold;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Shadow for readability */
-    background: rgba(255, 255, 255, 0.1); /* Semi-transparent white background */
-    padding: 8px 16px; /* Padding for better appearance */
-    border-radius: 10px; /* Rounded corners for text background */
-    backdrop-filter: blur(5px); /* Optional modern blur effect */
-    z-index: 1; /* Ensure text is above the image */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); 
+    background: rgba(255, 255, 255, 0.1); 
+    padding: 8px 16px;
+    border-radius: 10px; 
+    backdrop-filter: blur(5px);
+    z-index: 1; 
 }
 
 /* Hover effect for interactivity (optional) */
@@ -215,28 +154,27 @@ body
     background: rgba(255, 255, 255, 0.2); /* Slightly more opaque on hover */
     /* transition: background 0.3s ease; */
 }
-  .match-history 
-  {
-    /* margin-top: 450px;
-    margin-left: 500px; */
-    /* position: absolute; */
-    margin: 0;
-    grid-column: 2 / 4;
-    grid-row: 2 / 3;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /* width: 1300px; */
-    margin-bottom: 400px;
-    margin-right: 60px;
-  }
-  
-  .match-history-border 
-  {
-    width: 90%;
-    /* height: auto; */
-    /* margin: 0; */
-  }
+.match-history {
+  position: relative;
+  grid-column: 2 / 4;
+  grid-row: 2 / 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 400px;
+  margin-right: 60px;
+  width: 100%; /* Ensure it fills its grid cell */
+  max-width: 1300px; /* Match profile-stats width for consistency */
+}
+
+.match-history-border {
+  width: 100%; /* Full width of parent for responsiveness */
+  max-width: 1200px; /* Slightly less than container to avoid overflow */
+  height: auto;
+  display: block;
+  opacity: 0.9; /* Slight transparency for depth */
+  border-radius: 15px; /* Rounded corners if your image allows */
+}
 
   .profile-img
   {
@@ -247,42 +185,70 @@ body
     top: 550px;
   }
 
-  .profile-info h2
-  {
-    /* margin: 0; */
-    position: absolute;
-    top: 600px;
-    /* left: 18%; */
-    font-family: 'Poppins';
-    font-size: 30px;
-    color: white;
-  }
-  .p_img
-  {
-    position: absolute;
-    top: 400px;
-    /* left: 19%; */
-    width: 180px;
-    height: 180px;
-    border-radius: 80px;
-  }
+.profile-info h2
+{
+  position: absolute;
+  top: 650px;
+  /* left: 410px; */
+  /* transform: translateX(-50%); */
+  font-family: 'Poppins', sans-serif;
+  font-size: 30px;
+  color: #fff;
+  font-weight: bold;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  margin: 0;
+  padding: 10px 20px;
+  background: rgba(24, 30, 42, 0.7);
+  border-radius: 10px;
+  transition: 0.3sease, transform 0.3sease;
+}
+
+.profile-info h2:hover {
+  background: rgba(24, 30, 42, 0.9);
+
+}
+
+.p_img
+{
+  position: absolute;
+  top: 410px;
+  /* left: 365px; */
+  width: 180px;
+  height: 180px;
+  /* transform: translate(-50%, -50%); */
+  border-radius: 90px;
+  border: 4px solid #bfb9ed;
+  object-fit: cover;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  /* transition: transform 0.3sease, box-shadow 0.3sease; */
+}
+
+.p_img:hover {
+  box-shadow: 0 6px 20px rgba(191, 185, 237, 0.4);
+}
 
 .edit_p
 {
   position: absolute;
+  top: 770px;
   color: #fff;
-  top: 700px;
-  font-family: "Poppins", sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 2vh;
-  /* margin: 2vh 0 0 12vw; */
-  /* border: none; */
-  border: #fff solid 2px;
+  font-weight: bold;
+  border: 2px solid #bfb9ed;
   border-radius: 20px;
   background: transparent;
-  padding: 0.5vh 1vw;
-  font-weight: bold;
-  /* transform: translate(-50%, -50%) scaleY(1.7);*/
+  padding: 0.8vh 1.5vw;
+  cursor: pointer;
+  transition: all 0.3sease;
 }
+
+.edit_p:hover {
+  background: linear-gradient(135deg, #bfb9ed, #8a84c9);
+  color: #181e2a;
+  box-shadow: 0 4px 15px rgba(191, 185, 237, 0.4);
+}
+
 .signout
 {
   /* position: absolute; */
@@ -385,11 +351,13 @@ body
 
 .match-history-content {
   position: absolute;
-  top: 0;
-  left: 2%;
+  /* top: 5%; */
+  /* left: 50%; */
+  transform: translateX(-50%);
   width: 600px;
-  height: 100%;
-  padding: 10px;
+  max-width: 1100px;
+  height: 350px;
+  padding: 20px;
   box-sizing: border-box;
 }
 
@@ -400,72 +368,156 @@ body
 }
 
 .match-history-list {
-  padding: 10px;
-  max-height: 350px;
-  max-width: 1215px;
+  padding: 15px;
+  max-height: 270px;
+  width: 100%;
   overflow-y: auto;
   font-family: 'Poppins', sans-serif;
   color: #fff;
-  /* background: rgba(255, 255, 255, 0.1); */
-  border-radius: 15px;
-  margin-top: 10px;
-
+  background: rgba(24, 30, 42, 0.8);
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 
 .match-history-list::-webkit-scrollbar {
-  width: 10px;
+  width: 12px; /* Slightly wider for better grip */
 }
 
 .match-history-list::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 15px;
+  background: rgba(191, 185, 237, 0.1); /* Tie in #bfb9ed accent */
+  border-radius: 12px;
 }
 
 .match-history-list::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.4);
-  border-radius: 10px;
-  border: 2px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(135deg, #bfb9ed, #8a84c9); /* Gradient matching theme */
+  border-radius: 12px;
+  border: 3px solid rgba(24, 30, 42, 0.8); /* Match list background */
 }
 
 .match-history-list::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.6);
+  background: linear-gradient(135deg, #d8d3ff, #a29dd9); /* Lighter on hover */
 }
 
 .match-history-item {
-  margin-bottom: 10px;
-  padding: 5px;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 10px;
+  margin-bottom: 15px;
+  padding: 10px 15px;
+  background: rgba(255, 255, 255, 0.1); /* Slightly lighter than list */
+  border-radius: 8px;
   backdrop-filter: blur(5px);
+  transition: all 0.3s ease; /* Smooth hover effect */
+  display: flex; /* Flex for better layout */
+  justify-content: space-between;
+  align-items: center;
+  border-left: 4px solid #bfb9ed; /* Accent bar for visual pop */
+}
+.match-history-item:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px); /* Slight lift on hover */
+  box-shadow: 0 2px 10px rgba(191, 185, 237, 0.2); /* Glow effect */
 }
 
 .match-history-item p {
   margin: 0;
-  font-size: 14px;
-  line-height: 1.4;
+  font-size: 16px; /* Slightly larger for readability */
+  line-height: 1.5;
+}
+
+.match-history-item p:first-child {
+  font-weight: bold; /* Emphasize main detail (e.g., opponent or score) */
+  color: #fff;
 }
 
 .match-history-item p:last-child {
-  font-size: 12px;
-  color: #e0e0e0;
+  font-size: 13px;
+  color: #d8d3ff; /* Lighter shade for timestamp */
+  opacity: 0.9;
 }
 
 .match-history-number-tap
 {
-  position: absolute;
+  /* position: absolute;
   top: 0;
   left: 50%;
   width: 600px;
   height: 100%;
   padding: 10px;
+  box-sizing: border-box; */
+
+  position: absolute;
+  top: 5%;
+  right: 5%; /* Shift to right half */
+  width: 45%; /* Half of the border, with some padding */
+  max-width: 550px; /* Adjusted for half-width */
+  height: 90%;
+  padding: 20px;
   box-sizing: border-box;
 }
-.number-tap-stats
+.number-tap-stats 
 {
-  color: #fff;
+  padding: 15px;
+  max-height: 270px; /* Match Pong list height */
+  width: 100%;
+  overflow-y: auto;
   font-family: 'Poppins', sans-serif;
-  font-size: 20px;
+  color: #fff;
+  background: rgba(24, 30, 42, 0.8); /* Same dark overlay */
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.number-tap-stats::-webkit-scrollbar {
+  width: 12px;
+}
+
+.number-tap-stats::-webkit-scrollbar-track {
+  background: rgba(191, 185, 237, 0.1);
+  border-radius: 12px;
+}
+
+.number-tap-stats::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #bfb9ed, #8a84c9); /* Same gradient */
+  border-radius: 12px;
+  border: 3px solid rgba(24, 30, 42, 0.8);
+}
+
+.number-tap-stats::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #d8d3ff, #a29dd9);
+}
+.number-tap-stats .stats-item { /* Assuming each stat is a div or similar */
+  margin-bottom: 15px;
+  padding: 10px 15px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-left: 4px solid #ff6b6b; /* Red accent to differentiate from Pong */
+}
+
+.number-tap-stats .stats-item:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 10px rgba(255, 107, 107, 0.2); /* Red glow */
+}
+
+.number-tap-stats p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.number-tap-stats p:first-child {
+  font-weight: bold;
+  color: #fff;
+}
+
+.number-tap-stats p:last-child {
+  font-size: 13px;
+  color: #ffd4d4; /* Lighter red shade for timestamp/score */
+  opacity: 0.9;
 }
 /**********************************************/
   /* @media (min-width: 2000px) {

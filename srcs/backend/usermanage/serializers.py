@@ -3,6 +3,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from .models import Profile,FriendRequest
 # from django.contrib.auth import get_user_model
+import logging
+
+logger = logging.getLogger(__name__)
 
 class RegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=8)
@@ -59,9 +62,10 @@ class ProfileSerializer(serializers.ModelSerializer):
     email = serializers.CharField(source='user.email', required=False)
     first_name = serializers.CharField(source='user.first_name', required=False)
     last_name = serializers.CharField(source='user.last_name', required=False)
+    online_status = serializers.BooleanField(read_only=True)
     class Meta:
         model = Profile
-        fields = ['bio','username', 'email', 'first_name','last_name', 'avatar', 'created_at']
+        fields = ['bio','username', 'email', 'first_name','last_name', 'avatar', 'created_at', 'online_status']
     
     def validate_username(self, value):
         if User.objects.filter(username=value).exclude(pk=self.instance.user.pk).exists():
@@ -113,11 +117,19 @@ class FriendRequestSerializer(serializers.ModelSerializer):
     
 class UserSerializer(serializers.ModelSerializer):
     avatar = serializers.SerializerMethodField()
+    online_status = serializers.BooleanField(source='profile.online_status', read_only=True)
+    
     class Meta:
         model = User
-        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'avatar']
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'avatar', 'online_status']
+    
     def get_avatar(self, obj):
         profile = obj.profile
         if profile.avatar:
             return profile.avatar.url
         return profile.avatar_url
+    
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        logger.info(f"Serialized user {instance.username}: {data}")
+        return data
