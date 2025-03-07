@@ -648,7 +648,13 @@ body
     line-height: 1.5;
     word-wrap: break-word; /* Handle long messages */
 }
+.alert-popup p.success {
+    color: #d8d3ff;
+}
 
+.alert-popup p.error {
+    color: #ff6b6b;
+}
 .alert-popup .alert-close {
     padding: 8px 25px;
     font-family: 'Poppins', sans-serif;
@@ -670,6 +676,53 @@ body
 
 .alert-popup .alert-close:active {
     transform: scale(0.98); /* Pressed effect */
+}
+
+/********************************confirm popup for invite********************************/
+
+.alert-popup .button-group {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.alert-popup .alert-yes,
+.alert-popup .alert-no {
+    padding: 8px 25px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.alert-popup .alert-yes {
+    color: #181e2a;
+    background: #bfb9ed;
+}
+
+.alert-popup .alert-no {
+    color: #fff;
+    background: #ff6b6b; /* Red for "No" */
+}
+
+.alert-popup .alert-yes:hover {
+    background: #d8d3ff;
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(191, 185, 237, 0.4);
+}
+
+.alert-popup .alert-no:hover {
+    background: #ff8787;
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+}
+
+.alert-popup .alert-yes:active,
+.alert-popup .alert-no:active {
+    transform: scale(0.98);
 }
 
 /**************************friends list********************************/

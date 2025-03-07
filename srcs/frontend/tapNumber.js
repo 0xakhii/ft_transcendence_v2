@@ -363,7 +363,7 @@ export class NumberTapGame {
 
         document.getElementById('play-again-btn').addEventListener('click', () => {
             modal.remove();
-            this.dispose(); // Clean up current game
+            this.dispose();
             setCurrentGame(new NumberTapGame(this.mode)); // Restart in same mode
         });
 

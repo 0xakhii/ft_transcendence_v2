@@ -595,7 +595,67 @@ body
         transform: translateY(0);
     }
 }
+/****************modal pong game****************/
 
+#pong-end-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6); /* Dim background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+#pong-end-modal .modal-content {
+    background: rgba(24, 30, 42, 0.95);
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    width: 300px;
+    max-width: 90%;
+}
+
+#pong-end-modal h2 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 24px;
+    color: #fff;
+    margin: 0 0 15px;
+}
+
+#pong-end-modal p {
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    color: #fff;
+    margin: 0 0 20px;
+}
+
+#pong-end-modal #exit-btn {
+    padding: 8px 25px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    color: #181e2a;
+    background: #bfb9ed; /* Theme accent */
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#pong-end-modal #exit-btn:hover {
+    background: #d8d3ff;
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(191, 185, 237, 0.4);
+}
+
+#pong-end-modal #exit-btn:active {
+    transform: scale(0.98);
+}
 .multiplayer-mode-btn, .local-mode-btn, .tournament-btn {
 
     padding: 10px 20px;

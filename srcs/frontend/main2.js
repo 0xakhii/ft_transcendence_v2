@@ -1,4 +1,4 @@
-  let allUsers = [];
+let allUsers = [];
 let lastRequestTime = 0;
 let flag = 0
 import { PongGame, setCurrentGame, TournamentPongGame, currentGame } from "./three";
@@ -1032,6 +1032,48 @@ document.addEventListener("DOMContentLoaded", () => {
     //     }
     // }
 
+    function showPopup(message, isError = false) {
+        const popup = document.createElement("div");
+        popup.className = "alert-popup";
+        const overlay = document.createElement("div");
+        overlay.className = "alert-overlay";
+    
+        popup.innerHTML = `
+            <p class="${isError ? 'error' : 'success'}">${message}</p>
+            <button class="alert-close">OK</button>
+        `;
+    
+        document.body.appendChild(popup);
+        document.body.appendChild(overlay);
+    
+        // Show with animation
+        setTimeout(() => {
+            popup.classList.add("active");
+            overlay.classList.add("active");
+        }, 10);
+    
+        // Close popup
+        const closeBtn = popup.querySelector(".alert-close");
+        closeBtn.addEventListener("click", () => {
+            popup.classList.remove("active");
+            overlay.classList.remove("active");
+            setTimeout(() => {
+                popup.remove();
+                overlay.remove();
+            }, 300); // Match transition duration
+        });
+    
+        // Close on overlay click (optional)
+        overlay.addEventListener("click", () => {
+            popup.classList.remove("active");
+            overlay.classList.remove("active");
+            setTimeout(() => {
+                popup.remove();
+                overlay.remove();
+            }, 300);
+        });
+    }
+
     async function sendFriendRequest(receiverId) {
         try {
             console.log("Sending friend request to user ID:", receiverId);
@@ -1134,52 +1176,50 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function acceptFriendRequest(requestId) {
         try {
-          const token = localStorage.getItem("authToken");
-          const response = await fetch(`https://127.0.0.1:8000/friends/accept/${requestId}/`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`,
-            },
-          });
-      
-          if (response.ok) {
-            alert("Friend request accepted!");
-            // Reload the friend requests to update the UI
-            loadPendingFriendRequests();
-          } else {
-            const errorData = await response.json();
-            alert(errorData.message || "Failed to accept friend request");
-          }
+            const token = localStorage.getItem("authToken");
+            const response = await fetch(`https://127.0.0.1:8000/friends/accept/${requestId}/`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+    
+            if (response.ok) {
+                showPopup("Friend request accepted!");
+                loadPendingFriendRequests();
+            } else {
+                const errorData = await response.json();
+                showPopup(errorData.message || "Failed to accept friend request", true);
+            }
         } catch (error) {
-          console.error("Error accepting friend request:", error);
-          alert("An error occurred while accepting the friend request.");
+            console.error("Error accepting friend request:", error);
+            showPopup("An error occurred while accepting the friend request.", true);
         }
-      }
+    }
   
     async function rejectFriendRequest(requestId) {
-      try {
-        const token = localStorage.getItem("authToken");
-        const response = await fetch(`https://127.0.0.1:8000/friends/reject/${requestId}/`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-          },
-        });
-      
-        if (response.ok) {
-          alert("Friend request rejected!");
-
-          loadPendingFriendRequests();
-        } else {
-          const errorData = await response.json();
-          alert(errorData.message || "Failed to reject friend request");
+        try {
+            const token = localStorage.getItem("authToken");
+            const response = await fetch(`https://127.0.0.1:8000/friends/reject/${requestId}/`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+    
+            if (response.ok) {
+                showPopup("Friend request rejected!");
+                loadPendingFriendRequests();
+            } else {
+                const errorData = await response.json();
+                showPopup(errorData.message || "Failed to reject friend request", true);
+            }
+        } catch (error) {
+            console.error("Error rejecting friend request:", error);
+            showPopup("An error occurred while rejecting the friend request.", true);
         }
-      } catch (error) {
-        console.error("Error rejecting friend request:", error);
-        alert("An error occurred while rejecting the friend request.");
-      }
     }
   
     async function loadPendingFriendRequests() {
@@ -1382,12 +1422,25 @@ document.addEventListener("DOMContentLoaded", () => {
     
             let friendListContainer = document.getElementById("dynamic-friend-list");
             if (friendListContainer) {
-                friendListContainer.remove();
-            }
+                friendListContainer.innerHTML = ""; // Clear existing content
+            } else {
+                friendListContainer = document.createElement("div");
+                friendListContainer.id = "dynamic-friend-list";
+                friendListContainer.classList.add("friend-list-container");
     
-            friendListContainer = document.createElement("div");
-            friendListContainer.id = "dynamic-friend-list";
-            friendListContainer.classList.add("friend-list-container");
+                // Insert container safely
+                if (buttonElement && buttonElement.parentNode) {
+                    buttonElement.insertAdjacentElement("afterend", friendListContainer);
+                } else {
+                    const friendBox = document.querySelector(".friend-box");
+                    if (friendBox) {
+                        friendBox.appendChild(friendListContainer);
+                    } else {
+                        console.error("Could not find .friend-box to insert friend list");
+                        return;
+                    }
+                }
+            }
     
             if (friendList.length === 0) {
                 let noFriendsMessage = document.createElement("h2");
@@ -1397,8 +1450,6 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 renderFriendList(friendList, friendListContainer);
             }
-    
-            buttonElement.insertAdjacentElement("afterend", friendListContainer);
     
             // Start polling for status updates
             startFriendStatusPolling(friendListContainer);

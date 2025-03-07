@@ -14,6 +14,7 @@ export class PongGame {
         this.gameGroupName = null;
         this.playerRole = null;
         this.friendUsername = friendId;
+        this.hasEnded = false; // New flag to prevent duplicate endGame calls
 
         this.initializeScene();
         this.initializeRenderer();
@@ -109,12 +110,22 @@ export class PongGame {
         return paddle;
     }
 
+    // createBall() {
+    //     const ball = new THREE.Mesh(
+    //         new THREE.SphereGeometry(0.4),
+    //         new THREE.MeshBasicMaterial({ color: 'orange' })
+    //     );
+    //     this.scene.add(ball);
+    //     return ball;
+    // }
+
     createBall() {
         const ball = new THREE.Mesh(
             new THREE.SphereGeometry(0.4),
             new THREE.MeshBasicMaterial({ color: 'orange' })
         );
         this.scene.add(ball);
+        ball.velocity = new THREE.Vector3(0, 0, 0); // Initialize to prevent undefined
         return ball;
     }
 
@@ -156,8 +167,16 @@ export class PongGame {
         }
     }
 
+    // setupLocalMode() {
+    //     this.initObjects();
+    //     this.setupLocalControls();
+    //     this.createScoreUI();
+    //     this.animate();
+    // }
+
     setupLocalMode() {
         this.initObjects();
+        this.resetBall(); // Set initial velocity right after objects are created
         this.setupLocalControls();
         this.createScoreUI();
         this.animate();
@@ -275,20 +294,52 @@ export class PongGame {
         document.addEventListener('keyup', sendMove);
     }
 
+    // handleGameMessage(event) {
+    //     const data = JSON.parse(event.data);
+    //     if (data.type === 'game_update' || data.type === 'game_init') {
+    //         this.updateGameState(data);
+    //         if (this.isGameActive && (data.score1 >= this.maxScore || data.score2 >= this.maxScore)) {
+    //             this.endGame();
+    //         }
+    //     } else if (data.type === 'game_ended') {
+    //         this.endGame();
+    //     }
+    // this is the first one
+    // }
+
     handleGameMessage(event) {
         const data = JSON.parse(event.data);
         if (data.type === 'game_update' || data.type === 'game_init') {
             this.updateGameState(data);
             if (this.isGameActive && (data.score1 >= this.maxScore || data.score2 >= this.maxScore)) {
-                this.endGame();
+                this.endGame(); // Triggered by score
             }
         } else if (data.type === 'game_ended') {
-            this.endGame();
+            // Only end if not already ended
+            if (!this.hasEnded) {
+                this.endGame();
+            } else {
+                // Ensure modal is present if somehow missed
+                const modal = document.getElementById('pong-end-modal');
+                if (!modal) this.showEndGameModal();
+            }
         }
     }
 
+    // handleGameClose() {
+    //     console.log('WebSocket closed');
+    //     if (!this.hasEnded) {
+    //         this.endGame(); // Trigger end if not already ended
+    //     } else {
+    //         // Ensure modal is shown if not already
+    //         const modal = document.getElementById('pong-end-modal');
+    //         if (!modal) this.showEndGameModal();
+    //     }
+    // }
+
     handleGameClose() {
         if (this.isGameActive) this.endGame();
+    //this is the first one
     }
 
     updateGameState(data) {
@@ -380,7 +431,7 @@ export class PongGame {
 
     resetBall() {
         this.ball.position.set(0, 0, 0);
-        const speed = 0.3;
+        const speed = 0.2; //i deacrease speed to make the ball slower
         const direction = Math.random() > 0.5 ? 1 : -1;
         const angle = (Math.random() - 0.5) * Math.PI / 3;
         this.ball.velocity = new THREE.Vector3(speed * Math.sin(angle), 0, direction * speed * Math.cos(angle));
@@ -435,10 +486,92 @@ export class PongGame {
             .catch((error) => console.error('Error storing match history:', error));
     }
 
+    // endGame() {
+    //     this.isGameActive = false;
+    //     this.storeMatchHistory();
+    //     this.dispose();
+    //     this is the first one
+    // }
+
+    // endGame() {
+    //     this.isGameActive = false;
+    //     this.isRunning = false; // Stop animation loop
+    //     this.storeMatchHistory();
+    //     this.showEndGameModal(); // Show popup before cleanup
+    // }
+
     endGame() {
+        if (this.hasEnded) return; // Prevent re-entry
+        this.hasEnded = true;
         this.isGameActive = false;
+        this.isRunning = false;
         this.storeMatchHistory();
-        this.dispose();
+        this.showEndGameModal();
+
+        // Notify server if multiplayer
+        if (this.mode === 'multiplayer' || this.mode === 'friends') {
+            // if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+            //     this.socket.send(JSON.stringify({
+            //         action: 'end_game',
+            //         game_group_name: this.gameGroupName
+            //     }));
+            // }
+        }
+    }
+
+
+    showEndGameModal() {
+        // Remove any existing modal
+        const existingModal = document.getElementById('pong-end-modal');
+        if (existingModal) existingModal.remove();
+
+        const modal = document.createElement('div');
+        modal.id = 'pong-end-modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <h2>Game Over!</h2>
+                <p>${this.getResultText()}</p>
+                <button id="exit-btn">Exit to Menu</button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        const exitBtn = document.getElementById('exit-btn');
+        exitBtn.addEventListener('click', () => {
+            modal.remove();
+            this.dispose();
+            navigateTo('#/game'); // Should only trigger once
+        });
+    }
+
+    // showEndGameModal() {
+    //     const modal = document.createElement('div');
+    //     modal.id = 'pong-end-modal';
+    //     modal.innerHTML = `
+    //         <div class="modal-content">
+    //             <h2>Game Over!</h2>
+    //             <p>${this.getResultText()}</p>
+    //             <button id="exit-btn">Exit to Menu</button>
+    //         </div>
+    //     `;
+    //     document.body.appendChild(modal);
+
+    //     document.getElementById('exit-btn').addEventListener('click', () => {
+    //         modal.remove();
+    //         this.dispose(); // Clean up after modal closes
+    //         navigateTo('#/game'); // Use global navigateTo, no import needed
+    //     });
+    // }
+
+    getResultText() {
+        // Simple result based on internal score, no UI display needed
+        if (this.score.player1 >= this.maxScore) {
+            return this.player1Id ? `${this.player1Id} Wins!` : 'Player 1 Wins!';
+        } else if (this.score.player2 >= this.maxScore) {
+            return this.player2Id ? `${this.player2Id} Wins!` : 'Player 2 Wins!';
+        } else {
+            return 'Game Ended!';
+        }
     }
 
     dispose() {
@@ -447,11 +580,38 @@ export class PongGame {
         [this.startDiv, this.scoreDiv, this.renderer?.domElement].forEach(el => el?.remove());
         [this.paddle1, this.paddle2, this.ball, this.wall, this.wall2].forEach(obj => obj && this.scene.remove(obj));
         window.removeEventListener('resize', this.onWindowResize);
-        if (this.socket) this.socket.close();
+        if (this.socket) {
+            this.socket.close();
+            this.socket = null;
+        }
         this.renderer?.dispose();
         this.controls?.dispose();
         while (this.scene.children.length > 0) this.scene.remove(this.scene.children[0]);
     }
+
+    // dispose() {
+    //     this.isRunning = false;
+    //     this.isGameActive = false;
+    //     [this.startDiv, this.scoreDiv, this.renderer?.domElement].forEach(el => el?.remove());
+    //     [this.paddle1, this.paddle2, this.ball, this.wall, this.wall2].forEach(obj => obj && this.scene.remove(obj));
+    //     window.removeEventListener('resize', this.onWindowResize);
+    //     if (this.socket) this.socket.close();
+    //     this.renderer?.dispose();
+    //     this.controls?.dispose();
+    //     while (this.scene.children.length > 0) this.scene.remove(this.scene.children[0]);
+    // }
+    // dispose() {
+    //     this.isRunning = false;
+    //     this.isGameActive = false;
+    //     [this.startDiv, this.scoreDiv, this.renderer?.domElement].forEach(el => el?.remove());
+    //     [this.paddle1, this.paddle2, this.ball, this.wall, this.wall2].forEach(obj => obj && this.scene.remove(obj));
+    //     window.removeEventListener('resize', this.onWindowResize);
+    //     if (this.socket) this.socket.close();
+    //     this.renderer?.dispose();
+    //     this.controls?.dispose();
+    //     while (this.scene.children.length > 0) this.scene.remove(this.scene.children[0]);
+    // this is the first one
+    // }
 }
 
 export class TournamentPongGame extends PongGame {
