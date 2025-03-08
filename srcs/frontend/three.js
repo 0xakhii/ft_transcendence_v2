@@ -489,7 +489,6 @@ export class PongGame {
     //     this.isGameActive = false;
     //     this.storeMatchHistory();
     //     this.dispose();
-    //     this is the first one
     // }
 
     // endGame() {
@@ -505,10 +504,10 @@ export class PongGame {
         this.isGameActive = false;
         this.isRunning = false;
         this.storeMatchHistory();
-        this.showEndGameModal();
-
+        
         // Notify server if multiplayer
-        if (this.mode === 'multiplayer' || this.mode === 'friends') {
+        if (this.mode === 'multiplayer' || this.mode === 'friends' || this.mode === 'local') {
+            this.showEndGameModal();
             // if (this.socket && this.socket.readyState === WebSocket.OPEN) {
             //     this.socket.send(JSON.stringify({
             //         action: 'end_game',
@@ -609,7 +608,7 @@ export class PongGame {
     //     this.renderer?.dispose();
     //     this.controls?.dispose();
     //     while (this.scene.children.length > 0) this.scene.remove(this.scene.children[0]);
-    // this is the first one
+    // // this is the first one
     // }
 }
 
@@ -617,6 +616,7 @@ export class TournamentPongGame extends PongGame {
     constructor() {
         super('tournament');
         this.setupTournament();
+        this.createTournamentUI(); // Create UI early
     }
 
     startGame() {
@@ -638,22 +638,16 @@ export class TournamentPongGame extends PongGame {
     createTournamentUI() {
         this.tournamentUI = document.createElement('div');
         this.tournamentUI.id = 'tournament-ui';
-        this.tournamentUI.className = 'tournament-ui';
-        // Object.assign(this.tournamentUI.style, {
-            // position: 'absolute',
-            // top: '50%',
-            // left: '50%',
-            // transform: 'translate(-50%, -50%)',
-            // color: 'white',
-            // padding: '20px',
-            // borderRadius: '10px',
-            // textAlign: 'center',
-            // backgroundColor: 'transparent',
-            // fontFamily: 'Arial, sans-serif',
-            // fontSize: '25px',
-            // width: '300px',
-            // maxWidth: '90%'
-        // });
+        Object.assign(this.tournamentUI.style, {
+            position: 'absolute',
+            top: '50px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            background: 'rgba(0, 0, 0, 0.7)',
+            color: 'white',
+            padding: '20px',
+            borderRadius: '10px'
+        });
         document.body.appendChild(this.tournamentUI);
     }
 
@@ -666,8 +660,6 @@ export class TournamentPongGame extends PongGame {
                 for (let i = 1; i <= 4; i++) {
                     const input = document.createElement('input');
                     input.type = 'text';
-                    input.className = 'tn-player-input';
-                    input.style.cssText = 'margin-bottom: 10px; width: 300px;';
                     input.placeholder = `Player ${i}`;
                     input.id = `player-${i}`;
                     this.tournamentUI.appendChild(input);
@@ -687,7 +679,7 @@ export class TournamentPongGame extends PongGame {
             case 'finished':
                 this.tournamentUI.innerHTML = `<h2>Tournament Finished</h2>`;
                 this.tournamentUI.innerHTML += `<p>Winner: ${this.tournament.winners[0]}</p>`;
-                this.endGame();
+                // this.endGame();
                 break;
         }
     }
@@ -704,17 +696,50 @@ export class TournamentPongGame extends PongGame {
         ];
         this.tournament.stage = 'semifinals';
         this.tournament.currentMatch = this.tournament.semifinals[0];
-        this.initObjects();
-        this.setupLocalControls();
-        this.animate();
-        this.resetBall();
-        this.checkScoring();
+        
+        // Fully initialize the game for the first match
+        this.initializeNewMatch();
         this.updateTournamentUI();
+        this.animate();
+        console.log('Tournament started, scene children:', this.scene.children.length);
+    }
+
+    initializeNewMatch() {
+        // Reset game state
+        this.score.player1 = 0;
+        this.score.player2 = 0;
+        this.disposeGameObjects(); // Clear previous objects
+        this.initObjects(); // Reinitialize all game objects
+        this.resetBall(); // Start the ball moving
+        this.setupLocalControls(); // Reapply controls
+        this.isRunning = true;
+        this.isGameActive = true;
+        // Ensure renderer canvas is attached
+        if (!document.querySelector('.three-canvas') || !document.querySelector('.main')?.contains(document.querySelector('.three-canvas'))) {
+            document.querySelector('.main')?.appendChild(this.renderer.domElement);
+        }
+        console.log('New match initialized, scene children:', this.scene.children.length);
+    }
+
+    disposeGameObjects() {
+        // Safely dispose of game objects
+        [this.paddle1, this.paddle2, this.ball, this.wall, this.wall2].forEach(obj => {
+            if (obj) {
+                this.scene.remove(obj);
+                obj.geometry?.dispose();
+                obj.material?.dispose();
+            }
+        });
+        this.paddle1 = null;
+        this.paddle2 = null;
+        this.ball = null;
+        this.wall = null;
+        this.wall2 = null;
     }
 
     checkMatchEnd() {
-        if (this.score1 >= this.maxScore || this.score2 >= this.maxScore) {
-            const winner = this.score1 > this.score2 ? this.tournament.currentMatch.player1 : this.tournament.currentMatch.player2;
+        if (this.score.player1 >= this.maxScore || this.score.player2 >= this.maxScore) {
+            const winner = this.score.player1 > this.score.player2 ? this.tournament.currentMatch.player1 : this.tournament.currentMatch.player2;
             if (this.tournament.stage === 'semifinals') {
                 this.tournament.currentMatch.winner = winner;
                 this.tournament.winners.push(winner);
@@ -725,31 +750,38 @@ export class TournamentPongGame extends PongGame {
                     this.tournament.final = [{ player1: this.tournament.winners[0], player2: this.tournament.winners[1], winner: null }];
                     this.tournament.currentMatch = this.tournament.final[0];
                 }
+                this.initializeNewMatch(); // Start new match with fresh objects
             } else if (this.tournament.stage === 'final') {
                 this.tournament.currentMatch.winner = winner;
                 this.tournament.winners = [winner];
                 this.tournament.stage = 'finished';
+                this.isGameActive = false; // Stop game logic
             }
-            this.score1 = 0;
-            this.score2 = 0;
-            this.resetBall();
-            this.disposeGameObjects();
-            if (this.tournament.stage !== 'finished') this.initObjects();
             this.updateTournamentUI();
+            console.log('Match ended, stage:', this.tournament.stage, 'scene children:', this.scene.children.length);
         }
     }
 
     animate() {
-        this.updateTournamentUI();
-        if (!this.isRunning) return; // Stop animation if not running
+        if (!this.isRunning) return;
         requestAnimationFrame(() => this.animate());
-
-        if (this.isGameActive) {
-            this.handleLocalLogic(1 / 2);
-            if (this.mode === 'tournament') this.checkMatchEnd();
-        }
+        this.updateTournamentUI();
+        // Always attempt to render
         if (this.renderer && this.scene && this.camera) {
             this.renderer.render(this.scene, this.camera);
+            console.log('Rendering frame, scene children:', this.scene.children.length);
+        } else {
+            console.error('Rendering failed: missing renderer, scene, or camera', {
+                renderer: !!this.renderer,
+                scene: !!this.scene,
+                camera: !!this.camera
+            });
+        }
+
+        // Run game logic only when active and not finished
+        if (this.isGameActive && this.tournament.stage !== 'finished') {
+            this.handleLocalLogic();
+            this.checkMatchEnd();
         }
     }
 
